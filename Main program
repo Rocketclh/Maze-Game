@@ -1,0 +1,36 @@
+def main():
+    global x
+    global y
+    global steps
+    global ans
+    global Return_type_error
+    if Return_type_error:
+        Return_type_error=False
+    else:
+        print_board()
+    ans=input("System: Please enter the direction you want to move")
+def print_board():
+    global board
+    for y in range(23):
+        print(Board[0][y],Board[1][y], Board[2][y], Board[3][y], Board[4][y], Board[5][y], Board[6][y], Board[7][y], Board[8][y], Board[9][y], Board[10][y], Board[11][y],Board[12][y], Board[13][y], Board[14][y], Board[15][y], Board[16][y], Board[17][y], Board[18][y], Board[19][y], Board[20][y], Board[21][y], Board[22][y])
+def build_maze():
+    global board
+    i=random.randint(1,1)
+    if i == 1:
+        None
+
+import time
+import random
+x=0
+y=0
+steps=0
+ans=None
+Return_type_error=False
+Board=[[" "] * 23 for _ in range(23)]
+for i in range (9):
+    x=random.randint(0,22)
+    y=random.randint(0,22)
+    Board[x][y]=i
+print("System: This game is for single players.")
+time.sleep(1)
+print("System: ")
