@@ -10,14 +10,74 @@ def main():
         print_board()
     ans=input("System: Please enter the direction you want to move")
 def print_board():
-    global board
+    global Board
     for y in range(23):
         print(Board[0][y],Board[1][y], Board[2][y], Board[3][y], Board[4][y], Board[5][y], Board[6][y], Board[7][y], Board[8][y], Board[9][y], Board[10][y], Board[11][y],Board[12][y], Board[13][y], Board[14][y], Board[15][y], Board[16][y], Board[17][y], Board[18][y], Board[19][y], Board[20][y], Board[21][y], Board[22][y])
 def build_maze():
-    global board
+    global Board
     i=random.randint(1,1)
     if i == 1:
-        None
+        print("System: Loading Maze 01...")
+        time.sleep(0.1)
+        x=0 
+        y=0
+        for j in range(9):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(11):
+            Board[x][y]="X"
+            x=x+1
+        x=0 
+        y=1
+        Board[x][y]="X"
+        x=x+6
+        Board[x][y]="X"
+        x=x+12
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=0 
+        y=2
+        Board[x][y]="X"
+        x=x+2
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1 
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=x+2
+        for j in range(7):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=0
+        y=3
+        Board[x][y]="X"
+        for j in range(4):
+            x=x+2
+            Board[x][y]="X"
+        for j in range(3):
+            x=x+4
+            Board[x][y]="X"
+        x=0
+        y=4
+
+        x=0 
+        y=22
+        for j in range(11):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(9):
+            Board[x][y]="X"
+            x=x+1
+        print("System: Maze 01 loaded successfully.")
 
 import time
 import random
@@ -26,11 +86,9 @@ y=0
 steps=0
 ans=None
 Return_type_error=False
-Board=[[" "] * 23 for _ in range(23)]
-for i in range (9):
-    x=random.randint(0,22)
-    y=random.randint(0,22)
-    Board[x][y]=i
+Board=[[" "] * 23 for i in range(23)]
 print("System: This game is for single players.")
 time.sleep(1)
 print("System: ")
+build_maze()
+print_board()
