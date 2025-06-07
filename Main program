@@ -67,7 +67,151 @@ def build_maze():
             Board[x][y]="X"
         x=0
         y=4
-
+        Board[x][y]="X"
+        for j in range(3):
+            x=x+2
+            Board[x][y]="X"
+        x=x+2
+        for j in range(2):
+            Board[x][y]="X"
+            x=x+1
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=x+2
+        for j in range(7):
+            Board[x][y]="X"
+            x=x+1
+        x=0
+        y=5
+        Board[x][y]="X"
+        x=x+4
+        Board[x][y]="X"
+        for j in range(5):
+            x=x+2
+            Board[x][y]="X"
+        x=x+6
+        Board[x][y]="X"
+        x=0
+        y=6
+        for j in range(5):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(5):
+            Board[x][y]="X"
+            x=x+2
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        Board[x][y]="X"
+        x=0
+        y=7
+        Board[x][y]="X"
+        x=x+4
+        for j in range(6):
+            Board[x][y]="X"
+            x=x+2
+        for j in range(2):
+            x=x+2
+            Board[x][y]="X"
+        x=0
+        y=8
+        Board[x][y]="X"
+        for j in range(6):
+            x=x+2
+            Board[x][y]="X"
+        x=x+2
+        for j in range(5):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        Board[x][y]="X"
+        x=0
+        y=9
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=x+4
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+2
+            Board[x][y]="X"
+        x=x+10
+        Board[x][y]="X"
+        x=x+4
+        x=0
+        y=10
+        Board[x][y]="X"
+        x=x+2
+        for j in range(5):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(2):
+            Board[x][y]="X"
+            x=x+2
+        for j in range(5):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=0
+        y=11
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+4
+            Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=x+4
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+2
+            Board[x][y]="X"
+        x=0
+        y=12
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+2
+            Board[x][y]="X"
+        x=x+2
+        for j in range(5):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        Board[x][y]="X"
+        x=x+2
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=0
+        y=13
+        Board[x][y]="X"
+        x=x+4
+        Board[x][y]="X"
+        x=x+6
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+2
+            Board[x][y]="X"
+        x=x+4
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=0
+        y=14
+        Board[x][y]="X"
+        
         x=0 
         y=22
         for j in range(11):
@@ -78,6 +222,56 @@ def build_maze():
             Board[x][y]="X"
             x=x+1
         print("System: Maze 01 loaded successfully.")
+    elif i == 2:
+        print("System: Loading Maze 02...")
+        time.sleep(0.1)
+        x=0 
+        y=0
+        for j in range(9):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(11):
+            Board[x][y]="X"
+            x=x+1
+        x=0 
+        y=1
+
+        x=0 
+        y=22
+        for j in range(11):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(9):
+            Board[x][y]="X"
+            x=x+1
+        print("System: Maze 02 loaded successfully.")
+    elif i == 3:
+        print("System: Loading Maze 03...")
+        time.sleep(0.1)
+        x=0 
+        y=0
+        for j in range(9):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(11):
+            Board[x][y]="X"
+            x=x+1
+        x=0 
+        y=1
+
+        x=0 
+        y=22
+        for j in range(11):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(9):
+            Board[x][y]="X"
+            x=x+1
+        print("System: Maze 03 loaded successfully.")
 
 import time
 import random
