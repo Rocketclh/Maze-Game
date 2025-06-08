@@ -9,10 +9,14 @@ def main():
     else:
         print_board()
     ans=input("System: Please enter the direction you want to move")
+
 def print_board():
     global Board
-    for y in range(23):
-        print(Board[0][y],Board[1][y], Board[2][y], Board[3][y], Board[4][y], Board[5][y], Board[6][y], Board[7][y], Board[8][y], Board[9][y], Board[10][y], Board[11][y],Board[12][y], Board[13][y], Board[14][y], Board[15][y], Board[16][y], Board[17][y], Board[18][y], Board[19][y], Board[20][y], Board[21][y], Board[22][y])
+    print("")
+    for y in range(21):
+        print(Board[0][y],Board[1][y], Board[2][y], Board[3][y], Board[4][y], Board[5][y], Board[6][y], Board[7][y], Board[8][y], Board[9][y], Board[10][y], Board[11][y],Board[12][y], Board[13][y], Board[14][y], Board[15][y], Board[16][y], Board[17][y], Board[18][y], Board[19][y], Board[20][y])
+    print("")
+
 def build_maze():
     global Board
     i=random.randint(1,1)
@@ -210,10 +214,89 @@ def build_maze():
         Board[x][y]="X"
         x=0
         y=14
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(5):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+2
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
         Board[x][y]="X"
-        
+        x=0
+        y=15
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+2
+            Board[x][y]="X"
+        x=x+6
+        for j in range(4):
+            Board[x][y]="X"
+            x=x+2
+        x=x+2
+        Board[x][y]="X"
+        x=0
+        y=16
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+2
+            Board[x][y]="X"
+        x=x+2
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(4):
+            Board[x][y]="X"
+            x=x+2
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=0
+        y=17
+        Board[x][y]="X"
+        for j in range(2):
+            x=x+4
+            Board[x][y]="X"
+        x=x+6
+        Board[x][y]="X"
+        x=x+2
+        Board[x][y]="X"
+        x=x+4
+        Board[x][y]="X"
+        x=0
+        y=18
+        for j in range(7):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(7):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        for j in range(3):
+            Board[x][y]="X"
+            x=x+1
+        x=x+1
+        Board[x][y]="X"
+        x=0
+        y=19
+        Board[x][y]="X"
+        x=x+10
+        Board[x][y]="X"
+        x=x+6
+        Board[x][y]="X"
+        x=x+4
+        Board[x][y]="X"
         x=0 
-        y=22
+        y=20
         for j in range(11):
             Board[x][y]="X"
             x=x+1
@@ -238,7 +321,7 @@ def build_maze():
         y=1
 
         x=0 
-        y=22
+        y=20
         for j in range(11):
             Board[x][y]="X"
             x=x+1
@@ -263,7 +346,7 @@ def build_maze():
         y=1
 
         x=0 
-        y=22
+        y=20
         for j in range(11):
             Board[x][y]="X"
             x=x+1
@@ -280,7 +363,7 @@ y=0
 steps=0
 ans=None
 Return_type_error=False
-Board=[[" "] * 23 for i in range(23)]
+Board=[[" "] * 21 for i in range(21)]
 print("System: This game is for single players.")
 time.sleep(1)
 print("System: ")
