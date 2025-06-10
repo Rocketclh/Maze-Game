@@ -1,14 +1,99 @@
 def main():
-    global x
-    global y
     global steps
-    global ans
-    global Return_type_error
-    if Return_type_error:
-        Return_type_error=False
+    global Board
+    global Type_error
+    if Type_error:
+        Type_error=False
     else:
         print_board()
+    found=False
+    x=0
+    y=0
+    while found != True: #Automated relocate player position
+        if Board[x][y] == "P":
+            found=True
+        else:
+            y=y+1
+            if y > 20:
+                x=x+1
+                y=0
+                if x > 20:
+                    print("System: ERROR")
+                    print("System: Player position not found, please restart the game")
+                    ans=input("System: Press Enter to exit the game")
+                    sys.exit()
     ans=input("System: Please enter the direction you want to move")
+    ans=ans.lower()
+    if ans == "w": #Move up
+        if y > 0 and Board[x][y-1] != "X":
+            Board[x][y]=" "
+            y=y-1
+            steps=steps+1
+            if Board[x][y] == "E":
+                end()
+            else:
+                Board[x][y]="P"
+        else:
+            print("System: Invalid move!")
+            print("System: You cannot move up")
+            Type_error=True
+            main()
+    elif ans == "s": #Move down
+        if y < 20 and Board[x][y+1] != "X":
+            Board[x][y]=" "
+            y=y+1
+            steps=steps+1
+            if Board[x][y] == "E":
+                end()
+            else:
+                Board[x][y]="P"
+        else:
+            print("System: Invalid move!")
+            print("System: You cannot move down")
+            Type_error=True
+            main()
+    elif ans == "a": #Move left
+        if x > 0 and Board[x-1][y] != "X":
+            Board[x][y]=" "
+            x=x-1
+            steps=steps+1
+            if Board[x][y] == "E":
+                end()
+            else:
+                Board[x][y]="P"
+        else:
+            print("System: Invalid move!")
+            print("System: You cannot move left")
+            Type_error=True
+            main()
+    elif ans == "d": #Move right
+        if x < 20 and Board[x+1][y] != "X":
+            Board[x][y]=" "
+            x=x+1
+            steps=steps+1
+            if Board[x][y] == "E":
+                end()
+            else:
+                Board[x][y]="P"
+        else:
+            print("System: Invalid move!")
+            print("System: You cannot move right")
+            Type_error=True
+            main()
+    else:
+        print("System: Invalid input!")
+        print("System: Please enter W, A, S, or D")
+        Type_error=True
+        main()
+    main()
+
+def end():
+    global steps
+    print("System: Congratulations!")
+    print("System: You have exited the maze!")
+    print("System: Total steps taken:", steps)
+    ans=input("System: Press Enter to exit the game")
+    sys.exit()
 
 def print_board():
     global Board
@@ -28,6 +113,7 @@ def build_maze():
         for j in range(9):
             Board[x][y]="X"
             x=x+1
+        Board[x][y]="P"  # Player starting point
         x=x+1
         for j in range(11):
             Board[x][y]="X"
@@ -300,6 +386,7 @@ def build_maze():
         for j in range(11):
             Board[x][y]="X"
             x=x+1
+        Board[x][y]="E"  # Exit point
         x=x+1
         for j in range(9):
             Board[x][y]="X"
@@ -313,6 +400,7 @@ def build_maze():
         for j in range(9):
             Board[x][y]="X"
             x=x+1
+        Board[x][y]="P"  # Player starting point
         x=x+1
         for j in range(11):
             Board[x][y]="X"
@@ -325,6 +413,7 @@ def build_maze():
         for j in range(11):
             Board[x][y]="X"
             x=x+1
+        Board[x][y]="E"  # Exit point
         x=x+1
         for j in range(9):
             Board[x][y]="X"
@@ -338,6 +427,7 @@ def build_maze():
         for j in range(9):
             Board[x][y]="X"
             x=x+1
+        Board[x][y]="P"  # Player starting point
         x=x+1
         for j in range(11):
             Board[x][y]="X"
@@ -350,22 +440,35 @@ def build_maze():
         for j in range(11):
             Board[x][y]="X"
             x=x+1
+        Board[x][y]="E"  # Exit point
         x=x+1
         for j in range(9):
             Board[x][y]="X"
             x=x+1
         print("System: Maze 03 loaded successfully.")
+    main()
 
 import time
 import random
-x=0
-y=0
+import sys
 steps=0
-ans=None
-Return_type_error=False
+Type_error=False
 Board=[[" "] * 21 for i in range(21)]
-print("System: This game is for single players.")
+print("System: This game is for single players")
 time.sleep(1)
-print("System: ")
+print("System: Icon'X' is the wall, and icon ' ' is the path")
+time .sleep(1)
+print("System: Icon 'P' represent player, and icon 'E' represent exit")
+time.sleep(1)
+print("System: You can move in four directions")
+time.sleep(1)
+print("System: Up (W), Down (S), Left (A), Right (D)")
+time.sleep(1)
+print("System: Every steps you take will be recorded")
+time.sleep(1)
+print("System: Your goal is to exit the maze with fewest steps")
+time.sleep(1)
+ans=input("System: Press Enter to start the game")
+print("System: Good luck!")
+time.sleep(0.5)
 build_maze()
-print_board()
