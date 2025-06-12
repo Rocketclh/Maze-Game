@@ -104,7 +104,7 @@ def print_board():
 
 def build_maze():
     global Board
-    i=random.randint(1,1)
+    i=random.randint(2,2)
     if i == 1:
         print("System: Loading Maze 01...")
         time.sleep(0.1)
@@ -393,7 +393,8 @@ def build_maze():
             x=x+1
         print("System: Maze 01 loaded successfully.")
     elif i == 2:
-        print("System: Loading Maze 02...")
+        mn=str(random.randint(2,999))
+        print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
         x=0 
         y=0
@@ -406,9 +407,6 @@ def build_maze():
             Board[x][y]="X"
             x=x+1
         x=0 
-        y=1
-
-        x=0 
         y=20
         for j in range(11):
             Board[x][y]="X"
@@ -418,34 +416,7 @@ def build_maze():
         for j in range(9):
             Board[x][y]="X"
             x=x+1
-        print("System: Maze 02 loaded successfully.")
-    elif i == 3:
-        print("System: Loading Maze 03...")
-        time.sleep(0.1)
-        x=0 
-        y=0
-        for j in range(9):
-            Board[x][y]="X"
-            x=x+1
-        Board[x][y]="P"  # Player starting point
-        x=x+1
-        for j in range(11):
-            Board[x][y]="X"
-            x=x+1
-        x=0 
-        y=1
-
-        x=0 
-        y=20
-        for j in range(11):
-            Board[x][y]="X"
-            x=x+1
-        Board[x][y]="E"  # Exit point
-        x=x+1
-        for j in range(9):
-            Board[x][y]="X"
-            x=x+1
-        print("System: Maze 03 loaded successfully.")
+        print("System: Maze 0"+mn+" loaded successfully.")
     main()
 
 import time
