@@ -1,6 +1,8 @@
 def main():
     global steps
     global Board
+    global Size
+    global Test
     global Type_error
     if Type_error:
         Type_error=False
@@ -14,10 +16,10 @@ def main():
             found=True
         else:
             y=y+1
-            if y > 20:
+            if y > (Size-1):
                 x=x+1
                 y=0
-                if x > 20:
+                if x > (Size-1):
                     print("System: ERROR")
                     print("System: Player position not found, please restart the game")
                     ans=input("System: Press Enter to exit the game")
@@ -39,7 +41,7 @@ def main():
             Type_error=True
             main()
     elif ans == "s": #Move down
-        if y < 20 and Board[x][y+1] != "X":
+        if y < (Size-1) and Board[x][y+1] != "X":
             Board[x][y]=" "
             y=y+1
             steps=steps+1
@@ -67,7 +69,7 @@ def main():
             Type_error=True
             main()
     elif ans == "d": #Move right
-        if x < 20 and Board[x+1][y] != "X":
+        if x < (Size-1) and Board[x+1][y] != "X":
             Board[x][y]=" "
             x=x+1
             steps=steps+1
@@ -98,13 +100,18 @@ def end():
 def print_board():
     global Board
     print("")
-    for y in range(21):
-        print(Board[0][y],Board[1][y], Board[2][y], Board[3][y], Board[4][y], Board[5][y], Board[6][y], Board[7][y], Board[8][y], Board[9][y], Board[10][y], Board[11][y],Board[12][y], Board[13][y], Board[14][y], Board[15][y], Board[16][y], Board[17][y], Board[18][y], Board[19][y], Board[20][y])
+    for y in range(Size):
+        print(*[Board[i][y] for i in range(Size)])
     print("")
 
 def build_maze():
     global Board
-    i=random.randint(2,2)
+    global Difficulty 
+    global Size
+    global Test
+    i=2
+    if not Test:
+        i=1
     if i == 1:
         print("System: Loading Maze 01...")
         time.sleep(0.1)
@@ -424,7 +431,7 @@ import random
 import sys
 steps=0
 Type_error=False
-Board=[[" "] * 21 for i in range(21)]
+Test=False
 print("System: This game is for single players")
 time.sleep(1)
 print("System: Icon'X' is the wall, and icon ' ' is the path")
@@ -440,6 +447,21 @@ time.sleep(1)
 print("System: Your goal is to exit the maze with fewest steps")
 time.sleep(1)
 ans=input("System: Press Enter to start the game")
+if ans == "/test":
+    test=True
+passed=False
+while not passed:
+    try:
+        ans=int(input("Please enter difficulty  1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(61*61 Board)"))
+        if ans <=0 or ans >= 6:
+            print("System: Out of bounds")
+        else:
+            passed=True
+    except:
+        print("System: Formet error")
+Difficulty =(ans+1)*5
+Size=Difficulty *2+1
+Board=[[" "] * Size for i in range(Size)]
 print("System: Good luck!")
 time.sleep(0.5)
 build_maze()
