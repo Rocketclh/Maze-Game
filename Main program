@@ -102,7 +102,6 @@ def print_board():
     print("")
     for y in range(Size):
         print(*[Board[i][y] for i in range(Size)])
-    print("")
 
 def build_maze():
     global Board
