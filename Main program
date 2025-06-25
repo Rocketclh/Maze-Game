@@ -120,7 +120,7 @@ def build_maze():
         for j in range(9):
             Board[x][y]="X"
             x=x+1
-        Board[x][y]="P"  # Player starting point
+        Board[x][y]="P"  #Player starting point
         x=x+1
         for j in range(11):
             Board[x][y]="X"
@@ -393,26 +393,33 @@ def build_maze():
         for j in range(11):
             Board[x][y]="X"
             x=x+1
-        Board[x][y]="E"  # Exit point
+        Board[x][y]="E"  #Exit point
         x=x+1
         for j in range(9):
             Board[x][y]="X"
             x=x+1
         print("System: Maze 01 loaded successfully.")
-    elif i == 2: # Loop-erased random walk maze generate algorithm
-        mn=str(random.randint(2,999))
+    elif i == 2: #Loop-erased random walk maze generate algorithm
+        mn=str(random.randint(2,999)) #Random generate maze ID
         print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
         x=1
         y=0
-        Board[x][y]="P"  # Player starting point
-        x=random.randint(1,(size-1))
-        if x%2 == 0 :
-            x=(x%2)+(x//2)+1
-            if x%2 == 0 :
-                x=x+1
+        Board[x][y]="P"  #Player starting point
+        
         y=size-1
-        Board[x][y]="E"  # Exit point
+        Plot=False
+        while not(Plot): #Randomize  the exit position
+            x=random.randint(1,(size-1))
+            if x%2 == 0 :
+                x=(x%2)+(x//2)+1
+                x=x*random.randint(1,2)
+                if x%2 == 0 :
+                    x=x+1
+                if not(x>size):
+                    if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the exit is at the end of the path
+                        Plot=True
+        Board[x][y]="E"  #Exit point
         print("System: Maze 0"+mn+" loaded successfully.")
     main()
 
