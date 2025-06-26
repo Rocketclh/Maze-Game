@@ -408,7 +408,7 @@ def build_maze():
         Board[x][y]="P"  #Player starting point
         y=y+1
         Board[x][y]=" "
-        Maze=[["F"] * int((Size-1)/2) for n in range(int(Size-1)/2))] #Store the cell that are part of the maze, grid is stored in node form, lines are not included
+        Maze=[["F"] * int((Size-1)/2) for n in range(int(Size-1)/2)] #Store the cell that are part of the maze, grid is stored in node form, lines are not included
         Maze[x-1][y]="T"
         Done=False
         while not(Done): #Check is all node included in the maze
