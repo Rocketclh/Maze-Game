@@ -432,16 +432,17 @@ def build_maze():
             y=int(temp[2:4])
             Path=[] #Stored waked path
             while Maze[x][y] != "T":
-        y=size-1
+                None
+        y=Size-1
         Plot=False
         while not(Plot): #Randomize  the exit position
-            x=random.randint(1,(size-1))
+            x=random.randint(1,(Size-1))
             if x%2 == 0 :
                 x=(x%2)+(x//2)+1
                 x=x*random.randint(1,2)
                 if x%2 == 0 :
                     x=x+1
-                if not(x>size):
+                if not(x>Size):
                     if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the exit is at the end of the path
                         Plot=True
         Board[x][y]="E"  #Exit point
