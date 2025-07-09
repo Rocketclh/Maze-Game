@@ -27,9 +27,9 @@ def main():
     ans=input("System: Please enter the direction you want to move")
     ans=ans.lower()
     if ans == "w": #Move up
-        if y > 0 and Board[x][y-1] != "X":
+        if y < (Size-1) and Board[x][y+1] != "X":
             Board[x][y]=" "
-            y=y-1
+            y=y+1
             steps=steps+1
             if Board[x][y] == "E":
                 end()
@@ -41,9 +41,9 @@ def main():
             Type_error=True
             main()
     elif ans == "s": #Move down
-        if y < (Size-1) and Board[x][y+1] != "X":
+        if y > 0 and Board[x][y-1] != "X":
             Board[x][y]=" "
-            y=y+1
+            y=y-1
             steps=steps+1
             if Board[x][y] == "E":
                 end()
@@ -97,11 +97,11 @@ def end():
     ans=input("System: Press Enter to exit the game")
     sys.exit()
 
-def print_board():
+def print_board(): #0,0 at bottem left corner
     global Board
     print("")
     for y in range(Size):
-        print(*[Board[i][y] for i in range(Size)])
+        print(*[Board[x][Size-y-1] for x in range(Size)])
 
 def build_maze():
     global Board
@@ -404,13 +404,13 @@ def build_maze():
         print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
         x=1
-        y=0
+        y=Size-1
         Board[x][y]="P"  #Player starting point
-        y=y+1
+        y=y-1
         Board[x][y]=" "
         Maze=[["F"] * int((Size-1)/2) for n in range(int(Size-1)/2)] #Store the cell that are part of the maze, grid is stored in node form, lines are not included
         Maze[x-1][y]="T"
-        Done=False
+        Done=False #Register maze is fully finished
         while not(Done): #Check is all node included in the maze
             Done=True
             Not_Maze=[] #The cell that are not part of the maze, 1D array
@@ -427,34 +427,36 @@ def build_maze():
                         else:
                             temp=temp+str(v)
                         Not_Maze.append(temp) #Storing the grid in "0519" form as x=5 y=19
-            temp=Not_Maze[random.randint(0,len(Not_Maze)-1)]
-            Path=[temp] #Stored waked path
-            x=int(temp[0:2])
-            y=int(temp[2:4])
-            while Maze[x][y] != "T":
-                retry=False
-                Direction=random.randint(1,4) #1:Up 2:Down 3:Left 4:Right
-                if Direction == 1:
-                    if y-2 < 0:
-                        retry=True
-                    else:
-                        if x<10:
-                            temp="0"+str(x)
-                        else:
-                            temp=str(x)
-                        if v<10:
-                            temp=temp+"0"+str(y)
-                        else:
-                            temp=temp+str(y)
-                        found=False
-                        for c in range(1,len(Path)):
-                            if Path[c] == temp:
-                                found=True
-                        if found:
+            if not Done:
+                temp=Not_Maze[random.randint(0,len(Not_Maze)-1)]
+                Path=[temp] #Stored walked path
+                x=int(temp[0:2])
+                y=int(temp[2:4])
+                while Maze[x][y] != "T":
+                    retry=False
+                    Direction=random.randint(1,4) #1:Up 2:Down 3:Left 4:Right
+                    if Direction == 1:
+                        if y+2 > Size-1:
                             retry=True
                         else:
-                            Path.append(temp) #Storing the grid in "0519" form as x=5 y=19
-        y=Size-1
+                            if x<10:
+                                temp="0"+str(x)
+                            else:
+                                temp=str(x)
+                            y=y+2
+                            if y<10:
+                                temp=temp+"0"+str(y)
+                            else:
+                                temp=temp+str(y)
+                            found=False
+                            for c in range(1,len(Path)):
+                                if Path[c] == temp:
+                                    found=True
+                            if found:
+                                retry=True
+                            else:
+                                Path.append(temp) #Storing the grid in "0519" form as x=5 y=19
+        y=0
         Plot=False
         while not(Plot): #Randomize  the exit position
             x=random.randint(1,(Size-1))
