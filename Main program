@@ -400,20 +400,24 @@ def build_maze():
             x=x+1
         print("System: Maze 01 loaded successfully.")
     elif i == 2: #Loop-erased random walk maze generate algorithm
+        #Maze format: node only
+        #Board format: node and line(path)
         mn=str(random.randint(2,999)) #Random generate maze ID
         print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
         x=1
         y=Size-1
-        Board[x][y]="P"  #Player starting point
+        Board[x][y]="P"  #Player starting point on top left corner
         y=y-1
         Board[x][y]=" "
         Maze=[["F"] * int((Size-1)/2) for n in range(int(Size-1)/2)] #Store the cell that are part of the maze, grid is stored in node form, lines are not included
-        Maze[x-1][y]="T"
+        x=(x+1)/2-1 #Converting location vector from Board format to Maze format
+        y=(x+1)/2-1
+        Maze[x][y]="T"
         Done=False #Register maze is fully finished
         while not(Done): #Check is all node included in the maze
             Done=True
-            Not_Maze=[] #The cell that are not part of the maze, 1D array
+            Not_Maze=[] #The cell that are not part of the maze, 1D array, in maze format
             for h in range(len(Maze)): #x-axis
                 for v in range(len(Maze)): #y-axis
                     if Maze[h][v] == "F": #Check is it part of maze
@@ -428,11 +432,13 @@ def build_maze():
                             temp=temp+str(v)
                         Not_Maze.append(temp) #Storing the grid in "0519" form as x=5 y=19
             if not Done:
-                temp=Not_Maze[random.randint(0,len(Not_Maze)-1)]
-                Path=[temp] #Stored walked path
+                temp=Not_Maze[random.randint(0,len(Not_Maze)-1)] #In Maze format
                 x=int(temp[0:2])
                 y=int(temp[2:4])
-                while Maze[x][y] != "T":
+                x=2*x+1 #Converting location vector from Maze format to Board format
+                y=2*y+1
+                Path=[temp] #Stored walked path, in Board format
+                while Maze[(x+1)/2-1][(y+1)/2-1] != "T":
                     retry=False
                     Direction=random.randint(1,4) #1:Up 2:Down 3:Left 4:Right
                     if Direction == 1:
@@ -526,7 +532,7 @@ def build_maze():
                 Finish=False
                 n=0
                 while not Finish: #Register paths into maze
-                    temp=Path[n]
+                    temp=Path[n] #Load grid into temp, in Board format
                     x=int(temp[0:2])
                     y=int(temp[2:4])
                     Board[x][y]=" "
