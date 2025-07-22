@@ -404,9 +404,7 @@ def build_maze():
         print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
         x=1
-        y=Size-1
-        Board[x][y]="P"  #Player starting point on top left corner
-        y=y-1
+        y=1
         Board[x][y]=" "
         Maze=[["F"] * int((Size-1)/2) for n in range(int((Size-1)/2))] #Store the cell that are part of the maze, grid is stored in node form, lines are not included
         x=int((x+1)/2-1) #Converting location vector from Board format to Maze format
@@ -439,8 +437,8 @@ def build_maze():
                 while Maze[int((x+1)/2-1)][int((y+1)/2-1)] != "T":
                     retry=False
                     Direction=random.randint(1,4) #1:Up 2:Down 3:Left 4:Right
-                    Steps=random.randint(1,3)*2
-                    if Direction == 1:
+                    Steps=random.randint(1,2)*2
+                    if Direction == 1: #Move up
                         if y+Steps > Size-1:
                             retry=True
                         else:
@@ -459,11 +457,11 @@ def build_maze():
                                     if Path[c] == temp:
                                         found=True
                                 if found:
-                                    retry=True
+                                    Path = Path[:(c-1)] #Remove the path cycle
                                 else:
                                     Path.append(temp) #Storing the grid in "0519" form as x=5 y=19
-                    elif Direction == 2:
-                        if y-Steps < 0:
+                    elif Direction == 2: #Move down
+                        if y-Steps <= 0:
                             retry=True
                         else:
                             for t in range(Steps):
@@ -481,11 +479,11 @@ def build_maze():
                                     if Path[c] == temp:
                                         found=True
                                 if found:
-                                    retry=True
+                                    Path = Path[:(c-1)] #Remove the path cycle
                                 else:
                                     Path.append(temp) #Storing the grid in "0519" form as x=5 y=19
-                    elif Direction == 3:
-                        if x-Steps < 0:
+                    elif Direction == 3: #Move left
+                        if (x-Steps) <= 0:
                             retry=True
                         else:
                             for t in range(Steps):
@@ -503,10 +501,10 @@ def build_maze():
                                     if Path[c] == temp:
                                         found=True
                                 if found:
-                                    retry=True
+                                    Path = Path[:(c-1)] #Remove the path cycle
                                 else:
                                     Path.append(temp) #Storing the grid in "0519" form as x=5 y=19
-                    elif Direction == 4:
+                    elif Direction == 4: #Move right
                         if x+Steps > Size-1:
                             retry=True
                         else:
@@ -525,7 +523,7 @@ def build_maze():
                                     if Path[c] == temp:
                                         found=True
                                 if found:
-                                    retry=True
+                                    Path = Path[:(c-1)] #Remove the path cycle
                                 else:
                                     Path.append(temp) #Storing the grid in "0519" form as x=5 y=19
                 for n in range(0, len(Path)-1): #Register paths into maze
@@ -537,6 +535,13 @@ def build_maze():
                         x=int((x+1)/2-1) #Converting location vector from Board format to Maze format
                         y=int((y+1)/2-1)
                         Maze[x][y]="T"
+                check_state(Maze,Not_Maze,Done)
+                for k in range(Size):
+                    Board[0][k] = "X"
+                    Board[Size-1][k] = "X"
+                    Board[k][0] = "X"
+                    Board[k][Size-1] = "X"
+        Board[1][Size-1]="P"  #Player starting point on top left corner
         y=0
         Plot=False
         while not(Plot): #Randomize  the exit position
@@ -552,6 +557,25 @@ def build_maze():
         Board[x][y]="E"  #Exit point
         print("System: Maze 0"+mn+" loaded successfully.")
     main()
+
+def check_state(Maze,Not_Maze,Done):
+    global temp_Maze
+    global temp_Not_Maze
+    global temp_Done
+    temp_Maze=Maze
+    temp_Not_Maze=Not_Maze
+    temp_Done=Done
+    
+def print_state():
+    print("")
+    print_board()
+    print("")
+    print("System: Printing maze state...")
+    print("Maze:")
+    for y in range(int((Size-1)/2)):
+        print(*[temp_Maze[x][int((Size-1)/2)-y-1] for x in range(int((Size-1)/2))])
+    print("Not Maze:"+ str(temp_Not_Maze))
+    print("Done:", temp_Done)
 
 import time
 import random
@@ -573,15 +597,19 @@ print("System: Every steps you take will be recorded")
 time.sleep(1)
 print("System: Your goal is to exit the maze with fewest steps")
 time.sleep(1)
+print("System: In Hardcore Mode your steps was limmited, think carefully before moving")
+time.sleep(1)
 ans=input("System: Press Enter to start the game")
 if ans == "/test":
     test=True
 passed=False
 while not passed:
     try:
-        ans=int(input("System: Please enter difficulty  1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(61*61 Board)"))
-        if ans <=0 or ans >= 6:
+        ans=int(input("System: Please enter difficulty  1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode)"))
+        if ans <=0 or ans > 5:
             print("System: Out of bounds")
+        elif ans == 5:
+            ans=4
         else:
             passed=True
     except:
