@@ -109,7 +109,7 @@ def build_maze():
     global Size
     global Test
     i=2
-    if i == 1:
+    if i == 1: #Manual method
         Board=[[" "] * 21 for n in range(21)]
         print("System: Loading Maze 01...")
         time.sleep(0.1)
@@ -397,10 +397,10 @@ def build_maze():
             Board[x][y]="X"
             x=x+1
         print("System: Maze 01 loaded successfully.")
-    elif i == 2: #Loop-erased random walk maze generate algorithm
+    elif i == 2: #Loop-erased random walk method
         #Maze format: node only
         #Board format: node and line(path)
-        mn=str(random.randint(2,999)) #Random generate maze ID
+        mn=str(random.randint(1,999)) #Random generate maze ID
         print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
         x=1
@@ -536,7 +536,7 @@ def build_maze():
                         y=int((y+1)/2-1)
                         Maze[x][y]="T"
                 check_state(Maze,Not_Maze,Done)
-                for k in range(Size):
+                for k in range(Size): #Redraw the edge
                     Board[0][k] = "X"
                     Board[Size-1][k] = "X"
                     Board[k][0] = "X"
@@ -556,6 +556,9 @@ def build_maze():
                         Plot=True
         Board[x][y]="E"  #Exit point
         print("System: Maze 0"+mn+" loaded successfully.")
+    elif i == 3: #Recursive division method
+        mn=str(random.randint(1,999)) #Random generate maze ID
+        print("System: Loading Maze 0"+mn+"...")
     main()
 
 def check_state(Maze,Not_Maze,Done):
