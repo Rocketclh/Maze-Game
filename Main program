@@ -568,17 +568,17 @@ def build_maze():
         Chunk=[] #Store the chunks, each chunck stored in oreder of Top left corner, Top right corner, Bottom left corner, Bottom right corner grid
         Chunk_num=0 #Number of chunks
         Chunk_num_F=0 #Number of chunks that are fully finished
-        for n in range(4):
-            if n == 1: #Top left corner of the chunk
+        for n in range(0,4):
+            if n == 0: #Top left corner of the chunk
                 x=1
                 y=Size-2
-            elif n == 2: #Top right corner of the chunk
+            elif n == 1: #Top right corner of the chunk
                 x=Size-2
                 y=Size-2
-            elif n == 3: #Bottom left corner of the chunk
+            elif n == 2: #Bottom left corner of the chunk
                 x=1
                 y=1
-            elif n == 4: #Bottom right corner of the chunk
+            elif n == 3: #Bottom right corner of the chunk
                 x=Size-2
                 y=1
             if x<10:
@@ -609,26 +609,27 @@ def build_maze():
                 Chunk_num_F=Chunk_num_F+1 #Update the number of chunks that are fully finished
                 Chunk.pop(0,1,2,3) #Remove the completed chunk
             else:
-                x_Cut=random.randomint(x_TL+1,x_TR-1) #Randomize the cut point, even number is path, odd number is node
+                x_Cut=random.randint(x_TL+1,x_TR-1) #Randomize the cut point, even number is path, odd number is node
                 if x_Cut%2 == 0 : #Check is the cut point is path
                     x_Cut=x_Cut+1 #Making sure the cut point is node
                 x=x_Cut
-                for y in range(y_TL,y_BL):
+                for y in range(y_BL,y_TL+1):
                     Board[x][y]="X" #Cut the chunk vertically
-                y=random.randomint(y_TL,y_BL) #Randomlize the hole point, even number is node, odd number is path
+                y=random.randint(y_BL,y_TL) #Randomlize the hole point, even number is node, odd number is path
                 if y%2 == 0 : #Check is the hole point is node
                     y=y+1 #Making sure the hole point is path
                 Board[x][y]=" " #Making the hole in the wall
-                y_Cut=random.randint(y_TL+1,y_BL-1) #Randomize the cut point, even number is path, odd number is node
+                time.sleep(0.001)
+                y_Cut=random.randint(y_BL-1,y_TL+1) #Randomize the cut point, even number is path, odd number is node
                 if y_Cut%2 == 0 : #Check is the cut point is path
                     y_Cut=y_Cut+1 #Making sure the cut point is node
                 y=y_Cut
-                for x in range(x_TL,x_TR):
+                for x in range(x_TL,x_TR+1):
                     Board[x][y]="X" #Cut the chunk horizontally
                 y=random.randint(x_TL,x_TR) #Randomlize the hole point, even number is node, odd number is path
                 if y%2 == 0 : #Check is the hole point is node
                     y=y+1 #Making sure the hole point is path
-                Board[y][x]=" "
+                Board[x][y]=" "
                 Chunk_TL_N=Chunk_TL #Update the top left corner of the chunk
                 x_TR=x_Cut-1 #Update the top right corner of the chunk
                 if x_TR<10:
