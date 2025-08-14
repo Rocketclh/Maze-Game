@@ -108,7 +108,7 @@ def build_maze():
     global Difficulty 
     global Size
     global Test
-    i=1
+    i=3 #Maze generation method
     if i == 1: #Manual method
         Board=[[" "] * 21 for n in range(21)]
         print("System: Loading Maze 01...")
@@ -565,8 +565,243 @@ def build_maze():
             Board[Size-1][k] = "X"
             Board[k][0] = "X"
             Board[k][Size-1] = "X"
-        Chunk=[] #Store the chunks, each chunk given ID in form of "C0000" format
+        Chunk=[] #Store the chunks, each chunck stored in oreder of Top left corner, Top right corner, Bottom left corner, Bottom right corner grid
         Chunk_num=0 #Number of chunks
+        Chunk_num_F=0 #Number of chunks that are fully finished
+        for n in range(4):
+            if n == 1: #Top left corner of the chunk
+                x=1
+                y=Size-2
+            elif n == 2: #Top right corner of the chunk
+                x=Size-2
+                y=Size-2
+            elif n == 3: #Bottom left corner of the chunk
+                x=1
+                y=1
+            elif n == 4: #Bottom right corner of the chunk
+                x=Size-2
+                y=1
+            if x<10:
+                temp="0"+str(x)
+            else:
+                temp=str(x)
+            if y<10:
+                temp=temp+"0"+str(y)
+            else:
+                temp=temp+str(y)
+            Chunk.append(temp) #Storing the grid in "0519" form as x=5 y=19
+        Chunk_num=Chunk_num+1
+        Done = False #Register maze is fully finished
+        while not(Done): #Check is the maze finished
+            Chunk_TL=Chunk[0] #Top left corner of the chunk
+            Chunk_TR=Chunk[1] #Top right corner of the chunk
+            Chunk_BL=Chunk[2] #Bottom left corner of the chunk
+            Chunk_BR=Chunk[3] #Bottom right corner of the chunk
+            x_TL=int(Chunk_TL[0:2]) #Converting grid to location vector (x), path
+            y_TL=int(Chunk_TL[2:4]) #Converting grid to location vector (y), path
+            x_TR=int(Chunk_TR[0:2])
+            y_TR=int(Chunk_TR[2:4])
+            x_BL=int(Chunk_BL[0:2])
+            y_BL=int(Chunk_BL[2:4])
+            x_BR=int(Chunk_BR[0:2])
+            y_BR=int(Chunk_BR[2:4])
+            if (x_TL == x_TR) or (y_TL == y_BL): #Check is the chunk is too small
+                Chunk_num_F=Chunk_num_F+1 #Update the number of chunks that are fully finished
+                Chunk.pop(0,1,2,3) #Remove the completed chunk
+            else:
+                x_Cut=random.randomint(x_TL+1,x_TR-1) #Randomize the cut point, even number is path, odd number is node
+                if x_Cut%2 == 0 : #Check is the cut point is path
+                    x_Cut=x_Cut+1 #Making sure the cut point is node
+                x=x_Cut
+                for y in range(y_TL,y_BL):
+                    Board[x][y]="X" #Cut the chunk vertically
+                y=random.randomint(y_TL,y_BL) #Randomlize the hole point, even number is node, odd number is path
+                if y%2 == 0 : #Check is the hole point is node
+                    y=y+1 #Making sure the hole point is path
+                Board[x][y]=" " #Making the hole in the wall
+                y_Cut=random.randint(y_TL+1,y_BL-1) #Randomize the cut point, even number is path, odd number is node
+                if y_Cut%2 == 0 : #Check is the cut point is path
+                    y_Cut=y_Cut+1 #Making sure the cut point is node
+                y=y_Cut
+                for x in range(x_TL,x_TR):
+                    Board[x][y]="X" #Cut the chunk horizontally
+                y=random.randint(x_TL,x_TR) #Randomlize the hole point, even number is node, odd number is path
+                if y%2 == 0 : #Check is the hole point is node
+                    y=y+1 #Making sure the hole point is path
+                Board[y][x]=" "
+                Chunk_TL_N=Chunk_TL #Update the top left corner of the chunk
+                x_TR=x_Cut-1 #Update the top right corner of the chunk
+                if x_TR<10:
+                    temp="0"+str(x_TR)
+                else:
+                    temp=str(x_TR)
+                if y_TR<10:
+                    temp=temp+"0"+str(y_TR)
+                else:
+                    temp=temp+str(y_TR)
+                Chunk_TR_N=temp
+                y_BL=y_Cut+1 #Update the bottom left corner of the chunk
+                if x_BL<10:
+                    temp="0"+str(x_BL)
+                else:
+                    temp=str(x_BL)
+                if y_BL<10:
+                    temp=temp+"0"+str(y_BL)
+                else:
+                    temp=temp+str(y_BL)
+                Chunk_BL_N=temp
+                x_BR=x_Cut-1 #Update the bottom right corner of the chunk
+                y_BR=y_Cut+1
+                if x_BR<10:
+                    temp="0"+str(x_BR)
+                else:
+                    temp=str(x_BR)
+                if y_BR<10:
+                    temp=temp+"0"+str(y_BR)
+                else:
+                    temp=temp+str(y_BR)
+                Chunk_BR_N=temp
+                Chunk[0]=Chunk_TL_N #Store the updated chunk
+                Chunk[1]=Chunk_TR_N
+                Chunk[2]=Chunk_BL_N
+                Chunk[3]=Chunk_BR_N
+                x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector
+                y_TL=int(Chunk_TL[2:4])
+                x_TR=int(Chunk_TR[0:2])
+                y_TR=int(Chunk_TR[2:4])
+                x_BL=int(Chunk_BL[0:2])
+                y_BL=int(Chunk_BL[2:4])
+                x_BR=int(Chunk_BR[0:2])
+                y_BR=int(Chunk_BR[2:4])
+                x_TL=x_Cut+1 #Store the top left corner of the new chunk
+                if x_TL<10:
+                    temp="0"+str(x_TL)
+                else:
+                    temp=str(x_TL)
+                if y_TL<10:
+                    temp=temp+"0"+str(y_TL)
+                else:
+                    temp=temp+str(y_TL)
+                Chunk_TL_N=temp
+                Chunk_TR_N=Chunk_TR #Store the top right corner of the new chunk
+                x_BL=x_Cut+1 #Store the bottom left corner of the new chunk
+                y_BL=y_Cut+1
+                if x_BL<10:
+                    temp="0"+str(x_BL)
+                else:
+                    temp=str(x_BL)
+                if y_BL<10:
+                    temp=temp+"0"+str(y_BL)
+                else:
+                    temp=temp+str(y_BL)
+                Chunk_BL_N=temp
+                y_BR=y_Cut+1 #Store the bottom right corner of the new chunk
+                if x_BR<10:
+                    temp="0"+str(x_BR)
+                else:
+                    temp=str(x_BR)
+                if y_BR<10:
+                    temp=temp+"0"+str(y_BR)
+                else:
+                    temp=temp+str(y_BR)
+                Chunk_BR_N=temp
+                Chunk.append(Chunk_TL_N) #Store the new chunk
+                Chunk.append(Chunk_TR_N)
+                Chunk.append(Chunk_BL_N)
+                Chunk.append(Chunk_BR_N)
+                Chunk_num=Chunk_num+1 #Update the number of chunks
+                x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector
+                y_TL=int(Chunk_TL[2:4])
+                x_TR=int(Chunk_TR[0:2])
+                y_TR=int(Chunk_TR[2:4])
+                x_BL=int(Chunk_BL[0:2])
+                y_BL=int(Chunk_BL[2:4])
+                x_BR=int(Chunk_BR[0:2])
+                y_BR=int(Chunk_BR[2:4])
+                y_TL=y_Cut-1 #Store the top left corner of the new chunk
+                if y_TL<10:
+                    temp="0"+str(y_TL)
+                else:
+                    temp=str(y_TL)
+                if x_TL<10:
+                    temp=temp+"0"+str(x_TL)
+                else:
+                    temp=temp+str(x_TL)
+                Chunk_TL_N=temp
+                x_TR=x_Cut-1 #Store the top right corner of the new chunk
+                y_TR=y_Cut-1
+                if x_TR<10:
+                    temp="0"+str(x_TR)
+                else:
+                    temp=str(x_TR)
+                if y_TR<10:
+                    temp=temp+"0"+str(y_TR)
+                else:
+                    temp=temp+str(y_TR)
+                Chunk_TR_N=temp
+                Chunk_BL_N=Chunk_BL #Store the bottom left corner of the new chunk
+                x_BR=x_Cut-1 #Store the bottom right corner of the new chunk
+                if x_BR<10:
+                    temp="0"+str(x_BR)
+                else:
+                    temp=str(x_BR)
+                if y_BR<10:
+                    temp=temp+"0"+str(y_BR)
+                else:
+                    temp=temp+str(y_BR)
+                Chunk_BR_N=temp
+                Chunk.append(Chunk_TL_N) #Store the new chunk
+                Chunk.append(Chunk_TR_N)
+                Chunk.append(Chunk_BL_N)
+                Chunk.append(Chunk_BR_N)
+                Chunk_num=Chunk_num+1 #Update the number of chunks
+                x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector
+                y_TL=int(Chunk_TL[2:4])
+                x_TR=int(Chunk_TR[0:2])
+                y_TR=int(Chunk_TR[2:4])
+                x_BL=int(Chunk_BL[0:2])
+                y_BL=int(Chunk_BL[2:4])
+                x_BR=int(Chunk_BR[0:2])
+                y_BR=int(Chunk_BR[2:4])
+                x_TL=x_Cut+1 #Store the top left corner of the new chunk
+                y_TL=y_Cut-1
+                if x_TL<10:
+                    temp="0"+str(x_TL)
+                else:
+                    temp=str(x_TL)
+                if y_TL<10:
+                    temp=temp+"0"+str(y_TL)
+                else:
+                    temp=temp+str(y_TL)
+                Chunk_TL_N=temp
+                y_TL=y_Cut-1 #Store the top right corner of the new chunk
+                if x_TR<10:
+                    temp="0"+str(x_TR)
+                else:
+                    temp=str(x_TR)
+                if y_TL<10:
+                    temp=temp+"0"+str(y_TL)
+                else:
+                    temp=temp+str(y_TL)
+                Chunk_TL_N=temp
+                x_BL=x_Cut+1 #Store the bottom left corner of the new chunk
+                if x_BL<10:
+                    temp="0"+str(x_BL)
+                else:
+                    temp=str(x_BL)
+                if y_BL<10:
+                    temp=temp+"0"+str(y_BL)
+                else:
+                    temp=temp+str(y_BL)
+                Chunk_BL_N=temp
+                Chunk_BR_N=Chunk_BR #Store the bottom right corner of the new chunk
+                Chunk.append(Chunk_TL_N) #Store the new chunk
+                Chunk.append(Chunk_TR_N)
+                Chunk.append(Chunk_BL_N)
+                Chunk.append(Chunk_BR_N)
+                Chunk_num=Chunk_num+1 #Update the number of chunks
+            if Chunk_num_F == Chunk_num: #Check is all chunk is finished
+                Done=True
         Board[1][Size-1]="P"  #Player starting point on top left corner
         y=0
         Plot=False
