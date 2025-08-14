@@ -108,7 +108,7 @@ def build_maze():
     global Difficulty 
     global Size
     global Test
-    i=2
+    i=1
     if i == 1: #Manual method
         Board=[[" "] * 21 for n in range(21)]
         print("System: Loading Maze 01...")
@@ -400,6 +400,7 @@ def build_maze():
     elif i == 2: #Loop-erased random walk method
         #Maze format: node only
         #Board format: node and line(path)
+        Board=[["X"] * Size for i in range(Size)]
         mn=str(random.randint(1,999)) #Random generate maze ID
         print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
@@ -544,7 +545,7 @@ def build_maze():
         Board[1][Size-1]="P"  #Player starting point on top left corner
         y=0
         Plot=False
-        while not(Plot): #Randomize  the exit position
+        while not(Plot): #Randomize the exit position
             x=random.randint(1,(Size-1))
             if x%2 == 0 :
                 x=(x%2)+(x//2)+1
@@ -559,6 +560,29 @@ def build_maze():
     elif i == 3: #Recursive division method
         mn=str(random.randint(1,999)) #Random generate maze ID
         print("System: Loading Maze 0"+mn+"...")
+        for k in range(Size): #Redraw the edge
+            Board[0][k] = "X"
+            Board[Size-1][k] = "X"
+            Board[k][0] = "X"
+            Board[k][Size-1] = "X"
+        Chunk=[] #Store the chunks, each chunk given ID in form of "C0000" format
+        Chunk_num=0 #Number of chunks
+        Board[1][Size-1]="P"  #Player starting point on top left corner
+        y=0
+        Plot=False
+        while not(Plot): #Randomize the exit position
+            x=random.randint(1,(Size-1))
+            if x%2 == 0 :
+                x=(x%2)+(x//2)+1
+                x=x*random.randint(1,2)
+                if x%2 == 0 :
+                    x=x+1
+                if not(x>Size):
+                    if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the exit is at the end of the path
+                        Plot=True
+        Board[x][y]="E"  #Exit point
+        print("System: Maze 0"+mn+" loaded successfully.")
+
     main()
 
 def check_state(Maze,Not_Maze,Done):
@@ -619,7 +643,7 @@ while not passed:
         print("System: Formet error")
 Difficulty =(ans+1)*5
 Size=Difficulty *2+1
-Board=[["X"] * Size for i in range(Size)]
+Board=[[" "] * Size for i in range(Size)]
 print("System: Good luck!")
 time.sleep(0.5)
 build_maze()
