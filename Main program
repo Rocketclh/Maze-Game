@@ -610,13 +610,13 @@ def build_maze():
                 Chunk.pop(0,1,2,3) #Remove the completed chunk
             else:
                 x_Cut=random.randint(x_TL+1,x_TR-1) #Randomize the cut point, even number is path, odd number is node
-                if x_Cut%2 == 0 : #Check is the cut point is path
+                if x_Cut%2 != 0 : #Check is the cut point is path
                     x_Cut=x_Cut+1 #Making sure the cut point is node
                 x=x_Cut
                 for y in range(y_BL,y_TL+1):
                     Board[x][y]="X" #Cut the chunk vertically
                 y=random.randint(y_BL,y_TL) #Randomlize the hole point, even number is node, odd number is path
-                if y%2 == 0 : #Check is the hole point is node
+                if y%2 != 0 : #Check is the hole point is node
                     y=y+1 #Making sure the hole point is path
                 Board[x][y]=" " #Making the hole in the wall
                 time.sleep(0.001)
