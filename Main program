@@ -607,7 +607,10 @@ def build_maze():
             y_BR=int(Chunk_BR[2:4])
             if (x_TL == x_TR) or (y_TL == y_BL): #Check is the chunk is too small
                 Chunk_num_F=Chunk_num_F+1 #Update the number of chunks that are fully finished
-                Chunk.pop(0,1,2,3) #Remove the completed chunk
+                Chunk.pop(0) #Remove the completed chunk
+                Chunk.pop(1)
+                Chunk.pop(2)
+                Chunk.pop(3)
             else:
                 x_Cut=random.randint(x_TL+1,x_TR-1) #Randomize the cut point, even number is path, odd number is node
                 if x_Cut%2 != 0 : #Check is the cut point is path
