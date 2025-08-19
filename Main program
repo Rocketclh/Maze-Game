@@ -101,7 +101,12 @@ def print_board(): #0,0 at bottem left corner
     global Board
     print("")
     for y in range(Size):
-        print(*[Board[x][Size-y-1] for x in range(Size)])
+        h=Size-y-1 #Height of the board
+        if h<10:
+            temp="0"+str(h)
+        else:
+            temp=str(h)
+        print(temp, *[Board[x][h] for x in range(Size)])
 
 def build_maze():
     global Board
@@ -566,10 +571,11 @@ def build_maze():
                 Chunk.pop(2)
                 Chunk.pop(3)
             else:
-                x_Cut=random.randint(x_TL+1,x_TR-1) #Randomize the cut point, even number is path, odd number is node
+                x_Cut=random.randint(x_TL,x_TR) #Randomize the cut point on x-axis
                 if x_Cut%2 != 0 : #Check is the cut point is path
                     x_Cut=x_Cut+1 #Making sure the cut point is node
                 x=x_Cut
+                print("x_Cut",x_Cut) #Debugging output
                 for y in range(y_BL,y_TL+1):
                     Board[x][y]="X" #Cut the chunk vertically
                 y=random.randint(y_BL,y_TL) #Randomlize the hole point, even number is node, odd number is path
@@ -577,16 +583,18 @@ def build_maze():
                     y=y+1 #Making sure the hole point is path
                 Board[x][y]=" " #Making the hole in the wall
                 time.sleep(0.001)
-                y_Cut=random.randint(y_BL-1,y_TL+1) #Randomize the cut point, even number is path, odd number is node
+                y_Cut=random.randint(y_BL,y_TL) #Randomize the cut point on y-axis
                 if y_Cut%2 != 0 : #Check is the cut point is path
                     y_Cut=y_Cut+1 #Making sure the cut point is node
                 y=y_Cut
+                print("y_Cut",y_Cut) #Debugging output
                 for x in range(x_TL,x_TR+1):
                     Board[x][y]="X" #Cut the chunk horizontally
                 x=random.randint(x_TL,x_TR) #Randomlize the hole point, even number is node, odd number is path
                 if x%2 == 0 : #Check is the hole point is node
                     x=x+1 #Making sure the hole point is path
                 Board[x][y]=" "
+                print("0","TL:",Chunk_TL,"TR:",Chunk_TR,"BL:",Chunk_BL,"BR:",Chunk_BR) #Debugging output
                 Chunk_TL_N=Chunk_TL #Update the top left corner of the chunk
                 x_TR=x_Cut-1 #Update the top right corner of the chunk
                 Chunk_TR_N=grid(x_TR,y_TR)
@@ -599,6 +607,7 @@ def build_maze():
                 Chunk[1]=Chunk_TR_N
                 Chunk[2]=Chunk_BL_N
                 Chunk[3]=Chunk_BR_N
+                print("1","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -620,6 +629,7 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
+                print("2","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -641,6 +651,7 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
+                print("3","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -662,6 +673,9 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
+                print("4","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
+                print("Chunk_num_F:",Chunk_num_F,"Chunk_num:",Chunk_num) #Debugging output
+                print_board() #Debugging output
             if Chunk_num_F == Chunk_num: #Check is all chunk is finished
                 Done=True
         Board[1][Size-1]="P"  #Player starting point on top left corner
