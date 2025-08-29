@@ -571,28 +571,127 @@ def build_maze():
             else:
                 x_Cut=random.randint(x_TL,x_TR) #Randomize the cut point on x-axis
                 if x_Cut%2 != 0 : #Check is the cut point is path
-                    x_Cut=x_Cut+1 #Making sure the cut point is node
+                    if x_Cut == x_TR:
+                        x_Cut=x_Cut-1 #Making sure the cut point is node and within the chunk
+                    else:
+                        x_Cut=x_Cut+1 #Making sure the cut point is node
                 x=x_Cut
-                print("x_Cut",x_Cut) #Debugging output
                 for y in range(y_BL,y_TL+1):
                     Board[x][y]="X" #Cut the chunk vertically
-                y=random.randint(y_BL,y_TL) #Randomlize the hole point, even number is node, odd number is path
-                if y%2 == 0 : #Check is the hole point is node
-                    y=y+1 #Making sure the hole point is path
-                Board[x][y]=" " #Making the hole in the wall
-                time.sleep(0.001)
                 y_Cut=random.randint(y_BL,y_TL) #Randomize the cut point on y-axis
                 if y_Cut%2 != 0 : #Check is the cut point is path
-                    y_Cut=y_Cut+1 #Making sure the cut point is node
+                    if y_Cut == y_TL:
+                        y_Cut=y_Cut-1 #Making sure the cut point is node and within the chunk
+                    else:
+                        y_Cut=y_Cut+1 #Making sure the cut point is node
                 y=y_Cut
-                print("y_Cut",y_Cut) #Debugging output
                 for x in range(x_TL,x_TR+1):
                     Board[x][y]="X" #Cut the chunk horizontally
-                x=random.randint(x_TL,x_TR) #Randomlize the hole point, even number is node, odd number is path
-                if x%2 == 0 : #Check is the hole point is node
-                    x=x+1 #Making sure the hole point is path
-                Board[x][y]=" "
-                print("0","TL:",Chunk_TL,"TR:",Chunk_TR,"BL:",Chunk_BL,"BR:",Chunk_BR) #Debugging output
+                Third_Hole=random.randint(0,1) #Randomize which axis will have two holes
+                if Third_Hole == 0: #X-axis has two holes, Y-axis has one holes
+                    x=x_Cut
+                    y=y_Cut
+                    Punched = False
+                    while not(Punched):
+                        x=random.randint(x_TL,x_Cut) #Randomlize the hole point, even number is node, odd number is path
+                        #print("X:",x, " Y:",y) #Debugging output
+                        #time.sleep(0.1)
+                        if x%2 == 0 : #Check is the hole point is node
+                            if x == x_Cut:
+                                x=x-1 #Making sure the hole point is node and within the chunk
+                            else:
+                                x=x+1 #Making sure the hole point is path
+                        if Board[x][y] != " ":
+                            Punched = True #Making sure the hole is not at the same position as previous hole
+                            Board[x][y]=" " #Making the hole in the wall
+                            #print("Punched hole at x-axis 01") #Debugging output
+                            #print_board() #Debugging output
+                    x=x_Cut
+                    y=y_Cut
+                    Punched = False
+                    while not(Punched):
+                        x=random.randint(x_Cut,x_TR) #Randomlize the hole point, even number is node, odd number is path
+                        #print("X:",x, " Y:",y) #Debugging output
+                        #time.sleep(0.1)
+                        if x%2 == 0 : #Check is the hole point is node
+                            if x == x_Cut:
+                                x=x-1 #Making sure the hole point is node and within the chunk
+                            else:
+                                x=x+1 #Making sure the hole point is path
+                        if Board[x][y] != " ":
+                            Punched = True #Making sure the hole is not at the same position as previous hole
+                            Board[x][y]=" " #Making the hole in the wall
+                            #print("Punched hole at x-axis 02") #Debugging output
+                            #print_board() #Debugging output
+                    x=x_Cut
+                    y=y_Cut
+                    Punched = False
+                    while not(Punched):
+                        y=random.randint(y_BL,y_TL) #Randomlize the hole point, even number is node, odd number is path
+                        #print("X:",x, " Y:",y) #Debugging output
+                        #time.sleep(0.1)
+                        if y%2 == 0 : #Check is the hole point is node
+                            if y == y_Cut:
+                                y=y-1 #Making sure the hole point is node and within the chunk
+                            else:
+                                y=y+1 #Making sure the hole point is path
+                        if Board[x][y] != " ":
+                            Punched = True #Making sure the hole is not at the same position as previous hole
+                            Board[x][y]=" " #Making the hole in the wall
+                            #print("Punched hole at y-axis 03") #Debugging output
+                            #print_board() #Debugging output
+                elif Third_Hole == 1: #X-axis has one holes, Y-axis has two holes
+                    x=x_Cut
+                    y=y_Cut
+                    Punched = False
+                    while not(Punched):
+                        x=random.randint(x_TL,x_TR) #Randomlize the hole point, even number is node, odd number is path
+                        #print("X:",x, " Y:",y) #Debugging output
+                        #time.sleep(0.1)
+                        if x%2 == 0 : #Check is the hole point is node
+                            if x == x_Cut:
+                                x=x-1 #Making sure the hole point is node and within the chunk
+                            else:
+                                x=x+1 #Making sure the hole point is path
+                        if Board[x][y] != " ":
+                            Punched = True #Making sure the hole is not at the same position as previous hole
+                            Board[x][y]=" " #Making the hole in the wall
+                            #print("Punched hole at x-axis 04") #Debugging output
+                            #print_board() #Debugging output
+                    x=x_Cut
+                    y=y_Cut
+                    Punched = False
+                    while not(Punched):
+                        y=random.randint(y_BL,y_Cut) #Randomlize the hole point, even number is node, odd number is path
+                        #print("X:",x, " Y:",y) #Debugging output
+                        #time.sleep(0.1)
+                        if y%2 == 0 : #Check is the hole point is node
+                            if y == y_Cut:
+                                y=y-1 #Making sure the hole point is node and within the chunk
+                            else:
+                                y=y+1 #Making sure the hole point is path
+                        if Board[x][y] != " ":
+                            Punched = True #Making sure the hole is not at the same position as previous hole
+                            Board[x][y]=" " #Making the hole in the wall
+                            #print("Punched hole at y-axis 05") #Debugging output
+                            #print_board() #Debugging output
+                    x=x_Cut
+                    y=y_Cut
+                    Punched = False
+                    while not(Punched):
+                        y=random.randint(y_Cut,y_TL) #Randomlize the hole point, even number is node, odd number is path
+                        #print("X:",x, " Y:",y) #Debugging output
+                        #time.sleep(0.1)
+                        if y%2 == 0 : #Check is the hole point is node
+                            if y == y_Cut:
+                                y=y-1 #Making sure the hole point is node and within the chunk
+                            else:
+                                y=y+1 #Making sure the hole point is path
+                        if Board[x][y] != " ":
+                            Punched = True #Making sure the hole is not at the same position as previous hole
+                            Board[x][y]=" " #Making the hole in the wall
+                            #print("Punched hole at y-axis 06") #Debugging output
+                            #print_board() #Debugging output
                 Chunk_TL_N=Chunk_TL #Update the top left corner of the chunk
                 x_TR=x_Cut-1 #Update the top right corner of the chunk
                 Chunk_TR_N=grid(x_TR,y_TR)
