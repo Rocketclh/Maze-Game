@@ -26,7 +26,7 @@ def game():
                     print("System: Player position not found, please restart the game")
                     ans=input("System: Press Enter to exit the game")
                     sys.exit()
-    if Difficalty == 5:
+    if Difficulty == 5:
         if steps == adv_step:
             end(False)
     ans=input("System: Please enter the direction you want to move")
@@ -116,6 +116,7 @@ def end(win):
 
 def print_board(): #0,0 at bottem left corner
     global Board
+    global Size
     print("")
     for y in range(Size):
         h=Size-y-1 #Height of the board
@@ -852,6 +853,12 @@ def maze_solve():
     game()
 
 def main():
+    global Size
+    global Board
+    global steps
+    global Type_error
+    global Test
+    global Difficulty
     steps=0
     Type_error=False
     Test=False
