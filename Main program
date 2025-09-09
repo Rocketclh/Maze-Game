@@ -611,8 +611,8 @@ def build_maze():
                     Punched = False
                     while not(Punched):
                         x=random.randint(x_TL,x_Cut) #Randomlize the hole point, even number is node, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output
-                        #time.sleep(0.1)
+                        print("X:",x, " Y:",y) #Debugging output, hole punch
+                        time.sleep(0.1) #Debugging output, hole punch
                         if x%2 == 0 : #Check is the hole point is node
                             if x == x_Cut:
                                 x=x-1 #Making sure the hole point is node and within the chunk
@@ -621,15 +621,15 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at x-axis 01") #Debugging output
-                            #print_board() #Debugging output
+                            print("Punched hole at x-axis 01") #Debugging output, hole punch
+                            print_board() #Debugging output, hole punch
                     x=x_Cut
                     y=y_Cut
                     Punched = False
                     while not(Punched):
                         x=random.randint(x_Cut,x_TR) #Randomlize the hole point, even number is node, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output
-                        #time.sleep(0.1)
+                        print("X:",x, " Y:",y) #Debugging output, hole punch
+                        time.sleep(0.1) #Debugging output, hole punch
                         if x%2 == 0 : #Check is the hole point is node
                             if x == x_Cut:
                                 x=x-1 #Making sure the hole point is node and within the chunk
@@ -638,15 +638,15 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at x-axis 02") #Debugging output
-                            #print_board() #Debugging output
+                            print("Punched hole at x-axis 02") #Debugging output, hole punch
+                            print_board() #Debugging output, hole punch
                     x=x_Cut
                     y=y_Cut
                     Punched = False
                     while not(Punched):
                         y=random.randint(y_BL,y_TL) #Randomlize the hole point, even number is node, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output
-                        #time.sleep(0.1)
+                        print("X:",x, " Y:",y) #Debugging output, hole punch
+                        time.sleep(0.1) #Debugging output, hole punch
                         if y%2 == 0 : #Check is the hole point is node
                             if y == y_Cut:
                                 y=y-1 #Making sure the hole point is node and within the chunk
@@ -655,16 +655,16 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at y-axis 03") #Debugging output
-                            #print_board() #Debugging output
+                            print("Punched hole at y-axis 03") #Debugging output, hole punch
+                            print_board() #Debugging output, hole punch
                 elif Third_Hole == 1: #X-axis has one holes, Y-axis has two holes
                     x=x_Cut
                     y=y_Cut
                     Punched = False
                     while not(Punched):
                         x=random.randint(x_TL,x_TR) #Randomlize the hole point, even number is node, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output
-                        #time.sleep(0.1)
+                        print("X:",x, " Y:",y) #Debugging output, hole punch
+                        time.sleep(0.1) #Debugging output, hole punch
                         if x%2 == 0 : #Check is the hole point is node
                             if x == x_Cut:
                                 x=x-1 #Making sure the hole point is node and within the chunk
@@ -673,15 +673,15 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at x-axis 04") #Debugging output
-                            #print_board() #Debugging output
+                            print("Punched hole at x-axis 04") #Debugging output, hole punch
+                            print_board() #Debugging output, hole punch
                     x=x_Cut
                     y=y_Cut
                     Punched = False
                     while not(Punched):
                         y=random.randint(y_BL,y_Cut) #Randomlize the hole point, even number is node, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output
-                        #time.sleep(0.1)
+                        print("X:",x, " Y:",y) #Debugging output, hole punch
+                        time.sleep(0.1) #Debugging output, hole punch
                         if y%2 == 0 : #Check is the hole point is node
                             if y == y_Cut:
                                 y=y-1 #Making sure the hole point is node and within the chunk
@@ -690,15 +690,15 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at y-axis 05") #Debugging output
-                            #print_board() #Debugging output
+                            print("Punched hole at y-axis 05") #Debugging output, hole punch
+                            print_board() #Debugging output, hole punch
                     x=x_Cut
                     y=y_Cut
                     Punched = False
                     while not(Punched):
                         y=random.randint(y_Cut,y_TL) #Randomlize the hole point, even number is node, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output
-                        #time.sleep(0.1)
+                        print("X:",x, " Y:",y) #Debugging output, hole punch
+                        time.sleep(0.1) #Debugging output, hole punch
                         if y%2 == 0 : #Check is the hole point is node
                             if y == y_Cut:
                                 y=y-1 #Making sure the hole point is node and within the chunk
@@ -707,8 +707,8 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at y-axis 06") #Debugging output
-                            #print_board() #Debugging output
+                            print("Punched hole at y-axis 06") #Debugging output, hole punch
+                            print_board() #Debugging output, hole punch
                 Chunk_TL_N=Chunk_TL #Update the top left corner of the chunk
                 x_TR=x_Cut-1 #Update the top right corner of the chunk
                 Chunk_TR_N=grid(x_TR,y_TR)
@@ -721,7 +721,7 @@ def build_maze():
                 Chunk[1]=Chunk_TR_N
                 Chunk[2]=Chunk_BL_N
                 Chunk[3]=Chunk_BR_N
-                print("1","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
+                print("1","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -743,7 +743,7 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
-                print("2","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
+                print("2","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -765,7 +765,7 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
-                print("3","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
+                print("3","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -787,9 +787,9 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
-                print("4","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output
-                print("Chunk_num_F:",Chunk_num_F,"Chunk_num:",Chunk_num) #Debugging output
-                print_board() #Debugging output
+                print("4","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
+                print("Chunk_num_F:",Chunk_num_F,"Chunk_num:",Chunk_num) #Debugging output, chunk
+                print_board() #Debugging output, chunk
             if Chunk_num_F == Chunk_num: #Check is all chunk is finished
                 Done=True
         Board[1][Size-1]="P"  #Player starting point on top left corner
