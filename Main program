@@ -129,302 +129,14 @@ def build_maze():
     global Board
     global Size
     global Test
-    i=3 #Maze generation method using
-    if i == 1: #Manual method
-        Board=[[" "] * 21 for n in range(21)]
-        print("System: Loading Maze 01...")
-        time.sleep(0.1)
-        x=0 
-        y=0
-        for j in range(9):
-            Board[x][y]="X"
-            x=x+1
-        Board[x][y]="P"  #Player starting point
-        x=x+1
-        for j in range(11):
-            Board[x][y]="X"
-            x=x+1
-        x=0 
-        y=1
-        Board[x][y]="X"
-        x=x+6
-        Board[x][y]="X"
-        x=x+12
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=0 
-        y=2
-        Board[x][y]="X"
-        x=x+2
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1 
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=x+2
-        for j in range(7):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=0
-        y=3
-        Board[x][y]="X"
-        for j in range(4):
-            x=x+2
-            Board[x][y]="X"
-        for j in range(3):
-            x=x+4
-            Board[x][y]="X"
-        x=0
-        y=4
-        Board[x][y]="X"
-        for j in range(3):
-            x=x+2
-            Board[x][y]="X"
-        x=x+2
-        for j in range(2):
-            Board[x][y]="X"
-            x=x+1
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=x+2
-        for j in range(7):
-            Board[x][y]="X"
-            x=x+1
-        x=0
-        y=5
-        Board[x][y]="X"
-        x=x+4
-        Board[x][y]="X"
-        for j in range(5):
-            x=x+2
-            Board[x][y]="X"
-        x=x+6
-        Board[x][y]="X"
-        x=0
-        y=6
-        for j in range(5):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        for j in range(5):
-            Board[x][y]="X"
-            x=x+2
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=0
-        y=7
-        Board[x][y]="X"
-        x=x+4
-        for j in range(6):
-            Board[x][y]="X"
-            x=x+2
-        for j in range(2):
-            x=x+2
-            Board[x][y]="X"
-        x=0
-        y=8
-        Board[x][y]="X"
-        for j in range(6):
-            x=x+2
-            Board[x][y]="X"
-        x=x+2
-        for j in range(5):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=0
-        y=9
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=x+4
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+2
-            Board[x][y]="X"
-        x=x+10
-        Board[x][y]="X"
-        x=x+4
-        x=0
-        y=10
-        Board[x][y]="X"
-        x=x+2
-        for j in range(5):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        for j in range(2):
-            Board[x][y]="X"
-            x=x+2
-        for j in range(5):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=0
-        y=11
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+4
-            Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=x+4
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+2
-            Board[x][y]="X"
-        x=0
-        y=12
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+2
-            Board[x][y]="X"
-        x=x+2
-        for j in range(5):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=x+2
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=0
-        y=13
-        Board[x][y]="X"
-        x=x+4
-        Board[x][y]="X"
-        x=x+6
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+2
-            Board[x][y]="X"
-        x=x+4
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=0
-        y=14
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        for j in range(5):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+2
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=0
-        y=15
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+2
-            Board[x][y]="X"
-        x=x+6
-        for j in range(4):
-            Board[x][y]="X"
-            x=x+2
-        x=x+2
-        Board[x][y]="X"
-        x=0
-        y=16
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+2
-            Board[x][y]="X"
-        x=x+2
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        for j in range(4):
-            Board[x][y]="X"
-            x=x+2
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=0
-        y=17
-        Board[x][y]="X"
-        for j in range(2):
-            x=x+4
-            Board[x][y]="X"
-        x=x+6
-        Board[x][y]="X"
-        x=x+2
-        Board[x][y]="X"
-        x=x+4
-        Board[x][y]="X"
-        x=0
-        y=18
-        for j in range(7):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        for j in range(7):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        for j in range(3):
-            Board[x][y]="X"
-            x=x+1
-        x=x+1
-        Board[x][y]="X"
-        x=0
-        y=19
-        Board[x][y]="X"
-        x=x+10
-        Board[x][y]="X"
-        x=x+6
-        Board[x][y]="X"
-        x=x+4
-        Board[x][y]="X"
-        x=0 
-        y=20
-        for j in range(11):
-            Board[x][y]="X"
-            x=x+1
-        Board[x][y]="E"  #Exit point
-        x=x+1
-        for j in range(9):
-            Board[x][y]="X"
-            x=x+1
-        print("System: Maze 01 loaded successfully.")
-    elif i == 2: #Loop-erased random walk method
+    mn=str(random.randint(1,999)) #Random generate maze ID
+    print("System: Loading Maze 0"+mn+"...")
+    i=2 #Maze generation method using
+    if i == 1: #Loop-erased random walk method
         #Maze format: node only
         #Board format: node and line(path)
         #Grid format: Location vector in "0519" form, x=5 y=19
         Board=[["X"] * Size for i in range(Size)]
-        mn=str(random.randint(1,999)) #Random generate maze ID
-        print("System: Loading Maze 0"+mn+"...")
         time.sleep(0.1)
         x=1
         y=1
@@ -524,26 +236,9 @@ def build_maze():
                     Board[Size-1][k] = "X"
                     Board[k][0] = "X"
                     Board[k][Size-1] = "X"
-        Board[1][Size-1]="P"  #Player starting point on top left corner
-        y=0
-        Plot=False
-        while not(Plot): #Randomize the exit position
-            x=random.randint(1,(Size-1))
-            if x%2 == 0 :
-                x=(x%2)+(x//2)+1
-                x=x*random.randint(1,2)
-                if x%2 == 0 :
-                    x=x+1
-                if not(x>Size):
-                    if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the exit is at the end of the path
-                        Plot=True
-        Board[x][y]="E"  #Exit point
-        print("System: Maze 0"+mn+" loaded successfully.")
-    elif i == 3: #Recursive division method
+    elif i == 2: #Recursive division method
         #Grid format: Location vector in "0519" form, x=5 y=19
-        mn=str(random.randint(1,999)) #Random generate maze ID
-        print("System: Loading Maze 0"+mn+"...")
-        for k in range(Size): #Redraw the edge
+        for k in range(Size): #Draw the edge
             Board[0][k] = "X"
             Board[Size-1][k] = "X"
             Board[k][0] = "X"
@@ -610,8 +305,6 @@ def build_maze():
                     Punched = False
                     while not(Punched):
                         x=random.randint(x_TL,x_Cut) #Randomlize the hole point, even number is wall, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output, hole punch
-                        #time.sleep(0.1) #Debugging output, hole punch
                         if x%2 == 0 : #Check is the hole point is wall
                             if x == x_Cut:
                                 x=x-1 #Making sure the hole point is path and within the chunk
@@ -620,15 +313,11 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at x-axis 01") #Debugging output, hole punch
-                            #print_board() #Debugging output, hole punch
                     x=x_Cut #Cut point on x-axis, vertical wall
                     y=y_Cut #Cut point on y-axis, horizontal wall
                     Punched = False
                     while not(Punched):
                         x=random.randint(x_Cut,x_TR) #Randomlize the hole point, even number is wall, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output, hole punch
-                        #time.sleep(0.1) #Debugging output, hole punch
                         if x%2 == 0 : #Check is the hole point is wall
                             if x == x_Cut:
                                 x=x+1 #Making sure the hole point is path and within the chunk
@@ -637,15 +326,11 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at x-axis 02") #Debugging output, hole punch
-                            #print_board() #Debugging output, hole punch
                     x=x_Cut #Cut point on x-axis, vertical wall
                     y=y_Cut #Cut point on y-axis, horizontal wall
                     Punched = False
                     while not(Punched):
                         y=random.randint(y_BL,y_TL) #Randomlize the hole point, even number is wall, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output, hole punch
-                        #time.sleep(0.1) #Debugging output, hole punch
                         if y%2 == 0 : #Check is the hole point is wall
                             if y == y_Cut:
                                 y=y-1 #Making sure the hole point is path and within the chunk
@@ -654,16 +339,12 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at y-axis 03") #Debugging output, hole punch
-                            #print_board() #Debugging output, hole punch
                 elif Third_Hole == 1: #X-axis has one holes, Y-axis has two holes
                     x=x_Cut #Cut point on x-axis, vertical wall
                     y=y_Cut #Cut point on y-axis, horizontal wall
                     Punched = False
                     while not(Punched):
                         x=random.randint(x_TL,x_TR) #Randomlize the hole point, even number is wall, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output, hole punch
-                        #time.sleep(0.1) #Debugging output, hole punch
                         if x%2 == 0 : #Check is the hole point is wall
                             if x == x_Cut:
                                 x=x-1 #Making sure the hole point is path and within the chunk
@@ -672,15 +353,11 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at x-axis 04") #Debugging output, hole punch
-                            #print_board() #Debugging output, hole punch
                     x=x_Cut #Cut point on x-axis, vertical wall
                     y=y_Cut #Cut point on y-axis, horizontal wall
                     Punched = False
                     while not(Punched):
                         y=random.randint(y_BL,y_Cut) #Randomlize the hole point, even number is wall, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output, hole punch
-                        #time.sleep(0.1) #Debugging output, hole punch
                         if y%2 == 0 : #Check is the hole point is wall
                             if y == y_Cut:
                                 y=y-1 #Making sure the hole point is path and within the chunk
@@ -689,15 +366,11 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at y-axis 05") #Debugging output, hole punch
-                            #print_board() #Debugging output, hole punch
                     x=x_Cut #Cut point on x-axis, vertical wall
                     y=y_Cut #Cut point on y-axis, horizontal wall
                     Punched = False
                     while not(Punched):
                         y=random.randint(y_Cut,y_TL) #Randomlize the hole point, even number is wall, odd number is path
-                        #print("X:",x, " Y:",y) #Debugging output, hole punch
-                        #time.sleep(0.1) #Debugging output, hole punch
                         if y%2 == 0 : #Check is the hole point is wall
                             if y == y_Cut:
                                 y=y+1 #Making sure the hole point is path and within the chunk
@@ -706,8 +379,6 @@ def build_maze():
                         if Board[x][y] != " ":
                             Punched = True #Making sure the hole is not at the same position as previous hole
                             Board[x][y]=" " #Making the hole in the wall
-                            #print("Punched hole at y-axis 06") #Debugging output, hole punch
-                            #print_board() #Debugging output, hole punch
                 Chunk_TL_N=Chunk_TL #Update the top left corner of the chunk
                 x_TR=x_Cut-1 #Update the top right corner of the chunk
                 Chunk_TR_N=grid(x_TR,y_TR)
@@ -720,7 +391,6 @@ def build_maze():
                 Chunk[1]=Chunk_TR_N
                 Chunk[2]=Chunk_BL_N
                 Chunk[3]=Chunk_BR_N
-                print("1","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -742,7 +412,6 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
-                print("2","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -764,7 +433,6 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
-                print("3","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
                 x_TL=int(Chunk_TL[0:2]) #Restore the chunk location vector from Grid format
                 y_TL=int(Chunk_TL[2:4])
                 x_TR=int(Chunk_TR[0:2])
@@ -786,26 +454,23 @@ def build_maze():
                 Chunk.append(Chunk_BL_N)
                 Chunk.append(Chunk_BR_N)
                 Chunk_num=Chunk_num+1 #Update the number of chunks
-                print("4","TL:",Chunk_TL_N,"TR:",Chunk_TR_N,"BL:",Chunk_BL_N,"BR:",Chunk_BR_N) #Debugging output, chunk
-                print("Chunk_num_F:",Chunk_num_F,"Chunk_num:",Chunk_num) #Debugging output, chunk
-                print_board() #Debugging output, chunk
             if Chunk_num_F == Chunk_num: #Check is all chunk is finished
                 Done=True
-        Board[1][Size-1]="P"  #Player starting point on top left corner
-        y=0
-        Plot=False
-        while not(Plot): #Randomize the exit position
-            x=random.randint(1,(Size-1))
+    Board[1][Size-1]="P" #Player starting point on top left corner
+    y=0
+    Plot=False
+    while not(Plot): #Randomize the exit position
+        x=random.randint(1,(Size-1))
+        if x%2 == 0 :
+            x=(x%2)+(x//2)+1
+            x=x*random.randint(1,2)
             if x%2 == 0 :
-                x=(x%2)+(x//2)+1
-                x=x*random.randint(1,2)
-                if x%2 == 0 :
-                    x=x+1
-                if not(x>Size):
-                    if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the exit is at the end of the path
-                        Plot=True
-        Board[x][y]="E"  #Exit point
-        print("System: Maze 0"+mn+" loaded successfully.")
+                x=x+1
+        if not(x >= Size):
+            if Board[x-1][y+1] == "X" or Board[x+1][y+1] == "X": #Making sure the exit is at the end of the path
+                Plot=True
+    Board[x][y]="E" #Exit point
+    print("System: Maze 0"+mn+" loaded successfully.")
     maze_solve()
 
 def check_state(Maze,Not_Maze,Done): #Loop-erased random walk method debug function
@@ -901,7 +566,7 @@ def main():
                 Difficulty=ans
         except:
             print("System: Formet error")
-    Size=(ans+1)*5 *2+1
+    Size=(ans+1)*10+1
     Board=[[" "] * Size for i in range(Size)]
     print("System: Good luck!")
     time.sleep(0.5)
