@@ -24,12 +24,12 @@ def game():
                 if x > (Size-1):
                     print("System: ERROR")
                     print("System: Player position not found, please restart the game")
-                    ans=input("System: Press Enter to exit the game")
+                    ans=input("System: Press Enter to exit the game ")
                     sys.exit()
     if Difficulty == 5:
         if steps == adv_step:
             end(False)
-    ans=input("System: Please enter the direction you want to move")
+    ans=input("System: Please enter the direction you want to move ")
     ans=ans.lower()
     if ans == "w": #Move up
         if y < (Size-1) and Board[x][y+1] != "X":
@@ -107,7 +107,7 @@ def end(win):
         print("System: Total steps taken:", steps)
         print("System: Maze advence steps:", adv_step)
     time.sleep(0.5)
-    ans=input("System: Press Enter to exit the game or type '/restart' to restart the game")
+    ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
     if ans.lower() == "/restart":
         main()
     else:
@@ -548,13 +548,13 @@ def main():
     time.sleep(1)
     print("System: You are not allow to use more steps than the system advise in Hardcore Mode")
     time.sleep(1)
-    ans=input("System: Press Enter to start the game")
+    ans=input("System: Press Enter to start the game ")
     if ans == "/test":
         test=True
     passed=False
     while not passed:
         try:
-            ans=int(input("System: Please enter difficulty  1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode)"))
+            ans=int(input("System: Please enter difficulty  1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode) "))
             if ans <=0 or ans > 5:
                 print("System: Out of bounds")
             elif ans == 5:
