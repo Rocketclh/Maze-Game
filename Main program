@@ -5,7 +5,7 @@ def game():
     global Test
     global Type_error
     global Difficulty
-    global adv_step
+    global rec_step
     if Type_error:
         Type_error=False
     else:
@@ -27,7 +27,7 @@ def game():
                     ans=input("System: Press Enter to exit the game ")
                     sys.exit()
     if Difficulty == 5:
-        if steps == adv_step:
+        if steps == rec_step:
             end(False)
     ans=input("System: Please enter the direction you want to move ")
     ans=ans.lower()
@@ -95,17 +95,17 @@ def game():
 
 def end(win):
     global steps
-    global adv_step
+    global rec_step
     if win:
         print("System: Congratulations!")
         print("System: You have exited the maze!")
         print("System: Total steps taken:", steps)
-        print("System: Maze advise steps:", adv_step)
+        print("System: Maze recommended steps:", rec_step)
     else:
         print("System: Game Over")
         print("System: You have used all of the steps")
         print("System: Total steps taken:", steps)
-        print("System: Maze advise steps:", adv_step)
+        print("System: Maze recommended steps:", rec_step)
     time.sleep(0.5)
     ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
     if ans.lower() == "/restart":
@@ -507,15 +507,15 @@ def grid(x,y): #Convert Location vector to Grid format
 
 def maze_solve():
     global Board
-    global adv_step
-    adv_step=0
+    global rec_step
+    rec_step=0
     i=1
     if i == 1: #Breadth-First Search
         None
     elif i == 2: #A* Search
         None
-    adv_step=adv_step+10
-    print("System: Advice steps for this maze:", adv_step)
+    rec_step=rec_step+10
+    print("System: Advice steps for this maze:", rec_step)
     game()
 
 def main():
@@ -546,7 +546,7 @@ def main():
     time.sleep(1)
     print("System: In Hardcore Mode your steps was limmited, think carefully before moving")
     time.sleep(1)
-    print("System: You are not allow to use more steps than the system advise in Hardcore Mode")
+    print("System: You are not allow to use more steps than the system recommended in Hardcore Mode")
     time.sleep(1)
     ans=input("System: Press Enter to start the game ")
     if ans == "/test":
