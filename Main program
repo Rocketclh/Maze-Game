@@ -807,7 +807,7 @@ def build_maze():
                         Plot=True
         Board[x][y]="E"  #Exit point
         print("System: Maze 0"+mn+" loaded successfully.")
-    game()
+    maze_solve()
 
 def check_state(Maze,Not_Maze,Done): #Loop-erased random walk method debug function
     global temp_Maze
