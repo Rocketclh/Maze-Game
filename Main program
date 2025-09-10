@@ -44,7 +44,6 @@ def game():
             print("System: Invalid move!")
             print("System: You cannot move up")
             Type_error=True
-            game()
     elif ans == "s": #Move down
         if y > 0 and Board[x][y-1] != "X":
             Board[x][y]=" "
@@ -58,7 +57,6 @@ def game():
             print("System: Invalid move!")
             print("System: You cannot move down")
             Type_error=True
-            game()
     elif ans == "a": #Move left
         if x > 0 and Board[x-1][y] != "X":
             Board[x][y]=" "
@@ -72,7 +70,6 @@ def game():
             print("System: Invalid move!")
             print("System: You cannot move left")
             Type_error=True
-            game()
     elif ans == "d": #Move right
         if x < (Size-1) and Board[x+1][y] != "X":
             Board[x][y]=" "
@@ -86,12 +83,14 @@ def game():
             print("System: Invalid move!")
             print("System: You cannot move right")
             Type_error=True
-            game()
+    elif len(ans) != 1:
+        print("System: Out of Range!")
+        print("System: Please enter single character")
+        Type_error=True
     else:
         print("System: Invalid input!")
-        print("System: Please enter W, A, S, or D")
+        print("System: Please enter 'W', 'A', 'S', or 'D'")
         Type_error=True
-        game()
     game()
 
 def end(win):
@@ -865,13 +864,15 @@ def main():
     Test=False
     print("System: This game is for single players")
     time.sleep(1)
-    print("System: Icon'X' is the wall, and icon ' ' is the path")
+    print("System: The icon 'X' represent the wall, and icon ' ' represent the path")
     time .sleep(1)
-    print("System: Icon 'P' represent player, and icon 'E' represent exit")
+    print("System: Icon 'P' is the player, and icon 'E' is the exit")
     time.sleep(1)
     print("System: You can move in four directions")
     time.sleep(1)
     print("System: Up(W), Down(S), Left(A), Right(D)")
+    time.sleep(1)
+    print("System: Single character is entered everytime")
     time.sleep(1)
     print("System: Every steps you take will be recorded")
     time.sleep(1)
@@ -891,9 +892,10 @@ def main():
             if ans <=0 or ans > 5:
                 print("System: Out of bounds")
             elif ans == 5:
-                passed=True
+                passed=False
                 ans=4
                 Difficulty=5
+                print("System: Hardcore mode is not available now")
             else:
                 passed=True
                 Difficulty=ans
