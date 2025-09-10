@@ -554,7 +554,7 @@ def main():
     passed=False
     while not passed:
         try:
-            ans=int(input("System: Please enter difficulty  1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode) "))
+            ans=int(input("System: Please enter difficulty: 1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode) "))
             if ans <=0 or ans > 5:
                 print("System: Out of bounds")
             elif ans == 5:
