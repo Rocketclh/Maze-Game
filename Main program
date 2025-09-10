@@ -100,12 +100,12 @@ def end(win):
         print("System: Congratulations!")
         print("System: You have exited the maze!")
         print("System: Total steps taken:", steps)
-        print("System: Maze advence steps:", adv_step)
+        print("System: Maze advise steps:", adv_step)
     else:
         print("System: Game Over")
         print("System: You have used all of the steps")
         print("System: Total steps taken:", steps)
-        print("System: Maze advence steps:", adv_step)
+        print("System: Maze advise steps:", adv_step)
     time.sleep(0.5)
     ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
     if ans.lower() == "/restart":
