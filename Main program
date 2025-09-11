@@ -515,7 +515,7 @@ def maze_solve():
     elif i == 2: #A* Search
         None
     rec_step=rec_step+10
-    print("System: Advice steps for this maze:", rec_step)
+    print("System: Recommend steps for this maze:", rec_step)
     game()
 
 def main():
