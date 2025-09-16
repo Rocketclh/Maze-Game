@@ -526,7 +526,7 @@ def maze_solve():
     if i == 1: #Depth-First Search(DFS)
         Path=[] #Store the walked path in grid format
         Junctions=[] #Store the junctions in grid format
-        JUnction3=[] #Store the junctions that got 3 exit in grid format
+        Junction3=[] #Store the junctions that got 3 exit in grid format
         reach=False
         found=False
         x=1
@@ -609,6 +609,12 @@ def maze_solve():
                     elif temp == Junctions[len(Junctions)-1]: #Check is it at the junction
                         Junctions.pop()
                         back=True
+            print("rec_step: "+ rec_step) #Debugging output
+            print("Junctions: "+ Junctions) #Debugging output
+            print("Junction3: "+ Junction3) #Debugging output
+            print("exit_way: "+ exit_way) #Debugging output
+            print("exit_num: "+ exit_num) #Debugging output
+            print("direction: "+ direction) #Debugging output
             print_board() #Debugging output
         x=1
         y=0
