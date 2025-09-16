@@ -520,6 +520,7 @@ def grid(x,y): #Convert Location vector to Grid format
 def maze_solve():
     global Board
     global rec_step
+    print("System: Calculating recommended steps...")
     rec_step=0
     i=1
     if i == 1: #Depth-First Search(DFS)
@@ -608,6 +609,7 @@ def maze_solve():
                     elif temp == Junctions[len(Junctions)-1]: #Check is it at the junction
                         Junctions.pop()
                         back=True
+            print_board() #Debugging output
         x=1
         y=0
         while (x != Size-2) or (y != Size-2): #Cleaning up the board
