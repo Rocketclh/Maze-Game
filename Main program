@@ -2,7 +2,6 @@ def game():
     global steps
     global Board
     global Size
-    global Test
     global Type_error
     global Difficulty
     global rec_step
@@ -109,6 +108,8 @@ def end(win):
     time.sleep(0.5)
     ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
     if ans.lower() == "/restart":
+        for i in range(5):
+            print("")
         main()
     else:
         sys.exit()
@@ -129,15 +130,16 @@ def print_board(): #0,0 at bottem left corner
 def build_maze():
     global Board
     global Size
-    global Test
+    global retry_cycle
     mn=str(random.randint(1,999)) #Random generate maze ID
     print("System: Loading Maze 0"+mn+"...")
+    retry_cycle=0
     i=2 #Maze generation method using
     if i == 1: #Loop-erased random walk method
         #Maze format: node only
         #Board format: node and line(path)
         #Grid format: Location vector in "0519" form, x=5 y=19
-        Board=[["X"] * Size for i in range(Size)]
+        Board=[["X"] * Size for z in range(Size)]
         time.sleep(0.1)
         x=1
         y=1
@@ -239,6 +241,7 @@ def build_maze():
                     Board[k][Size-1] = "X"
     elif i == 2: #Recursive division method
         #Grid format: Location vector in "0519" form, x=5 y=19
+        Board=[[" "] * Size for z in range(Size)]
         for k in range(Size): #Draw the edge
             Board[0][k] = "X"
             Board[Size-1][k] = "X"
@@ -519,7 +522,10 @@ def grid(x,y): #Convert Location vector to Grid format
 
 def maze_solve():
     global Board
+    global Size
+    global Difficulty
     global rec_step
+    global retry_cycle
     print("System: Calculating recommended steps...")
     rec_step=0
     i=1
@@ -527,8 +533,8 @@ def maze_solve():
         Path=[] #Store the walked path in grid format
         Junctions=[] #Store the junctions in grid format
         Junction3=[] #Store the junctions that got 3 exit in grid format
-        reach=False
-        found=False
+        reach=False #Register is the exit reached
+        found=False #Register is the player position found
         x=1
         y=Size-1
         while found != True: #Automated relocate player position
@@ -539,16 +545,16 @@ def maze_solve():
                     if x > (Size-1):
                         print("System: ERROR")
                         print("System: Player position not found, please restart the game")
-                        ans=input("System: Press Enter to exit the game ")
+                        input("System: Press Enter to exit the game ")
                         sys.exit()
         y=y-1
         rec_step=rec_step+1
         Board[x][y]="0"
         Path.append(grid(x,y))
-        while not(reach):
+        while not(reach): #Check is the exit reached
             exit_way=[] #Direction of walkable path
             exit_num=0 #Number of walkable path
-            direction=None
+            direction=None #Direction of walk
             if Board[x][y-1] == "E": #Check is the bottom box the exit
                 rec_step=rec_step+1
                 reach=True
@@ -568,54 +574,58 @@ def maze_solve():
                 direction=0
             elif exit_num == 2: #2-way junction
                 Junctions.append(grid(x,y))
-                dirction=random.randint(0,1) #Random choose a way to walk
+                direction=random.randint(0,1) #Random choose a way to walk
             elif exit_num == 3: #3-way junction
                 Junctions.append(grid(x,y))
                 Junction3.append(grid(x,y))
-                dirction=random.randint(0,2) #Random choose a way to walk
-            if direction != None:
-                if exit_way[direction] == "up": #Walk up
-                    y=y+1
-                    rec_step=rec_step+1
-                    Board[x][y]="0"
-                    Path.append(grid(x,y))
-                elif exit_way[direction] == "down": #Walk down
-                    y=y-1
-                    rec_step=rec_step+1
-                    Board[x][y]="0"
-                    Path.append(grid(x,y))
-                elif exit_way[direction] == "left": #Walk left
-                    x=x-1
-                    rec_step=rec_step+1
-                    Board[x][y]="0"
-                    Path.append(grid(x,y))
-                elif exit_way[direction] == "right": #Walk right
-                    x=x+1
-                    rec_step=rec_step+1
-                    Board[x][y]="0"
-                    Path.append(grid(x,y))
-            elif (direction == None) and (exit_num == 0): #Dead end
-                back=False
-                while not(back): #Check did it arrive the previous junction
-                    Board[x][y]="/"
-                    path.pop()
-                    rec_step=rec_step-1
-                    temp=path[len(path)-1] #Move back
-                    x=int(temp[0:2])
-                    y=int(temp[2:4])
-                    if temp == Junction3[len(Junction3)-1]: #Check is it at the 3-way junction
-                        Junction3.pop()
-                        back=True
-                    elif temp == Junctions[len(Junctions)-1]: #Check is it at the junction
-                        Junctions.pop()
-                        back=True
-            print("rec_step: "+ rec_step) #Debugging output
-            print("Junctions: "+ Junctions) #Debugging output
-            print("Junction3: "+ Junction3) #Debugging output
-            print("exit_way: "+ exit_way) #Debugging output
-            print("exit_num: "+ exit_num) #Debugging output
-            print("direction: "+ direction) #Debugging output
-            print_board() #Debugging output
+                direction=random.randint(0,2) #Random choose a way to walk
+            if reach != True:
+                if direction != None:
+                    if exit_way[direction] == "up": #Walk up
+                        y=y+1
+                        rec_step=rec_step+1
+                        Board[x][y]="0"
+                        Path.append(grid(x,y))
+                    elif exit_way[direction] == "down": #Walk down
+                        y=y-1
+                        rec_step=rec_step+1
+                        Board[x][y]="0"
+                        Path.append(grid(x,y))
+                    elif exit_way[direction] == "left": #Walk left
+                        x=x-1
+                        rec_step=rec_step+1
+                        Board[x][y]="0"
+                        Path.append(grid(x,y))
+                    elif exit_way[direction] == "right": #Walk right
+                        x=x+1
+                        rec_step=rec_step+1
+                        Board[x][y]="0"
+                        Path.append(grid(x,y))
+                elif (direction == None) and (exit_num == 0): #Dead end
+                    back=False
+                    while not(back): #Check did it arrive the previous junction
+                        Board[x][y]="/"
+                        Path.pop()
+                        rec_step=rec_step-1
+                        temp=Path[len(Path)-1] #Move back
+                        x=int(temp[0:2])
+                        y=int(temp[2:4])
+                        if len(Junction3) != 0: #Check is there any 3-way junction
+                            if temp == Junction3[len(Junction3)-1]: #Check is it at the 3-way junction
+                                Junction3.pop()
+                                back=True
+                        if back != True:
+                            if temp == Junctions[len(Junctions)-1]: #Check is it at the junction
+                                Junctions.pop()
+                                back=True
+            #print_board() #Debugging output
+            #print("rec_step: "+ str(rec_step)) #Debugging output
+            #print("Junctions: "+ str(Junctions)) #Debugging output
+            #print("Junction3: "+ str(Junction3)) #Debugging output
+            #print("exit_way: "+ str(exit_way)) #Debugging output
+            #print("exit_num: "+ str(exit_num)) #Debugging output
+            #print("direction: "+ str(direction)) #Debugging output
+            #print("Path: "+ str(Path)) #Debugging output
         x=1
         y=0
         while (x != Size-2) or (y != Size-2): #Cleaning up the board
@@ -630,7 +640,43 @@ def maze_solve():
         None
     elif i == 3: #A* Search
         None
-    rec_step=rec_step+10
+    if Difficulty > 3: #Minimize the recommended steps for hard and hardcore mode
+        percentage=0.25
+    else: #Minimize the recommended steps for easy mode
+        percentage=0.2
+    if rec_step <= (Size*Size*percentage): #Make sure the recommended steps is not too low
+        y=Size-1
+        Plot=False
+        while not(Plot): #Randomize the player position
+            x=random.randint(1,(Size-1))
+            if x%2 == 0 :
+                x=(x%2)+(x//2)+1
+                x=x*random.randint(1,2)
+                if x%2 == 0 :
+                    x=x+1
+            if not(x >= Size):
+                if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the player is start at the end of the path
+                    Plot=True
+        Board[x][y]="P" #Player starting point
+        y=0
+        Plot=False
+        while not(Plot): #Randomize the exit position
+            x=random.randint(1,(Size-1))
+            if x%2 == 0 :
+                x=(x%2)+(x//2)+1
+                x=x*random.randint(1,2)
+                if x%2 == 0 :
+                    x=x+1
+            if not(x >= Size):
+                if Board[x-1][y+1] == "X" or Board[x+1][y+1] == "X": #Making sure the exit is at the end of the path
+                    Plot=True
+        Board[x][y]="E" #Exit point
+        retry_cycle=retry_cycle+1
+        if retry_cycle < 3: #Maximum number of retry
+            maze_solve()
+        else: #Restart the maze generation if it exceed the maximum number of retry
+            build_maze()
+    rec_step=rec_step+10 #Add some buffer to the recommended steps
     print("System: Recommend steps for this maze:", rec_step)
     game()
 
@@ -639,11 +685,9 @@ def main():
     global Board
     global steps
     global Type_error
-    global Test
     global Difficulty
     steps=0
     Type_error=False
-    Test=False
     print("System: This game is for single players")
     time.sleep(1)
     print("System: The icon 'X' represent the wall, and icon ' ' represent the path")
@@ -665,8 +709,6 @@ def main():
     print("System: You are not allow to use more steps than the system recommended in Hardcore Mode")
     time.sleep(1)
     ans=input("System: Press Enter to start the game ")
-    if ans == "/test":
-        test=True
     passed=False
     while not passed:
         try:
@@ -684,7 +726,6 @@ def main():
         except:
             print("System: Formet error")
     Size=(ans+1)*10+1
-    Board=[[" "] * Size for i in range(Size)]
     print("System: Good luck!")
     time.sleep(0.5)
     build_maze()
