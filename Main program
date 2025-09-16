@@ -457,7 +457,19 @@ def build_maze():
                 Chunk_num=Chunk_num+1 #Update the number of chunks
             if Chunk_num_F == Chunk_num: #Check is all chunk is finished
                 Done=True
-    Board[1][Size-1]="P" #Player starting point on top left corner
+    y=Size-1
+    Plot=False
+    while not(Plot): #Randomize the player position
+        x=random.randint(1,(Size-1))
+        if x%2 == 0 :
+            x=(x%2)+(x//2)+1
+            x=x*random.randint(1,2)
+            if x%2 == 0 :
+                x=x+1
+        if not(x >= Size):
+            if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the player is start at the end of the path
+                Plot=True
+    Board[x][y]="P" #Player starting point
     y=0
     Plot=False
     while not(Plot): #Randomize the exit position
@@ -510,9 +522,105 @@ def maze_solve():
     global rec_step
     rec_step=0
     i=1
-    if i == 1: #Breadth-First Search
+    if i == 1: #Depth-First Search(DFS)
+        Path=[] #Store the walked path in grid format
+        Junctions=[] #Store the junctions in grid format
+        JUnction3=[] #Store the junctions that got 3 exit in grid format
+        reach=False
+        found=False
+        x=1
+        y=Size-1
+        while found != True: #Automated relocate player position
+                if Board[x][y] == "P":
+                    found=True
+                else:
+                    x=x+1
+                    if x > (Size-1):
+                        print("System: ERROR")
+                        print("System: Player position not found, please restart the game")
+                        ans=input("System: Press Enter to exit the game ")
+                        sys.exit()
+        y=y-1
+        rec_step=rec_step+1
+        Board[x][y]="0"
+        Path.append(grid(x,y))
+        while not(reach):
+            exit_way=[] #Direction of walkable path
+            exit_num=0 #Number of walkable path
+            direction=None
+            if Board[x][y-1] == "E": #Check is the bottom box the exit
+                rec_step=rec_step+1
+                reach=True
+            elif Board[x][y-1] == " ": #Check is the bottom box the path
+                exit_num=exit_num+1
+                exit_way.append("down")
+            if Board[x-1][y] == " ": #Check is the left box the path
+                exit_num=exit_num+1
+                exit_way.append("left")
+            if Board[x][y+1] == " ": #Check is the top box the path
+                exit_num=exit_num+1
+                exit_way.append("up")
+            if Board[x+1][y] == " ": #Check is the right box the path
+                exit_num=exit_num+1
+                exit_way.append("right")
+            if exit_num == 1: #One-way path
+                direction=0
+            elif exit_num == 2: #2-way junction
+                Junctions.append(grid(x,y))
+                dirction=random.randint(0,1) #Random choose a way to walk
+            elif exit_num == 3: #3-way junction
+                Junctions.append(grid(x,y))
+                Junction3.append(grid(x,y))
+                dirction=random.randint(0,2) #Random choose a way to walk
+            if direction != None:
+                if exit_way[direction] == "up": #Walk up
+                    y=y+1
+                    rec_step=rec_step+1
+                    Board[x][y]="0"
+                    Path.append(grid(x,y))
+                elif exit_way[direction] == "down": #Walk down
+                    y=y-1
+                    rec_step=rec_step+1
+                    Board[x][y]="0"
+                    Path.append(grid(x,y))
+                elif exit_way[direction] == "left": #Walk left
+                    x=x-1
+                    rec_step=rec_step+1
+                    Board[x][y]="0"
+                    Path.append(grid(x,y))
+                elif exit_way[direction] == "right": #Walk right
+                    x=x+1
+                    rec_step=rec_step+1
+                    Board[x][y]="0"
+                    Path.append(grid(x,y))
+            elif (direction == None) and (exit_num == 0): #Dead end
+                back=False
+                while not(back): #Check did it arrive the previous junction
+                    Board[x][y]="/"
+                    path.pop()
+                    rec_step=rec_step-1
+                    temp=path[len(path)-1] #Move back
+                    x=int(temp[0:2])
+                    y=int(temp[2:4])
+                    if temp == Junction3[len(Junction3)-1]: #Check is it at the 3-way junction
+                        Junction3.pop()
+                        back=True
+                    elif temp == Junctions[len(Junctions)-1]: #Check is it at the junction
+                        Junctions.pop()
+                        back=True
+        x=1
+        y=0
+        while (x != Size-2) or (y != Size-2): #Cleaning up the board
+            if y+1 == Size-1: #Check did it reach the top
+                y=1
+                x=x+1
+            else:
+                y=y+1
+            if Board[x][y] != "X": #Replace the path
+                Board[x][y]=" "
+    elif i == 2: #Breadth-First Search(BFS)
         None
-    elif i == 2: #A* Search
+    elif i == 3: #A* Search
         None
     rec_step=rec_step+10
     print("System: Recommend steps for this maze:", rec_step)
