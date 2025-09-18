@@ -699,6 +699,8 @@ def main():
     time.sleep(1)
     print("System: Single character is entered everytime")
     time.sleep(1)
+    print("System: Press Enter to execute the action")
+    time.sleep(1)
     print("System: Every steps you take will be recorded")
     time.sleep(1)
     print("System: Your goal is to exit the maze with fewest steps")
