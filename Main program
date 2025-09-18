@@ -544,15 +544,15 @@ def maze_solve():
             x=1
             y=Size-1
             while found != True: #Automated relocate player position
-                    if Board[x][y] == "P":
-                        found=True
-                    else:
-                        x=x+1
-                        if x > (Size-1):
-                            print("System: ERROR")
-                            print("System: Player position not found, please restart the game")
-                            input("System: Press Enter to exit the game ")
-                            sys.exit()
+                if Board[x][y] == "P":
+                    found=True
+                else:
+                    x=x+1
+                    if x > (Size-1):
+                        print("System: ERROR")
+                        print("System: Player position not found, please restart the game")
+                        input("System: Press Enter to exit the game ")
+                        sys.exit()
             y=y-1
             rec_step=rec_step+1
             Board[x][y]="0"
@@ -624,14 +624,6 @@ def maze_solve():
                                 if temp == Junctions[len(Junctions)-1]: #Check is it at the junction
                                     Junctions.pop()
                                     back=True
-                #print_board() #Debugging output
-                #print("rec_step: "+ str(rec_step)) #Debugging output
-                #print("Junctions: "+ str(Junctions)) #Debugging output
-                #print("Junction3: "+ str(Junction3)) #Debugging output
-                #print("exit_way: "+ str(exit_way)) #Debugging output
-                #print("exit_num: "+ str(exit_num)) #Debugging output
-                #print("direction: "+ str(direction)) #Debugging output
-                #print("Path: "+ str(Path)) #Debugging output
             x=1
             y=0
             while (x != Size-2) or (y != Size-2): #Cleaning up the board
@@ -649,8 +641,8 @@ def maze_solve():
         min_step=Size*Size*0.1 #Minimum steps for the maze
         if rec_step <= min_step: #Make sure the recommended steps is not too low
             for k in range(Size): #Redraw the top and bottom edge
-                        Board[k][0] = "X"
-                        Board[k][Size-1] = "X"
+                Board[k][0] = "X"
+                Board[k][Size-1] = "X"
             y=Size-1
             Plot=False
             while not(Plot): #Randomize the player position
