@@ -679,6 +679,13 @@ def maze_solve():
     time.sleep(0.1)
     game()
 
+def turtle_setup():
+    global t
+    global Size
+    t.screen.title("Maze Game")
+    t.screen.bgcolor("White")
+    t.screen.setup(width=Size*20, height=Size*20)
+
 def main():
     global Size
     global Board
@@ -726,9 +733,12 @@ def main():
     Size=(ans+1)*10+1
     print("System: Good luck!")
     time.sleep(0.5)
+    turtle_setup()
     build_maze()
 
 import time
 import random
 import sys
+from turtle import Turtle
+t= Turtle()
 main()
