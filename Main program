@@ -1,4 +1,4 @@
-def game():
+def game(): #Cmd game control
     global steps
     global Board
     global Size
@@ -98,7 +98,7 @@ def game():
         time.sleep(0.5)
     game()
 
-def end(win):
+def end(win): #Cmd win output
     global steps
     global rec_step
     if win:
@@ -120,11 +120,11 @@ def end(win):
     else:
         sys.exit()
 
-def print_board(): #0,0 at bottem left corner
+def print_board(): #Cmd board
     global Board
     global Size
     print("")
-    for y in range(Size):
+    for y in range(Size): #0,0 at bottem left corner
         h=Size-y-1 #Height of the board
         if h<10:
             temp="0"+str(h)
@@ -679,14 +679,21 @@ def maze_solve():
     time.sleep(0.1)
     game()
 
-def turtle_setup():
-    global t
-    global Size
-    t.screen.title("Maze Game")
-    t.screen.bgcolor("White")
-    t.screen.setup(width=Size*20, height=Size*20)
+def Timer(): #10 minutes timer (Sub-thread)
+    Time_up=False
+    Minutes=10
+    Second=60
+    while not(Time_up):
+        time.sleep(1)
+        Second=Second-1
+        if Second < 0:
+            Minutes=Minutes-1
+            Second=60
+        if (Minutes == 0) and (Second == 0):
+            Time_up=True
+    print("Times up")
 
-def main():
+def main(): #Cmd menu
     global Size
     global Board
     global steps
@@ -733,12 +740,40 @@ def main():
     Size=(ans+1)*10+1
     print("System: Good luck!")
     time.sleep(0.5)
-    turtle_setup()
     build_maze()
+
+def turtle_setup():
+    global t
+    global Size
+    global Ratio
+    screen=t.Screen()
+    pen=t.Turtle()
+    screen.title("Maze Game")
+    screen.bgcolor("White")
+    if Size == 21 :
+        Ratio=35
+    elif Size == 31:
+        Ratio=25
+    elif Size == 41:
+        Ratio=17.5
+    elif Size == 51:
+        Ratio=15
+    screen.setup(width=Size*Ratio, height=Size*Ratio)
+    pen.shapesize((Ratio/20), (Ratio/20))
+    pen.penup()
+    pen.showturtle()
+    pen.goto((Ratio/4),0) #Center
+
+def menu(): #GUI menu
+    global t
+    screen=t.Screen()
+    pen=t.Turtle()
+    screen.title("Maze Game")
+    screen.bgcolor("White")
+    turtle_setup()
 
 import time
 import random
 import sys
-from turtle import Turtle
-t= Turtle()
+import turtle as t
 main()
