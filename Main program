@@ -742,12 +742,13 @@ def main(): #Cmd menu
     time.sleep(0.5)
     build_maze()
 
-def turtle_setup():
+def game_setup(): #Game GUI setup
     global t
     global screen
     global Size
     global Ratio
     global FPS
+    screen.clear()
     screen=t.Screen()
     screen.title("Maze Game")
     screen.bgcolor("White")
@@ -762,16 +763,18 @@ def turtle_setup():
     screen.setup(width=Size*Ratio, height=Size*Ratio)
     screen.tracer(0)
     refrash()
-    FPS=60
     pen=t.Turtle()
     pen.shapesize((Ratio/20), (Ratio/20))
     pen.penup()
     pen.showturtle()
     pen.goto((Ratio/4),0) #Center
 
-def menu(): #GUI menu
+def menu_setup(): #GUI menu setup
     global t
     global screen
+    global pen
+    global FPS
+    FPS=60
     screen=t.Screen()
     screen.title("Maze Game")
     screen.bgcolor("White")
@@ -779,12 +782,24 @@ def menu(): #GUI menu
     screen.tracer(0)
     refrash()
     pen=t.Turtle()
+    pen.hideturtle()
     pen.penup()
+    screen.mainloop
+    menu()
+
+def menu(): #GUI main menu
+    global t
+    global screen
+    global page
+    global pen
+    page=0 #Menu id
+    pen.penup()
+    pen.clear() #Clear the board
     pen.goto(0,200)
     pen.pendown()
     pen.write("Maze Game", align="center", font=("Arial", 50, "bold")) #Game title
     pen.penup()
-    time.sleep(0.1)
+    time.sleep(0.01)
     pen.goto(-100,125) #TL of instruction button
     pen.pendown() #Start drawing instruction button
     pen.goto(100,125) #TR of instruction button
@@ -796,7 +811,7 @@ def menu(): #GUI menu
     pen.pendown() #Write text
     pen.write("Instruction", align="center", font=("Arial", 25, "bold"))
     pen.penup() #Finish drawing instruction button
-    time.sleep(0.1)
+    time.sleep(0.01)
     pen.goto(-100,25) #TL of start button
     pen.pendown() #Start drawing start button
     pen.goto(100,25) #TR of start button
@@ -808,7 +823,7 @@ def menu(): #GUI menu
     pen.pendown() #Write text
     pen.write("Start", align="center", font=("Arial", 25, "bold"))
     pen.penup() #Finish drawing start button
-    time.sleep(0.1)
+    time.sleep(0.01)
     pen.goto(-100,-75) #TL of setting button
     pen.pendown() #Start drawing setting button
     pen.goto(100,-75) #TR of setting button
@@ -820,7 +835,20 @@ def menu(): #GUI menu
     pen.pendown() #Write text
     pen.write("Setting", align="center", font=("Arial", 25, "bold"))
     pen.penup() #Finish drawing setting button
-    screen.mainloop
+    time.sleep(0.01)
+    pen.goto(-250,-250) #TL of exit button
+    pen.pendown() #Start drawing exit button
+    pen.goto(-150,-250) #TR of exit button
+    pen.goto(-150,-300) #BR of exit button
+    pen.goto(-250,-300) #BL of exit button
+    pen.goto(-250,-250) #TL of exit button
+    pen.penup()
+    pen.goto(-200,-295)
+    pen.pendown() #Write text
+    pen.write("Exit", align="center", font=("Arial", 25, "bold"))
+    pen.penup() #Finish drawing exit button
+    screen.listen()
+    screen.onclick(button_click)
 
 def refrash(): #GUI FPS
     global screen
@@ -828,9 +856,234 @@ def refrash(): #GUI FPS
     screen.update()
     screen.ontimer(refrash, 1000//FPS) #FPS control
 
+def button_click(x,y): #Mouse clicked
+    global screen
+    global page
+    global Difficulty
+    if page == 0: #From menu
+        if -100 < x < 100:
+            if 75 < y < 125: #Instruction button pressed
+                instruction()
+            elif -25 < y < 25: #Start button pressed
+                Difficulty=1
+                game_setting()
+            elif -125 < y < -75: #Setting button pressed
+                setting()
+        elif -250 < x < -150 and -300 < y < -250: #Exit button pressed
+            screen.clear()
+            sys.exit()
+    elif page == 1: #From instruction
+        if -250 < x < -125 and -300 < y < -250: #Return button pressed
+            menu()
+    elif page == 2: #From game_setting
+        if -250 < x < -125 and -300 < y < -250: #Return button pressed
+            menu()
+        elif 0 < x < 25 and -25 < y < 25: #Left arrow button pressed
+            if Difficulty > 1: #Decrease difficulty
+                Difficulty=Difficulty-1
+                game_setting()
+        elif 255 < x < 230 and -25 < y < 25: #Right arrow button pressed
+            if Difficulty < 5: #Increase difficulty
+                Difficulty=Difficulty+1
+                game_setting()
+    elif page == 3: #From setting
+        if -250 < x < -125 and -300 < y < -250: #Return button pressed
+            menu()
+
+def instruction(): #GUI instruction
+    global screen
+    global page
+    global pen
+    page=1
+    pen.clear() #Reset board
+    style="Arial", 15, "bold"
+    y=275
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- This game is for single players -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- Icon 'P' is the player -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- And icon 'E' is the exit -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- You can move in four directions -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- Up(W), Down(S), Left(A), Right(D) -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- Every steps you take will be recorded -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- Your goal is to exit the maze with fewest steps -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- In Hardcore Mode your steps was limmited -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- Think carefully before moving -", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("- You are not allow to use more steps than", align="center", font=(style))
+    pen.penup()
+    y=y-50
+    time.sleep(0.1)
+    pen.goto(0,y)
+    pen.pendown()
+    pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
+    pen.penup()
+    time.sleep(0.1)
+    pen.goto(-250,-250) #TL of return button
+    pen.pendown() #Start drawing return button
+    pen.goto(-125,-250) #TR of return button
+    pen.goto(-125,-300) #BR of return button
+    pen.goto(-250,-300) #BL of return button
+    pen.goto(-250,-250) #TL of return button
+    pen.penup()
+    pen.goto(-187.5,-295)
+    pen.pendown() #Write text
+    pen.write("Return", align="center", font=("Arial", 25, "bold"))
+    pen.penup() #Finish drawing return button
+    screen.listen()
+    screen.onclick(button_click)
+
+def game_setting(): #GUI game setting
+    global screen
+    global page
+    global pen
+    global Difficulty
+    page=2
+    pen.clear() #Reset board
+    style="Arial", 20, "bold"
+    pen.goto(-75,-12.5)
+    pen.pendown()
+    pen.write("Difficulty:", align="center", font=(style))
+    pen.penup()
+    time.sleep(0.1)
+    pen.goto(0,25) #TL of left arrow button
+    pen.pendown() #Start drawing left arrow button
+    pen.goto(25,25) #TR of left arrow button
+    pen.goto(25,-25) #BR of left arrow button
+    pen.goto(0,-25) #BL of left arrow button
+    pen.goto(0,25) #TL of left arrow button
+    pen.penup()
+    pen.goto(5,0) #Arrow left point
+    pen.pendown()
+    pen.begin_fill()
+    pen.fillcolor("black")
+    pen.goto(20,20) #Arrow top right point
+    pen.goto(20,-20) #Arrow bottom right point
+    pen.goto(5,0) #Arrow left point
+    pen.end_fill()
+    pen.penup() #Finish drawing left arrow button
+    time.sleep(0.1)
+    pen.goto(30,25) #TL of current difficulty display
+    pen.pendown() #Start drawing current difficulty display
+    pen.goto(225,25) #TR of current difficulty display
+    pen.goto(225,-25) #BR of current difficulty display
+    pen.goto(30,-25) #BL of current difficulty display
+    pen.goto(30,25) #TL of current difficulty display
+    pen.penup()
+    pen.goto(127.5,-17.5)
+    pen.pendown() #Print current difficulty
+    style="Arial", 20, "bold"
+    if Difficulty == 1:
+        pen.write("1(21*21 Board)", align="center", font=(style))
+    elif Difficulty == 2:
+        pen.write("2(31*31 Board)", align="center", font=(style))
+    elif Difficulty == 3:
+        pen.write("3(41*41 Board)", align="center", font=(style))
+    elif Difficulty == 4:
+        pen.write("4(51*51 Board)", align="center", font=(style))
+    elif Difficulty == 5:
+        pen.write("5(Hardcore Mode)", align="center", font=(style))
+    pen.penup() #Finish drawing current difficulty display
+    time.sleep(0.1)
+    pen.goto(230,25) #TL of right arrow button
+    pen.pendown() #Start drawing right arrow button
+    pen.goto(255,25) #TR of right arrow button
+    pen.goto(255,-25) #BR of right arrow button
+    pen.goto(230,-25) #BL of right arrow button
+    pen.goto(230,25) #TL of right arrow button
+    pen.penup()
+    pen.goto(235,20) #Arrow top left point
+    pen.pendown()
+    pen.begin_fill()
+    pen.fillcolor("black")
+    pen.goto(250,0) #Arrow right point
+    pen.goto(235,-20) #Arrow bottom left point
+    pen.goto(235,20) #Arrow top left point
+    pen.end_fill()
+    pen.penup() #Finish drawing right arrow button
+    time.sleep(0.1)
+    pen.goto(-250,-250) #TL of return button
+    pen.pendown() #Start drawing return button
+    pen.goto(-125,-250) #TR of return button
+    pen.goto(-125,-300) #BR of return button
+    pen.goto(-250,-300) #BL of return button
+    pen.goto(-250,-250) #TL of return button
+    pen.penup()
+    pen.goto(-187.5,-295)
+    pen.pendown() #Write text
+    pen.write("Return", align="center", font=("Arial", 25, "bold"))
+    pen.penup() #Finish drawing return button
+    screen.listen()
+    screen.onclick(button_click)
+
+def setting(): #GUI setting
+    global screen
+    global page
+    global pen
+    page=3
+    pen.clear() #Reset board
+    pen.goto(0,0)
+    time.sleep(0.1)
+    pen.goto(-250,-250) #TL of return button
+    pen.pendown() #Start drawing return button
+    pen.goto(-125,-250) #TR of return button
+    pen.goto(-125,-300) #BR of return button
+    pen.goto(-250,-300) #BL of return button
+    pen.goto(-250,-250) #TL of return button
+    pen.penup()
+    pen.goto(-187.5,-295)
+    pen.pendown() #Write text
+    pen.write("Return", align="center", font=("Arial", 25, "bold"))
+    pen.penup() #Finish drawing return button
+    screen.listen()
+    screen.onclick(button_click)
+
 import time
 import random
 import sys
 import threading
 import turtle as t
-main()
+menu_setup()
