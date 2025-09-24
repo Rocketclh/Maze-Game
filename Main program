@@ -744,10 +744,11 @@ def main(): #Cmd menu
 
 def turtle_setup():
     global t
+    global screen
     global Size
     global Ratio
+    global FPS
     screen=t.Screen()
-    pen=t.Turtle()
     screen.title("Maze Game")
     screen.bgcolor("White")
     if Size == 21 :
@@ -759,6 +760,10 @@ def turtle_setup():
     elif Size == 51:
         Ratio=15
     screen.setup(width=Size*Ratio, height=Size*Ratio)
+    screen.tracer(0)
+    refrash()
+    FPS=60
+    pen=t.Turtle()
     pen.shapesize((Ratio/20), (Ratio/20))
     pen.penup()
     pen.showturtle()
@@ -766,14 +771,66 @@ def turtle_setup():
 
 def menu(): #GUI menu
     global t
+    global screen
     screen=t.Screen()
-    pen=t.Turtle()
     screen.title("Maze Game")
     screen.bgcolor("White")
-    turtle_setup()
+    screen.setup(width=550, height=650)
+    screen.tracer(0)
+    refrash()
+    pen=t.Turtle()
+    pen.penup()
+    pen.goto(0,200)
+    pen.pendown()
+    pen.write("Maze Game", align="center", font=("Arial", 50, "bold")) #Game title
+    pen.penup()
+    time.sleep(0.1)
+    pen.goto(-100,125) #TL of instruction button
+    pen.pendown() #Start drawing instruction button
+    pen.goto(100,125) #TR of instruction button
+    pen.goto(100,75) #BR of instruction button
+    pen.goto(-100,75) #BL of instruction button
+    pen.goto(-100,125) #TL of instruction button
+    pen.penup()
+    pen.goto(0,80)
+    pen.pendown() #Write text
+    pen.write("Instruction", align="center", font=("Arial", 25, "bold"))
+    pen.penup() #Finish drawing instruction button
+    time.sleep(0.1)
+    pen.goto(-100,25) #TL of start button
+    pen.pendown() #Start drawing start button
+    pen.goto(100,25) #TR of start button
+    pen.goto(100,-25) #BR of start button
+    pen.goto(-100,-25) #BL of start button
+    pen.goto(-100,25) #TL of start button
+    pen.penup()
+    pen.goto(0,-20)
+    pen.pendown() #Write text
+    pen.write("Start", align="center", font=("Arial", 25, "bold"))
+    pen.penup() #Finish drawing start button
+    time.sleep(0.1)
+    pen.goto(-100,-75) #TL of setting button
+    pen.pendown() #Start drawing setting button
+    pen.goto(100,-75) #TR of setting button
+    pen.goto(100,-125) #BR of setting button
+    pen.goto(-100,-125) #BL of setting button
+    pen.goto(-100,-75) #TL of setting button
+    pen.penup()
+    pen.goto(0,-120)
+    pen.pendown() #Write text
+    pen.write("Setting", align="center", font=("Arial", 25, "bold"))
+    pen.penup() #Finish drawing setting button
+    screen.mainloop
+
+def refrash(): #GUI FPS
+    global screen
+    global FPS
+    screen.update()
+    screen.ontimer(refrash, 1000//FPS) #FPS control
 
 import time
 import random
 import sys
+import threading
 import turtle as t
 main()
