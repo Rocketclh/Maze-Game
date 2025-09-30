@@ -137,7 +137,8 @@ def build_maze():
     global Board
     global Size
     mn=str(random.randint(1,999)) #Random generate maze ID
-    print("System: Loading Maze 0"+mn+"...")
+    if mode == 1:
+        print("System: Loading Maze 0"+mn+"...")
     i=2 #Maze generation method using
     if i == 1: #Loop-erased random walk method
         #Maze format: node only
@@ -489,8 +490,9 @@ def build_maze():
             if Board[x-1][y+1] == "X" or Board[x+1][y+1] == "X": #Making sure the exit is at the end of the path
                 Plot=True
     Board[x][y]="E" #Exit point
-    print("System: Maze 0"+mn+" loaded successfully")
-    time.sleep(0.1)
+    if mode == 1:
+        print("System: Maze 0"+mn+" loaded successfully")
+        time.sleep(0.1)
     maze_solve()
 
 def check_state(Maze,Not_Maze,Done): #Loop-erased random walk method debug function
@@ -531,7 +533,8 @@ def maze_solve():
     global rec_step
     retry_cycle=0
     passed = False
-    print("System: Calculating recommended steps...")
+    if mode == 1:
+        print("System: Calculating recommended steps...")
     while not (passed):
         rec_step=0
         i=1
@@ -675,9 +678,10 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    print("System: Recommend steps for this maze:", rec_step)
-    time.sleep(0.1)
-    game()
+    if mode == 1:
+        print("System: Recommend steps for this maze:", rec_step)
+        time.sleep(0.1)
+        game()
 
 def Timer(): #10 minutes timer (Sub-thread)
     Time_up=False
@@ -699,6 +703,7 @@ def main(): #Cmd menu
     global steps
     global Type_error
     global Difficulty
+    global mode
     steps=0
     Type_error=False
     print("System: This game is for single players")
@@ -723,24 +728,28 @@ def main(): #Cmd menu
     time.sleep(1)
     print("System: You are not allow to use more steps than the system recommended in Hardcore Mode")
     time.sleep(1)
-    ans=input("System: Press Enter to start the game ")
-    passed=False
-    while not passed:
-        try:
-            ans=int(input("System: Please enter difficulty: 1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode) "))
-            if ans <=0 or ans > 5:
-                print("System: Out of bounds")
-            else:
-                passed=True
-                Difficulty=ans
-        except:
-            print("System: Formet error")
-    if Difficulty == 5:
-        ans=4
-    Size=(ans+1)*10+1
-    print("System: Good luck!")
-    time.sleep(0.5)
-    build_maze()
+    ans=input("System: Press Enter to start the game or enter /GUI to swap to GUI manu")
+    if ans.lower() == "/gui":
+        mode=2
+        menu_setup() #Swap to graphical user interface
+    else:
+        passed=False
+        while not passed:
+            try:
+                ans=int(input("System: Please enter difficulty: 1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode) "))
+                if ans <=0 or ans > 5:
+                    print("System: Out of bounds")
+                else:
+                    passed=True
+                    Difficulty=ans
+            except:
+                print("System: Formet error")
+        if Difficulty == 5:
+            ans=4
+        Size=(ans+1)*10+1
+        print("System: Good luck!")
+        time.sleep(0.5)
+        build_maze()
 
 def game_setup(): #Game GUI setup
     global t
@@ -792,6 +801,11 @@ def menu(): #GUI main menu
     global screen
     global page
     global pen
+    global Instruction_bt
+    global Start_bt
+    global Setting_bt
+    global Exit_bt
+    global Cmd_bt
     page=0 #Menu id
     pen.penup()
     pen.clear() #Clear the board
@@ -799,54 +813,16 @@ def menu(): #GUI main menu
     pen.pendown()
     pen.write("Maze Game", align="center", font=("Arial", 50, "bold")) #Game title
     pen.penup()
-    time.sleep(0.01)
-    pen.goto(-100,125) #TL of instruction button
-    pen.pendown() #Start drawing instruction button
-    pen.goto(100,125) #TR of instruction button
-    pen.goto(100,75) #BR of instruction button
-    pen.goto(-100,75) #BL of instruction button
-    pen.goto(-100,125) #TL of instruction button
-    pen.penup()
-    pen.goto(0,80)
-    pen.pendown() #Write text
-    pen.write("Instruction", align="center", font=("Arial", 25, "bold"))
-    pen.penup() #Finish drawing instruction button
-    time.sleep(0.01)
-    pen.goto(-100,25) #TL of start button
-    pen.pendown() #Start drawing start button
-    pen.goto(100,25) #TR of start button
-    pen.goto(100,-25) #BR of start button
-    pen.goto(-100,-25) #BL of start button
-    pen.goto(-100,25) #TL of start button
-    pen.penup()
-    pen.goto(0,-20)
-    pen.pendown() #Write text
-    pen.write("Start", align="center", font=("Arial", 25, "bold"))
-    pen.penup() #Finish drawing start button
-    time.sleep(0.01)
-    pen.goto(-100,-75) #TL of setting button
-    pen.pendown() #Start drawing setting button
-    pen.goto(100,-75) #TR of setting button
-    pen.goto(100,-125) #BR of setting button
-    pen.goto(-100,-125) #BL of setting button
-    pen.goto(-100,-75) #TL of setting button
-    pen.penup()
-    pen.goto(0,-120)
-    pen.pendown() #Write text
-    pen.write("Setting", align="center", font=("Arial", 25, "bold"))
-    pen.penup() #Finish drawing setting button
-    time.sleep(0.01)
-    pen.goto(-250,-250) #TL of exit button
-    pen.pendown() #Start drawing exit button
-    pen.goto(-150,-250) #TR of exit button
-    pen.goto(-150,-300) #BR of exit button
-    pen.goto(-250,-300) #BL of exit button
-    pen.goto(-250,-250) #TL of exit button
-    pen.penup()
-    pen.goto(-200,-295)
-    pen.pendown() #Write text
-    pen.write("Exit", align="center", font=("Arial", 25, "bold"))
-    pen.penup() #Finish drawing exit button
+    Instruction_bt=Button(-100,125,200,50,"Instruction")
+    Instruction_bt.draw() #Draw instruction button
+    Start_bt=Button(-100,25,200,50,"Start")
+    Start_bt.draw() #Draw start button
+    Setting_bt=Button(-100,-75,200,50,"Setting")
+    Setting_bt.draw() #Draw setting button
+    Exit_bt=Button(-250,-250,100,50,"Exit")
+    Exit_bt.draw() #Draw exit button
+    Cmd_bt=Button(150,-250,100,50,"Cmd")
+    Cmd_bt.draw() #Draw cmd button
     screen.listen()
     screen.onclick(button_click)
 
@@ -860,40 +836,53 @@ def button_click(x,y): #Mouse clicked
     global screen
     global page
     global Difficulty
+    global mode
+    global Instruction_bt #Instruction button
+    global Start_bt #Start button
+    global Setting_bt #Setting button
+    global Exit_bt #Exit button
+    global Cmd_bt #Cmd button
+    global Return_bt #Return button
+    global Difficulty_btL #Difficulty left arrow button
+    global Difficulty_btR #Difficulty right arrow button
     if page == 0: #From menu
-        if -100 < x < 100:
-            if 75 < y < 125: #Instruction button pressed
-                instruction()
-            elif -25 < y < 25: #Start button pressed
-                Difficulty=1
-                game_setting()
-            elif -125 < y < -75: #Setting button pressed
-                setting()
-        elif -250 < x < -150 and -300 < y < -250: #Exit button pressed
+        if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
+            instruction()
+        elif Start_bt.get_x_min() < x < Start_bt.get_x_max() and Start_bt.get_y_min() < y < Start_bt.get_y_max(): #Start button pressed
+            Difficulty=1
+            game_setting()
+        elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
+            setting()
+        elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
             screen.clear()
             sys.exit()
+        elif Cmd_bt.get_x_min() < x < Cmd_bt.get_x_max() and Cmd_bt.get_y_min() < y < Cmd_bt.get_y_max(): #Cmd button pressed
+            screen.clear()
+            mode=1
+            main() #Swap to command line interface
     elif page == 1: #From instruction
-        if -250 < x < -125 and -300 < y < -250: #Return button pressed
+        if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             menu()
     elif page == 2: #From game_setting
-        if -250 < x < -125 and -300 < y < -250: #Return button pressed
+        if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             menu()
-        elif 0 < x < 25 and -25 < y < 25: #Left arrow button pressed
+        elif Difficulty_btL.get_x_min() < x < Difficulty_btL.get_x_max() and Difficulty_btL.get_y_min() < y < Difficulty_btL.get_y_max(): #Difficulty left arrow button pressed
             if Difficulty > 1: #Decrease difficulty
                 Difficulty=Difficulty-1
                 game_setting()
-        elif 255 < x < 230 and -25 < y < 25: #Right arrow button pressed
+        elif Difficulty_btR.get_x_min() < x < Difficulty_btR.get_x_max() and Difficulty_btR.get_y_min() < y < Difficulty_btR.get_y_max(): #Difficulty right arrow button pressed
             if Difficulty < 5: #Increase difficulty
                 Difficulty=Difficulty+1
                 game_setting()
     elif page == 3: #From setting
-        if -250 < x < -125 and -300 < y < -250: #Return button pressed
+        if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             menu()
 
 def instruction(): #GUI instruction
     global screen
     global page
     global pen
+    global Return_bt
     page=1
     pen.clear() #Reset board
     style="Arial", 15, "bold"
@@ -903,43 +892,36 @@ def instruction(): #GUI instruction
     pen.write("- This game is for single players -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Icon 'P' is the player -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- And icon 'E' is the exit -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- You can move in four directions -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Up(W), Down(S), Left(A), Right(D) -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Every steps you take will be recorded -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Your goal is to exit the maze with fewest steps -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- In Hardcore Mode your steps was limmited -", align="center", font=(style))
@@ -950,29 +932,17 @@ def instruction(): #GUI instruction
     pen.write("- Think carefully before moving -", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("- You are not allow to use more steps than", align="center", font=(style))
     pen.penup()
     y=y-50
-    time.sleep(0.1)
     pen.goto(0,y)
     pen.pendown()
     pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
     pen.penup()
-    time.sleep(0.1)
-    pen.goto(-250,-250) #TL of return button
-    pen.pendown() #Start drawing return button
-    pen.goto(-125,-250) #TR of return button
-    pen.goto(-125,-300) #BR of return button
-    pen.goto(-250,-300) #BL of return button
-    pen.goto(-250,-250) #TL of return button
-    pen.penup()
-    pen.goto(-187.5,-295)
-    pen.pendown() #Write text
-    pen.write("Return", align="center", font=("Arial", 25, "bold"))
-    pen.penup() #Finish drawing return button
+    Return_bt=Button(-250,-250,125,50,"Return")
+    Return_bt.draw() #Draw return button
     screen.listen()
     screen.onclick(button_click)
 
@@ -981,81 +951,39 @@ def game_setting(): #GUI game setting
     global page
     global pen
     global Difficulty
+    global Return_bt
+    global Difficulty_btL
+    global Difficulty_btR
     page=2
     pen.clear() #Reset board
-    style="Arial", 20, "bold"
-    pen.goto(-75,-12.5)
+    x=-135
+    y=25
+    pen.goto(x,y-42.5)
     pen.pendown()
-    pen.write("Difficulty:", align="center", font=(style))
+    pen.write("Difficulty:", align="center", font=("Arial", 25, "bold"))
     pen.penup()
-    time.sleep(0.1)
-    pen.goto(0,25) #TL of left arrow button
-    pen.pendown() #Start drawing left arrow button
-    pen.goto(25,25) #TR of left arrow button
-    pen.goto(25,-25) #BR of left arrow button
-    pen.goto(0,-25) #BL of left arrow button
-    pen.goto(0,25) #TL of left arrow button
-    pen.penup()
-    pen.goto(5,0) #Arrow left point
-    pen.pendown()
-    pen.begin_fill()
-    pen.fillcolor("black")
-    pen.goto(20,20) #Arrow top right point
-    pen.goto(20,-20) #Arrow bottom right point
-    pen.goto(5,0) #Arrow left point
-    pen.end_fill()
+    x=x+85
+    Difficulty_btL=Button_L(x,y,25,50)
+    Difficulty_btL.draw()
+    x=x+50
     pen.penup() #Finish drawing left arrow button
-    time.sleep(0.1)
-    pen.goto(30,25) #TL of current difficulty display
-    pen.pendown() #Start drawing current difficulty display
-    pen.goto(225,25) #TR of current difficulty display
-    pen.goto(225,-25) #BR of current difficulty display
-    pen.goto(30,-25) #BL of current difficulty display
-    pen.goto(30,25) #TL of current difficulty display
-    pen.penup()
-    pen.goto(127.5,-17.5)
-    pen.pendown() #Print current difficulty
-    style="Arial", 20, "bold"
-    if Difficulty == 1:
-        pen.write("1(21*21 Board)", align="center", font=(style))
+    if Difficulty == 1: #Set difficulty
+        Difficulty_dp=Button(x,y,225,50,"1(21*21 Board)")
     elif Difficulty == 2:
-        pen.write("2(31*31 Board)", align="center", font=(style))
+        Difficulty_dp=Button(x,y,225,50,"2(31*31 Board)")
     elif Difficulty == 3:
-        pen.write("3(41*41 Board)", align="center", font=(style))
+        Difficulty_dp=Button(x,y,225,50,"3(41*41 Board)")
     elif Difficulty == 4:
-        pen.write("4(51*51 Board)", align="center", font=(style))
+        Difficulty_dp=Button(x,y,225,50,"4(51*51 Board)")
     elif Difficulty == 5:
-        pen.write("5(Hardcore Mode)", align="center", font=(style))
+        Difficulty_dp=Button(x,y,225,50,"5(Hardcore Mode)")
+    Difficulty_dp.draw() #Draw current difficulty display
     pen.penup() #Finish drawing current difficulty display
-    time.sleep(0.1)
-    pen.goto(230,25) #TL of right arrow button
-    pen.pendown() #Start drawing right arrow button
-    pen.goto(255,25) #TR of right arrow button
-    pen.goto(255,-25) #BR of right arrow button
-    pen.goto(230,-25) #BL of right arrow button
-    pen.goto(230,25) #TL of right arrow button
-    pen.penup()
-    pen.goto(235,20) #Arrow top left point
-    pen.pendown()
-    pen.begin_fill()
-    pen.fillcolor("black")
-    pen.goto(250,0) #Arrow right point
-    pen.goto(235,-20) #Arrow bottom left point
-    pen.goto(235,20) #Arrow top left point
-    pen.end_fill()
-    pen.penup() #Finish drawing right arrow button
-    time.sleep(0.1)
-    pen.goto(-250,-250) #TL of return button
-    pen.pendown() #Start drawing return button
-    pen.goto(-125,-250) #TR of return button
-    pen.goto(-125,-300) #BR of return button
-    pen.goto(-250,-300) #BL of return button
-    pen.goto(-250,-250) #TL of return button
-    pen.penup()
-    pen.goto(-187.5,-295)
-    pen.pendown() #Write text
-    pen.write("Return", align="center", font=("Arial", 25, "bold"))
-    pen.penup() #Finish drawing return button
+    x=x+230
+    Difficulty_btR=Button_R(x,y,25,50)
+    Difficulty_btR.draw()
+    Return_bt=Button(-250,-250,125,50,"Return")
+    Return_bt.draw() #Draw return button
     screen.listen()
     screen.onclick(button_click)
 
@@ -1063,23 +991,125 @@ def setting(): #GUI setting
     global screen
     global page
     global pen
+    global Return_bt
     page=3
     pen.clear() #Reset board
     pen.goto(0,0)
-    time.sleep(0.1)
-    pen.goto(-250,-250) #TL of return button
-    pen.pendown() #Start drawing return button
-    pen.goto(-125,-250) #TR of return button
-    pen.goto(-125,-300) #BR of return button
-    pen.goto(-250,-300) #BL of return button
-    pen.goto(-250,-250) #TL of return button
-    pen.penup()
-    pen.goto(-187.5,-295)
-    pen.pendown() #Write text
-    pen.write("Return", align="center", font=("Arial", 25, "bold"))
-    pen.penup() #Finish drawing return button
+    Return_bt=Button(-250,-250,125,50,"Return")
+    Return_bt.draw() #Draw return button
     screen.listen()
     screen.onclick(button_click)
+
+class Button:
+    def __init__(self, x, y, width, height, text):
+        self.x=x #Top left x coordinate
+        self.y=y #Top left y coordinate
+        self.width=width
+        self.height=height
+        self.text=text
+    
+    def get_x_min(self): #Return the x value bottom bound
+        return self.x
+    
+    def get_x_max(self): #Return the x value upper bound
+        return self.x+self.width
+    
+    def get_y_min(self): #Return the y value bottom bound
+        return self.y-self.height
+    
+    def get_y_max(self): #Return the y value upper bound
+        return self.y
+
+    def draw(self): #Draw button
+        global screen
+        global pen
+        pen.goto(self.x,self.y) #TL of the button
+        pen.pendown() #Start drawing the button
+        pen.goto(self.x+self.width,self.y) #TR of the button
+        pen.goto(self.x+self.width,self.y-self.height) #BR of the button
+        pen.goto(self.x,self.y-self.height) #BL of the button
+        pen.goto(self.x,self.y) #TL of the button
+        pen.penup()
+        pen.goto(self.x+(self.width/2),self.y-self.height+5)
+        pen.pendown() #Write text
+        pen.write(self.text, align="center", font=("Arial", 25, "bold"))
+        pen.penup() #Finish drawing the button
+
+class Button_L: #Left arrow button
+    def __init__(self, x, y, width, height):
+        self.x=x #Top left x coordinate
+        self.y=y #Top left y coordinate
+        self.width=width
+        self.height=height
+
+    def get_x_min(self): #Return the x value bottom bound
+        return self.x
+    
+    def get_x_max(self): #Return the x value upper bound
+        return self.x+self.width
+    
+    def get_y_min(self): #Return the y value bottom bound
+        return self.y-self.height
+    
+    def get_y_max(self): #Return the y value upper bound
+        return self.y
+
+    def draw(self): #Draw button
+        global pen
+        pen.goto(self.x,self.y) #TL of the button
+        pen.pendown() #Start drawing the button
+        pen.goto(self.x+self.width,self.y) #TR of the button
+        pen.goto(self.x+self.width,self.y-self.height) #BR of the button
+        pen.goto(self.x,self.y-self.height) #BL of the button
+        pen.goto(self.x,self.y) #TL of the button
+        pen.penup()
+        pen.goto(self.x+5,self.y-self.height/2) #Arrow left point
+        pen.pendown() #Start drawing arrow
+        pen.begin_fill()
+        pen.fillcolor("black")
+        pen.goto(self.x+self.width-5,self.y-5) #Arrow top right point
+        pen.goto(self.x+self.width-5,self.y-self.height+5) #Arrow bottom right point
+        pen.goto(self.x+5,self.y-self.height/2) #Arrow left point
+        pen.end_fill()
+        pen.penup() #Finish drawing the button
+
+class Button_R: #Right arrow button
+    def __init__(self, x, y, width, height):
+        self.x=x #Top left x coordinate
+        self.y=y #Top left y coordinate
+        self.width=width
+        self.height=height
+
+    def get_x_min(self): #Return the x value bottom bound
+        return self.x
+    
+    def get_x_max(self): #Return the x value upper bound
+        return self.x+self.width
+    
+    def get_y_min(self): #Return the y value bottom bound
+        return self.y-self.height
+    
+    def get_y_max(self): #Return the y value upper bound
+        return self.y
+
+    def draw(self): #Draw button
+        global pen
+        pen.goto(self.x,self.y) #TL of the button
+        pen.pendown() #Start drawing the button
+        pen.goto(self.x+self.width,self.y) #TR of the button
+        pen.goto(self.x+self.width,self.y-self.height) #BR of the button
+        pen.goto(self.x,self.y-self.height) #BL of the button
+        pen.goto(self.x,self.y) #TL of the button
+        pen.penup()
+        pen.goto(self.x+5,self.y-5) #Arrow top left point
+        pen.pendown() #Start drawing arrow
+        pen.begin_fill()
+        pen.fillcolor("black")
+        pen.goto(self.x+self.width-5,self.y-self.height/2) #Arrow right point
+        pen.goto(self.x+5,self.y-self.height+5) #Arrow bottom leftight point
+        pen.goto(self.x+5,self.y-5) #Arrow top left point
+        pen.end_fill()
+        pen.penup() #Finish drawing the button
 
 import time
 import random
