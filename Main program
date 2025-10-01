@@ -682,6 +682,13 @@ def maze_solve():
         print("System: Recommend steps for this maze:", rec_step)
         time.sleep(0.1)
         game()
+    elif mode == 2:
+        draw_maze()
+    else:
+        print("System: ERROR")
+        print("System: User interface not recognised, please restart the game")
+        ans=input("System: Press Enter to exit the game ")
+        sys.exit()
 
 def Timer(): #10 minutes timer (Sub-thread)
     Time_up=False
@@ -746,37 +753,10 @@ def main(): #Cmd menu
                 print("System: Formet error")
         if Difficulty == 5:
             ans=4
-        Size=(ans+1)*10+1
+        Size=(ans+1)*10+1 #Calculate board size
         print("System: Good luck!")
         time.sleep(0.5)
         build_maze()
-
-def game_setup(): #Game GUI setup
-    global t
-    global screen
-    global Size
-    global Ratio
-    global FPS
-    screen.clear()
-    screen=t.Screen()
-    screen.title("Maze Game")
-    screen.bgcolor("White")
-    if Size == 21 :
-        Ratio=35
-    elif Size == 31:
-        Ratio=25
-    elif Size == 41:
-        Ratio=17.5
-    elif Size == 51:
-        Ratio=15
-    screen.setup(width=Size*Ratio, height=Size*Ratio)
-    screen.tracer(0)
-    refrash()
-    pen=t.Turtle()
-    pen.shapesize((Ratio/20), (Ratio/20))
-    pen.penup()
-    pen.showturtle()
-    pen.goto((Ratio/4),0) #Center
 
 def menu_setup(): #GUI menu setup
     global t
@@ -837,12 +817,13 @@ def button_click(x,y): #Mouse clicked
     global page
     global Difficulty
     global mode
+    global Size
     global Instruction_bt #Instruction button
     global Start_bt #Start button
     global Setting_bt #Setting button
     global Exit_bt #Exit button
-    global Cmd_bt #Cmd button
     global Return_bt #Return button
+    global Cmd_bt #Cmd button
     global Difficulty_btL #Difficulty left arrow button
     global Difficulty_btR #Difficulty right arrow button
     if page == 0: #From menu
@@ -874,6 +855,8 @@ def button_click(x,y): #Mouse clicked
             if Difficulty < 5: #Increase difficulty
                 Difficulty=Difficulty+1
                 game_setting()
+        elif Start_bt.get_x_min() < x < Start_bt.get_x_max() and Start_bt.get_y_min() < y < Start_bt.get_y_max(): #Start button pressed
+            game_setup()
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             menu()
@@ -886,57 +869,57 @@ def instruction(): #GUI instruction
     page=1
     pen.clear() #Reset board
     style="Arial", 15, "bold"
-    y=275
+    y=275 #Fist row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- This game is for single players -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Second row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Icon 'P' is the player -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Third row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- And icon 'E' is the exit -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Fourth row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- You can move in four directions -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Fifth row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Up(W), Down(S), Left(A), Right(D) -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Sixth row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Every steps you take will be recorded -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Seventh row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Your goal is to exit the maze with fewest steps -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Eighth row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- In Hardcore Mode your steps was limmited -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Nineth row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- Think carefully before moving -", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Tenth row
     pen.goto(0,y)
     pen.pendown()
     pen.write("- You are not allow to use more steps than", align="center", font=(style))
     pen.penup()
-    y=y-50
+    y=y-50 #Eleventh row
     pen.goto(0,y)
     pen.pendown()
     pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
@@ -951,37 +934,41 @@ def game_setting(): #GUI game setting
     global page
     global pen
     global Difficulty
-    global Return_bt
     global Difficulty_btL
     global Difficulty_btR
+    global Start_bt
+    global Return_bt
     page=2
     pen.clear() #Reset board
-    x=-135
+    x=-170 #Difficulty text position
     y=25
     pen.goto(x,y-42.5)
     pen.pendown()
     pen.write("Difficulty:", align="center", font=("Arial", 25, "bold"))
     pen.penup()
-    x=x+85
+    x=x+85 #Difficulty text to difficulty left arrow button TL position
     Difficulty_btL=Button_L(x,y,25,50)
     Difficulty_btL.draw()
-    x=x+50
+    x=x+30 #Difficulty left arrow button TL to difficulty display TL position
     pen.penup() #Finish drawing left arrow button
     if Difficulty == 1: #Set difficulty
-        Difficulty_dp=Button(x,y,225,50,"1(21*21 Board)")
+        text="1(21*21 Board)"
     elif Difficulty == 2:
-        Difficulty_dp=Button(x,y,225,50,"2(31*31 Board)")
+        text="2(31*31 Board)"
     elif Difficulty == 3:
-        Difficulty_dp=Button(x,y,225,50,"3(41*41 Board)")
+        text="3(41*41 Board)"
     elif Difficulty == 4:
-        Difficulty_dp=Button(x,y,225,50,"4(51*51 Board)")
+        text="4(51*51 Board)"
     elif Difficulty == 5:
-        Difficulty_dp=Button(x,y,225,50,"5(Hardcore Mode)")
+        text="5(Hardcore Mode)"
+    Difficulty_dp=Button(x,y,285,50,text)
     Difficulty_dp.draw() #Draw current difficulty display
     pen.penup() #Finish drawing current difficulty display
-    x=x+230
+    x=x+290 #Difficulty display to difficulty right arrow button TL position
     Difficulty_btR=Button_R(x,y,25,50)
     Difficulty_btR.draw()
+    Start_bt=Button(-50,-100,100,50,"Start")
+    Start_bt.draw() #Draw start button
     Return_bt=Button(-250,-250,125,50,"Return")
     Return_bt.draw() #Draw return button
     screen.listen()
@@ -999,6 +986,66 @@ def setting(): #GUI setting
     Return_bt.draw() #Draw return button
     screen.listen()
     screen.onclick(button_click)
+
+def game_setup(): #Game GUI setup
+    global t
+    global screen
+    global Size
+    global Ratio
+    global FPS
+    screen.clear()
+    screen=t.Screen()
+    screen.title("Maze Game")
+    screen.bgcolor("White")
+    temp=Difficulty
+    if Difficulty == 5:
+        temp=4
+    Size=(temp+1)*10+1 #Calculate board size
+    if Size == 21 :
+        Ratio=30
+    elif Size == 31:
+        Ratio=20
+    elif Size == 41:
+        Ratio=15
+    elif Size == 51:
+        Ratio=12.5
+    screen.setup(width=Size*Ratio, height=Size*Ratio)
+    screen.tracer(0)
+    refrash()
+    pen=t.Turtle() #Use to draw maze
+    pen.shapesize((Ratio/20), (Ratio/20))
+    pen.penup()
+    pen.color("black")
+    pen.showturtle()
+    pen.goto((Ratio/4),0) #Center
+    player=t.Turtle() #Player control character and text display when drawing maze
+    player.shapesize((Ratio/20), (Ratio/20))
+    player.penup()
+    player.color("Green")
+    player.showturtle()
+    player.goto(-(Ratio/8),-(Ratio/4)) #Center
+    player.setheading(270)
+    wall_block(100,100)
+
+def draw_maze():
+    global Board
+    global pen
+    global screen
+    global Size
+    global Ratio
+
+def wall_block(x,y):
+    global pen
+    global Ratio
+    pen.goto(x,y) #Top left
+    pen.pendown()
+    pen.begin_fill()
+    pen.goto(x+Ratio,y) #Top right
+    pen.goto(x+Ratio,y-Ratio)#Bottom right
+    pen.goto(x,y-Ratio)#Bottom left
+    pen.goto(x,y) #Top left
+    pen.end_fill()
+    pen.penup()
 
 class Button:
     def __init__(self, x, y, width, height, text):
