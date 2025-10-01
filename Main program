@@ -136,6 +136,7 @@ def print_board(): #Cmd board
 def build_maze():
     global Board
     global Size
+    global mode
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
@@ -531,6 +532,8 @@ def maze_solve():
     global Size
     global Difficulty
     global rec_step
+    global mode
+    global cycle
     retry_cycle=0
     passed = False
     if mode == 1:
@@ -678,17 +681,19 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    if mode == 1:
-        print("System: Recommend steps for this maze:", rec_step)
-        time.sleep(0.1)
-        game()
-    elif mode == 2:
-        draw_maze()
-    else:
-        print("System: ERROR")
-        print("System: User interface not recognised, please restart the game")
-        ans=input("System: Press Enter to exit the game ")
-        sys.exit()
+    cycle=cycle+1
+    if cycle == 1:
+        if mode == 1:
+            print("System: Recommend steps for this maze:", rec_step)
+            time.sleep(0.1)
+            game()
+        elif mode == 2:
+            draw_maze()
+        else:
+            print("System: ERROR")
+            print("System: User interface not recognised, please restart the game")
+            ans=input("System: Press Enter to exit the game ")
+            sys.exit()
 
 def Timer(): #10 minutes timer (Sub-thread)
     Time_up=False
@@ -769,11 +774,10 @@ def menu_setup(): #GUI menu setup
     screen.bgcolor("White")
     screen.setup(width=550, height=650)
     screen.tracer(0)
-    refrash()
     pen=t.Turtle()
     pen.hideturtle()
     pen.penup()
-    screen.mainloop
+    screen.update()
     menu()
 
 def menu(): #GUI main menu
@@ -803,14 +807,9 @@ def menu(): #GUI main menu
     Exit_bt.draw() #Draw exit button
     Cmd_bt=Button(150,-250,100,50,"Cmd")
     Cmd_bt.draw() #Draw cmd button
+    screen.update()
     screen.listen()
     screen.onclick(button_click)
-
-def refrash(): #GUI FPS
-    global screen
-    global FPS
-    screen.update()
-    screen.ontimer(refrash, 1000//FPS) #FPS control
 
 def button_click(x,y): #Mouse clicked
     global screen
@@ -826,6 +825,7 @@ def button_click(x,y): #Mouse clicked
     global Cmd_bt #Cmd button
     global Difficulty_btL #Difficulty left arrow button
     global Difficulty_btR #Difficulty right arrow button
+    screen.update()
     if page == 0: #From menu
         if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
             instruction()
@@ -926,6 +926,7 @@ def instruction(): #GUI instruction
     pen.penup()
     Return_bt=Button(-250,-250,125,50,"Return")
     Return_bt.draw() #Draw return button
+    screen.update()
     screen.listen()
     screen.onclick(button_click)
 
@@ -971,6 +972,7 @@ def game_setting(): #GUI game setting
     Start_bt.draw() #Draw start button
     Return_bt=Button(-250,-250,125,50,"Return")
     Return_bt.draw() #Draw return button
+    screen.update()
     screen.listen()
     screen.onclick(button_click)
 
@@ -984,6 +986,7 @@ def setting(): #GUI setting
     pen.goto(0,0)
     Return_bt=Button(-250,-250,125,50,"Return")
     Return_bt.draw() #Draw return button
+    screen.update()
     screen.listen()
     screen.onclick(button_click)
 
@@ -1008,24 +1011,17 @@ def game_setup(): #Game GUI setup
     elif Size == 41:
         Ratio=15
     elif Size == 51:
-        Ratio=12.5
+        Ratio=13
     screen.setup(width=Size*Ratio, height=Size*Ratio)
     screen.tracer(0)
-    refrash()
-    pen=t.Turtle() #Use to draw maze
+    pen=t.Turtle()
     pen.shapesize((Ratio/20), (Ratio/20))
     pen.penup()
     pen.color("black")
-    pen.showturtle()
+    pen.hideturtle()
     pen.goto((Ratio/4),0) #Center
-    player=t.Turtle() #Player control character and text display when drawing maze
-    player.shapesize((Ratio/20), (Ratio/20))
-    player.penup()
-    player.color("Green")
-    player.showturtle()
-    player.goto(-(Ratio/8),-(Ratio/4)) #Center
-    player.setheading(270)
-    wall_block(100,100)
+    screen.update()
+    build_maze()
 
 def draw_maze():
     global Board
@@ -1033,9 +1029,43 @@ def draw_maze():
     global screen
     global Size
     global Ratio
+    i=0
+    j=Size-1  #Board top left corner
+    while (i < Size) and (j != -1):
+        if Board[i][j] == "X":
+            x=-(Size*Ratio/2)+(i-1)*Ratio+Ratio #Screen x position
+            y=-(Size*Ratio/2)+(j-1)*Ratio+Ratio*2 #Screen y position
+            wall_block(x,y)
+        i=i+1
+        if i == Size:
+            i=0
+            j=j-1
+    found=False #Register is the player position found
+    i=1
+    j=Size-1
+    while found != True: #Automated relocate player position
+        if Board[i][j] == "P":
+            found=True
+        else:
+            i=i+1
+            if i > (Size-1):
+                print("System: ERROR")
+                print("System: Player position not found, please restart the game")
+                input("System: Press Enter to exit the game ")
+                sys.exit()
+    x=-(Size*Ratio/2)+(i-1)*Ratio+Ratio+(Ratio/4)
+    y=-(Size*Ratio/2)+(j-1)*Ratio+Ratio*2-(Ratio/4)
+    pen.pendown()
+    pen.showturtle()
+    screen.update()
+    pen.color("green")
+    pen.goto(x,y)
+    pen.penup()
+    screen.update()
 
 def wall_block(x,y):
     global pen
+    global screen
     global Ratio
     pen.goto(x,y) #Top left
     pen.pendown()
@@ -1046,6 +1076,7 @@ def wall_block(x,y):
     pen.goto(x,y) #Top left
     pen.end_fill()
     pen.penup()
+    screen.update()
 
 class Button:
     def __init__(self, x, y, width, height, text):
@@ -1068,8 +1099,8 @@ class Button:
         return self.y
 
     def draw(self): #Draw button
-        global screen
         global pen
+        global screen
         pen.goto(self.x,self.y) #TL of the button
         pen.pendown() #Start drawing the button
         pen.goto(self.x+self.width,self.y) #TR of the button
@@ -1081,6 +1112,7 @@ class Button:
         pen.pendown() #Write text
         pen.write(self.text, align="center", font=("Arial", 25, "bold"))
         pen.penup() #Finish drawing the button
+        screen.update()
 
 class Button_L: #Left arrow button
     def __init__(self, x, y, width, height):
@@ -1103,6 +1135,7 @@ class Button_L: #Left arrow button
 
     def draw(self): #Draw button
         global pen
+        global screen
         pen.goto(self.x,self.y) #TL of the button
         pen.pendown() #Start drawing the button
         pen.goto(self.x+self.width,self.y) #TR of the button
@@ -1119,6 +1152,7 @@ class Button_L: #Left arrow button
         pen.goto(self.x+5,self.y-self.height/2) #Arrow left point
         pen.end_fill()
         pen.penup() #Finish drawing the button
+        screen.update()
 
 class Button_R: #Right arrow button
     def __init__(self, x, y, width, height):
@@ -1141,6 +1175,7 @@ class Button_R: #Right arrow button
 
     def draw(self): #Draw button
         global pen
+        global screen
         pen.goto(self.x,self.y) #TL of the button
         pen.pendown() #Start drawing the button
         pen.goto(self.x+self.width,self.y) #TR of the button
@@ -1157,10 +1192,21 @@ class Button_R: #Right arrow button
         pen.goto(self.x+5,self.y-5) #Arrow top left point
         pen.end_fill()
         pen.penup() #Finish drawing the button
+        screen.update()
 
 import time
 import random
 import sys
 import threading
 import turtle as t
-menu_setup()
+mode=2
+cycle=0 #Threshold
+if mode == 1: #Cmd
+    main()
+elif mode == 2: #GUI
+    menu_setup()
+else:
+    print("System: ERROR")
+    print("System: User interface initialize fail, please restart the game")
+    ans=input("System: Press Enter to exit the game ")
+    sys.exit()
