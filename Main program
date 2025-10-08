@@ -974,6 +974,10 @@ def game_setup(): #Game GUI setup
     global Ratio
     global player
     global system
+    global page
+    global step
+    global menu_width
+    page=4
     screen.clear()
     screen=t.Screen()
     screen.title("Maze Game")
@@ -983,7 +987,8 @@ def game_setup(): #Game GUI setup
         temp=4
     Size=(temp+1)*10+1 #Calculate board size
     Ratio=min(screen.cv.winfo_screenwidth()/Size, screen.cv.winfo_screenheight()/Size)* 0.85 #Set screen size using monitor resolution
-    screen.setup(width=Size*Ratio+0.25*Ratio, height=Size*Ratio+0.25*Ratio)
+    menu_width=Size*Ratio/4 #In game menu width
+    screen.setup(width=Size*Ratio+0.25*Ratio+menu_width, height=Size*Ratio+0.25*Ratio)
     screen.tracer(0)
     pen=t.Turtle() #GUI drawing
     pen.shapesize((Ratio/20), (Ratio/20))
@@ -1003,6 +1008,11 @@ def game_setup(): #Game GUI setup
     system.color("red")
     system.goto(0,0)
     system.hideturtle()
+    step=t.Turtle() #Steps count
+    step.shapesize(1,1)
+    step.penup()
+    step.color("yellow")
+    step.hideturtle()
     screen.update()
     build_maze()
 
@@ -1013,15 +1023,16 @@ def draw_maze():
     global Size
     global Ratio
     global player
+    global menu_width
     i=0
     j=Size-1 #Board top left corner
+    #Maze bottom-left corner setted
+    maze_x0=-screen.window_width()/2-Ratio/1.25+menu_width
+    maze_y0=-screen.window_height()/2+Ratio/1.25
     while (i < Size) and (j != -1):
-        #Turtle screen bottom-left corner
-        screen_x0=-screen.window_width()/2-Ratio/1.25
-        screen_y0=-screen.window_height()/2+Ratio/1.25
         #Convert Board[i][j] location vecter to Screen x,y
-        x=screen_x0+i*Ratio+Ratio/2
-        y=screen_y0+j*Ratio+Ratio/2
+        x=maze_x0+i*Ratio+Ratio/2
+        y=maze_y0+j*Ratio+Ratio/2
         if Board[i][j] == "X": #Draw wall
             wall_block(x,y,"black")
         elif Board[i][j] == "E": #Draw exit
@@ -1047,7 +1058,6 @@ def draw_maze():
                 print("System: Player position not found, please restart the game")
                 input("System: Press Enter to exit the game ")
                 sys.exit()
-    screen.update()
     player.showturtle()
     screen.update()
     screen.onkeypress(move_up,"w")
@@ -1055,6 +1065,21 @@ def draw_maze():
     screen.onkeypress(move_left,"a")
     screen.onkeypress(move_right,"d")
     screen.listen()
+    draw_menu()
+
+def draw_menu():
+    global step
+    global pen
+    global screen
+    global Ratio
+    global menu_width
+    menu_x0=-screen.window_width()/2
+    style="Arial", 25, "bold"
+    items=5
+    margin=screen.window_height()*0.05
+    menu_heigh=screen.window_height()-margin
+    menu_width=menu_width*0.9
+    screen.update()
 
 def wall_block(x,y,color):
     global pen
