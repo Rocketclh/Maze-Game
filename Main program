@@ -538,6 +538,7 @@ def maze_solve():
     global rec_step
     global mode
     global cycle
+    global steps
     retry_cycle=0
     passed = False
     if mode == 1:
@@ -662,6 +663,7 @@ def maze_solve():
     rec_step=rec_step+10 #Add some buffer to the recommended steps
     cycle=cycle+1
     if cycle == 1:
+        steps=0
         if mode == 1:
             print("System: Recommend steps for this maze:", rec_step)
             time.sleep(0.1)
@@ -691,11 +693,9 @@ def Timer(): #10 minutes timer (Sub-thread)
 def main(): #Cmd menu
     global Size
     global Board
-    global steps
     global Type_error
     global Difficulty
     global mode
-    steps=0
     Type_error=False
     print("System: This game is for single players")
     time.sleep(1)
@@ -854,12 +854,12 @@ def instruction(): #GUI instruction
     y=y-50 #Second row
     pen.goto(0,y)
     pen.pendown()
-    pen.write("- Icon 'P' is the player -", align="center", font=(style))
+    pen.write("- The green curser is the player -", align="center", font=(style))
     pen.penup()
     y=y-50 #Third row
     pen.goto(0,y)
     pen.pendown()
-    pen.write("- And icon 'E' is the exit -", align="center", font=(style))
+    pen.write("- And red box is the exit -", align="center", font=(style))
     pen.penup()
     y=y-50 #Fourth row
     pen.goto(0,y)
@@ -973,6 +973,7 @@ def game_setup(): #Game GUI setup
     global Size
     global Ratio
     global player
+    global system
     screen.clear()
     screen=t.Screen()
     screen.title("Maze Game")
@@ -990,12 +991,18 @@ def game_setup(): #Game GUI setup
     pen.color("black")
     pen.hideturtle()
     pen.goto((Ratio/4),0) #Center
-    player=t.Turtle()
+    player=t.Turtle() #Player character
     player.shapesize((Ratio/20), (Ratio/20))
     player.penup()
-    player.color("green") #Player character
+    player.color("green")
     player.goto((Ratio/4),0)
     player.hideturtle()
+    system=t.Turtle()  #Output massage
+    system.shapesize(1,1)
+    system.penup()
+    system.color("red")
+    system.goto(0,0)
+    system.hideturtle()
     screen.update()
     build_maze()
 
@@ -1019,7 +1026,7 @@ def draw_maze():
             wall_block(x,y,"black")
         elif Board[i][j] == "E": #Draw exit
             wall_block(x,y,"red")
-        elif Board[i][j] == "P": #Draw exit
+        elif Board[i][j] == "P": #Draw player start
             wall_block(x,y,"blue")
             player.goto(x+Ratio/2,y-Ratio/2)
             player.setheading(270)
@@ -1043,35 +1050,11 @@ def draw_maze():
     screen.update()
     player.showturtle()
     screen.update()
-
-def move_up():
-    global Board
-    global Player
-    global Size
-    while found != True: #Automated relocate player position
-        if Board[x][y] == "P":
-            found=True
-        else:
-            y=y+1
-            if y > (Size-1):
-                x=x+1
-                y=0
-                if x > (Size-1):
-                    print("System: ERROR")
-                    print("System: Player position not found, please restart the game")
-                    ans=input("System: Press Enter to exit the game ")
-                    sys.exit()
-    if y < (Size-1) and Board[x][y+1] != "X":
-        Board[x][y]=" "
-        y=y+1
-        steps=steps+1
-        if Board[x][y] == "E":
-            end(True)
-        else:
-            Board[x][y]="P"
-    else:
-        print("System: Invalid move!")
-        print("System: You cannot move up")
+    screen.onkeypress(move_up,"w")
+    screen.onkeypress(move_down,"s")
+    screen.onkeypress(move_left,"a")
+    screen.onkeypress(move_right,"d")
+    screen.listen()
 
 def wall_block(x,y,color):
     global pen
@@ -1087,6 +1070,186 @@ def wall_block(x,y,color):
     pen.goto(x,y) #Top left
     pen.end_fill()
     pen.penup()
+    screen.update()
+
+def Invalid_move(direction):
+    global system
+    global screen
+    style="Arial", 25, "bold"
+    system.goto(0,25)
+    system.pendown()
+    system.write("Invalid Move", align="center", font=(style))
+    system.penup()
+    system.goto(0,-25)
+    text="You Cannot Move "+direction
+    system.pendown()
+    system.write(text, align="center", font=(style))
+    system.penup()
+    screen.ontimer(Sys_wait_2_second, 2000) #Execute after 2 second
+    screen.update()
+
+def Sys_wait_2_second(): #System massage clear after 2 second
+    global system
+    system.clear()
+
+def move_up():
+    global Board
+    global Player
+    global Size
+    global Screen
+    global Ratio
+    global steps
+    found=False
+    x=0
+    y=0
+    while found != True: #Automated relocate player position
+        if Board[x][y] == "P":
+            found=True
+        else:
+            y=y+1
+            if y > (Size-1):
+                x=x+1
+                y=0
+                if x > (Size-1):
+                    print("System: ERROR")
+                    print("System: Player position not found, please restart the game")
+                    ans=input("System: Press Enter to exit the game ")
+                    sys.exit()
+    player.setheading(90) #Curser turn toward up
+    if y < (Size-1) and Board[x][y+1] != "X":
+        Board[x][y]=" "
+        y=y+1
+        steps=steps+1
+        if Board[x][y] == "E":
+            end(True)
+        else:
+            Board[x][y]="P" #Change player postion in board
+            x=player.xcor()
+            y=player.ycor()
+            y=y+Ratio
+            player.goto(x,y) #Player curser move up
+    else:
+        Invalid_move("Up")
+    screen.update()
+
+def move_down():
+    global Board
+    global Player
+    global Size
+    global Screen
+    global Ratio
+    global steps
+    found=False
+    x=0
+    y=0
+    while found != True: #Automated relocate player position
+        if Board[x][y] == "P":
+            found=True
+        else:
+            y=y+1
+            if y > (Size-1):
+                x=x+1
+                y=0
+                if x > (Size-1):
+                    print("System: ERROR")
+                    print("System: Player position not found, please restart the game")
+                    ans=input("System: Press Enter to exit the game ")
+                    sys.exit()
+    player.setheading(270) #Curser turn toward down
+    if y > 0 and Board[x][y-1] != "X":
+        Board[x][y]=" "
+        y=y-1
+        steps=steps+1
+        if Board[x][y] == "E":
+            end(True)
+        else:
+            Board[x][y]="P" #Change player postion in board
+            x=player.xcor()
+            y=player.ycor()
+            y=y-Ratio
+            player.goto(x,y) #Player curser move down
+    else:
+        Invalid_move("Down")
+    screen.update()
+
+def move_left():
+    global Board
+    global Player
+    global Size
+    global Screen
+    global Ratio
+    global steps
+    found=False
+    x=0
+    y=0
+    while found != True: #Automated relocate player position
+        if Board[x][y] == "P":
+            found=True
+        else:
+            y=y+1
+            if y > (Size-1):
+                x=x+1
+                y=0
+                if x > (Size-1):
+                    print("System: ERROR")
+                    print("System: Player position not found, please restart the game")
+                    ans=input("System: Press Enter to exit the game ")
+                    sys.exit()
+    player.setheading(180) #Curser turn toward left
+    if x > 0 and Board[x-1][y] != "X":
+        Board[x][y]=" "
+        x=x-1
+        steps=steps+1
+        if Board[x][y] == "E":
+            end(True)
+        else:
+            Board[x][y]="P" #Change player postion in board
+            x=player.xcor()
+            y=player.ycor()
+            x=x-Ratio
+            player.goto(x,y) #Player curser move left
+    else:
+        Invalid_move("Left")
+    screen.update()
+
+def move_right():
+    global Board
+    global Player
+    global Size
+    global Screen
+    global Ratio
+    global steps
+    found=False
+    x=0
+    y=0
+    while found != True: #Automated relocate player position
+        if Board[x][y] == "P":
+            found=True
+        else:
+            y=y+1
+            if y > (Size-1):
+                x=x+1
+                y=0
+                if x > (Size-1):
+                    print("System: ERROR")
+                    print("System: Player position not found, please restart the game")
+                    ans=input("System: Press Enter to exit the game ")
+                    sys.exit()
+    player.setheading(0) #Curser turn toward right
+    if x < (Size-1) and Board[x+1][y] != "X":
+        Board[x][y]=" "
+        x=x+1
+        steps=steps+1
+        if Board[x][y] == "E":
+            end(True)
+        else:
+            Board[x][y]="P" #Change player postion in board
+            x=player.xcor()
+            y=player.ycor()
+            x=x+Ratio
+            player.goto(x,y) #Player curser move right
+    else:
+        Invalid_move("Right")
     screen.update()
 
 class Button:
@@ -1210,6 +1373,7 @@ import random
 import sys
 import threading
 import turtle as t
+timer=threading.Thread(target=Timer) #Setup sub-thread
 mode=2
 cycle=0 #Threshold
 if mode == 1: #Cmd
