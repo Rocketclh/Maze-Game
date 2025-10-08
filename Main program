@@ -465,32 +465,7 @@ def build_maze():
                 Chunk_num=Chunk_num+1 #Update the number of chunks
             if Chunk_num_F == Chunk_num: #Check is all chunk is finished
                 Done=True
-    y=Size-1
-    Plot=False
-    while not(Plot): #Randomize the player position
-        x=random.randint(1,(Size-1))
-        if x%2 == 0 :
-            x=(x%2)+(x//2)+1
-            x=x*random.randint(1,2)
-            if x%2 == 0 :
-                x=x+1
-        if not(x >= Size):
-            if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the player is start at the end of the path
-                Plot=True
-    Board[x][y]="P" #Player starting point
-    y=0
-    Plot=False
-    while not(Plot): #Randomize the exit position
-        x=random.randint(1,(Size-1))
-        if x%2 == 0 :
-            x=(x%2)+(x//2)+1
-            x=x*random.randint(1,2)
-            if x%2 == 0 :
-                x=x+1
-        if not(x >= Size):
-            if Board[x-1][y+1] == "X" or Board[x+1][y+1] == "X": #Making sure the exit is at the end of the path
-                Plot=True
-    Board[x][y]="E" #Exit point
+    Deploy() #Plot player and exit position
     if mode == 1:
         print("System: Maze 0"+mn+" loaded successfully")
         time.sleep(0.1)
@@ -526,6 +501,35 @@ def grid(x,y): #Convert Location vector to Grid format
     else:
         temp=temp+str(y)
     return temp
+def Deploy(): #Plot player and exit position
+    global Size
+    global board
+    y=Size-1
+    Plot=False
+    while not(Plot): #Randomize the player position
+        x=random.randint(1,(Size-1))
+        if x%2 == 0 :
+            x=(x%2)+(x//2)+1
+            x=x*random.randint(1,2)
+            if x%2 == 0 :
+                x=x+1
+        if not(x >= Size):
+            if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the player is start at the end of the path
+                Plot=True
+    Board[x][y]="P" #Player starting point
+    y=0
+    Plot=False
+    while not(Plot): #Randomize the exit position
+        x=random.randint(1,(Size-1))
+        if x%2 == 0 :
+            x=(x%2)+(x//2)+1
+            x=x*random.randint(1,2)
+            if x%2 == 0 :
+                x=x+1
+        if not(x >= Size):
+            if Board[x-1][y+1] == "X" or Board[x+1][y+1] == "X": #Making sure the exit is at the end of the path
+                Plot=True
+    Board[x][y]="E" #Exit point
 
 def maze_solve():
     global Board
@@ -649,32 +653,7 @@ def maze_solve():
             for k in range(Size): #Redraw the top and bottom edge
                 Board[k][0] = "X"
                 Board[k][Size-1] = "X"
-            y=Size-1
-            Plot=False
-            while not(Plot): #Randomize the player position
-                x=random.randint(1,(Size-1))
-                if x%2 == 0 :
-                    x=(x%2)+(x//2)+1
-                    x=x*random.randint(1,2)
-                    if x%2 == 0 :
-                        x=x+1
-                if not(x >= Size):
-                    if Board[x-1][y-1] == "X" or Board[x+1][y-1] == "X": #Making sure the player is start at the end of the path
-                        Plot=True
-            Board[x][y]="P" #Player starting point
-            y=0
-            Plot=False
-            while not(Plot): #Randomize the exit position
-                x=random.randint(1,(Size-1))
-                if x%2 == 0 :
-                    x=(x%2)+(x//2)+1
-                    x=x*random.randint(1,2)
-                    if x%2 == 0 :
-                        x=x+1
-                if not(x >= Size):
-                    if Board[x-1][y+1] == "X" or Board[x+1][y+1] == "X": #Making sure the exit is at the end of the path
-                        Plot=True
-            Board[x][y]="E" #Exit point
+            Deploy()
             retry_cycle=retry_cycle+1
             if retry_cycle == 3: #Maximum number of retry
                 build_maze() #Restart the maze generation if it exceed the maximum number of retry
@@ -767,8 +746,6 @@ def menu_setup(): #GUI menu setup
     global t
     global screen
     global pen
-    global FPS
-    FPS=60
     screen=t.Screen()
     screen.title("Maze Game")
     screen.bgcolor("White")
@@ -995,7 +972,7 @@ def game_setup(): #Game GUI setup
     global screen
     global Size
     global Ratio
-    global FPS
+    global player
     screen.clear()
     screen=t.Screen()
     screen.title("Maze Game")
@@ -1004,22 +981,21 @@ def game_setup(): #Game GUI setup
     if Difficulty == 5:
         temp=4
     Size=(temp+1)*10+1 #Calculate board size
-    if Size == 21 :
-        Ratio=30
-    elif Size == 31:
-        Ratio=20
-    elif Size == 41:
-        Ratio=15
-    elif Size == 51:
-        Ratio=13
-    screen.setup(width=Size*Ratio, height=Size*Ratio)
+    Ratio=min(screen.cv.winfo_screenwidth()/Size, screen.cv.winfo_screenheight()/Size)* 0.85 #Set screen size using monitor resolution
+    screen.setup(width=Size*Ratio+0.25*Ratio, height=Size*Ratio+0.25*Ratio)
     screen.tracer(0)
-    pen=t.Turtle()
+    pen=t.Turtle() #GUI drawing
     pen.shapesize((Ratio/20), (Ratio/20))
     pen.penup()
     pen.color("black")
     pen.hideturtle()
     pen.goto((Ratio/4),0) #Center
+    player=t.Turtle()
+    player.shapesize((Ratio/20), (Ratio/20))
+    player.penup()
+    player.color("green") #Player character
+    player.goto((Ratio/4),0)
+    player.hideturtle()
     screen.update()
     build_maze()
 
@@ -1029,13 +1005,24 @@ def draw_maze():
     global screen
     global Size
     global Ratio
+    global player
     i=0
-    j=Size-1  #Board top left corner
+    j=Size-1 #Board top left corner
     while (i < Size) and (j != -1):
-        if Board[i][j] == "X":
-            x=-(Size*Ratio/2)+(i-1)*Ratio+Ratio #Screen x position
-            y=-(Size*Ratio/2)+(j-1)*Ratio+Ratio*2 #Screen y position
-            wall_block(x,y)
+        #Turtle screen bottom-left corner
+        screen_x0=-screen.window_width()/2-Ratio/1.25
+        screen_y0=-screen.window_height()/2+Ratio/1.25
+        #Convert Board[i][j] location vecter to Screen x,y
+        x=screen_x0+i*Ratio+Ratio/2
+        y=screen_y0+j*Ratio+Ratio/2
+        if Board[i][j] == "X": #Draw wall
+            wall_block(x,y,"black")
+        elif Board[i][j] == "E": #Draw exit
+            wall_block(x,y,"red")
+        elif Board[i][j] == "P": #Draw exit
+            wall_block(x,y,"blue")
+            player.goto(x+Ratio/2,y-Ratio/2)
+            player.setheading(270)
         i=i+1
         if i == Size:
             i=0
@@ -1053,20 +1040,44 @@ def draw_maze():
                 print("System: Player position not found, please restart the game")
                 input("System: Press Enter to exit the game ")
                 sys.exit()
-    x=-(Size*Ratio/2)+(i-1)*Ratio+Ratio+(Ratio/4)
-    y=-(Size*Ratio/2)+(j-1)*Ratio+Ratio*2-(Ratio/4)
-    pen.pendown()
-    pen.showturtle()
     screen.update()
-    pen.color("green")
-    pen.goto(x,y)
-    pen.penup()
+    player.showturtle()
     screen.update()
 
-def wall_block(x,y):
+def move_up():
+    global Board
+    global Player
+    global Size
+    while found != True: #Automated relocate player position
+        if Board[x][y] == "P":
+            found=True
+        else:
+            y=y+1
+            if y > (Size-1):
+                x=x+1
+                y=0
+                if x > (Size-1):
+                    print("System: ERROR")
+                    print("System: Player position not found, please restart the game")
+                    ans=input("System: Press Enter to exit the game ")
+                    sys.exit()
+    if y < (Size-1) and Board[x][y+1] != "X":
+        Board[x][y]=" "
+        y=y+1
+        steps=steps+1
+        if Board[x][y] == "E":
+            end(True)
+        else:
+            Board[x][y]="P"
+    else:
+        print("System: Invalid move!")
+        print("System: You cannot move up")
+
+def wall_block(x,y,color):
     global pen
     global screen
     global Ratio
+    pen.color(color)
     pen.goto(x,y) #Top left
     pen.pendown()
     pen.begin_fill()
