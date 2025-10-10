@@ -140,7 +140,7 @@ def build_maze():
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
-    i=1 #Maze generation method using
+    i=2 #Maze generation method using
     if i == 1: #Loop-erased random walk method
         #Maze format: node only
         #Board format: node and line(path)
