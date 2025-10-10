@@ -140,7 +140,7 @@ def build_maze():
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
-    i=2 #Maze generation method using
+    i=1 #Maze generation method using
     if i == 1: #Loop-erased random walk method
         #Maze format: node only
         #Board format: node and line(path)
@@ -182,9 +182,10 @@ def build_maze():
                                 found=False
                                 for c in range(1,len(Path)):
                                     if Path[c] == grid(x,y):
+                                        m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(c-1)] #Remove the path cycle
+                                    Path = Path[:(m-1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                     elif Direction == 2: #Move down
@@ -196,9 +197,10 @@ def build_maze():
                                 found=False
                                 for c in range(1,len(Path)):
                                     if Path[c] == grid(x,y):
+                                        m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(c-1)] #Remove the path cycle
+                                    Path = Path[:(m-1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                     elif Direction == 3: #Move left
@@ -210,9 +212,10 @@ def build_maze():
                                 found=False
                                 for c in range(1,len(Path)):
                                     if Path[c] == grid(x,y):
+                                        m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(c-1)] #Remove the path cycle
+                                    Path = Path[:(m-1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                     elif Direction == 4: #Move right
@@ -224,9 +227,10 @@ def build_maze():
                                 found=False
                                 for c in range(1,len(Path)):
                                     if Path[c] == grid(x,y):
+                                        m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(c-1)] #Remove the path cycle
+                                    Path = Path[:(m-1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                 for n in range(0, len(Path)-1): #Register paths into maze
@@ -787,6 +791,7 @@ def menu(): #GUI main menu
     screen.update()
     screen.listen()
     screen.onclick(button_click)
+    screen.mainloop() #Keep the window open
 
 def button_click(x,y): #Mouse clicked
     global screen
@@ -1080,6 +1085,7 @@ def draw_menu():
     menu_heigh=screen.window_height()-margin
     menu_width=menu_width*0.9
     screen.update()
+    screen.mainloop() #Keep the window open
 
 def wall_block(x,y,color):
     global pen
