@@ -1,4 +1,4 @@
-def game(): #Cmd game control
+def game(): #CLI game control
     global steps
     global Board
     global Size
@@ -98,7 +98,7 @@ def game(): #Cmd game control
         time.sleep(0.5)
     game()
 
-def end(win): #Cmd win output
+def end(win): # win output
     global steps
     global rec_step
     if win:
@@ -120,7 +120,7 @@ def end(win): #Cmd win output
     else:
         sys.exit()
 
-def print_board(): #Cmd board
+def print_board(): # board
     global Board
     global Size
     print("")
@@ -694,7 +694,7 @@ def Timer(): #10 minutes timer (Sub-thread)
             Time_up=True
     print("Times up")
 
-def main(): #Cmd menu
+def main(): # menu
     global Size
     global Board
     global Type_error
@@ -770,7 +770,7 @@ def menu(): #GUI main menu
     global Start_bt
     global Setting_bt
     global Exit_bt
-    global Cmd_bt
+    global CLI_bt
     page=0 #Menu id
     pen.penup()
     pen.clear() #Clear the board
@@ -786,8 +786,8 @@ def menu(): #GUI main menu
     Setting_bt.draw() #Draw setting button
     Exit_bt=Button(-250,-250,100,50,"Exit")
     Exit_bt.draw() #Draw exit button
-    Cmd_bt=Button(150,-250,100,50,"Cmd")
-    Cmd_bt.draw() #Draw cmd button
+    CLI_bt=Button(150,-250,100,50,"CLI")
+    CLI_bt.draw() #Draw CLI button
     screen.update()
     screen.listen()
     screen.onclick(button_click)
@@ -804,7 +804,7 @@ def button_click(x,y): #Mouse clicked
     global Setting_bt #Setting button
     global Exit_bt #Exit button
     global Return_bt #Return button
-    global Cmd_bt #Cmd button
+    global CLI_bt #CLI button
     global Difficulty_btL #Difficulty left arrow button
     global Difficulty_btR #Difficulty right arrow button
     screen.update()
@@ -819,7 +819,7 @@ def button_click(x,y): #Mouse clicked
         elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
             screen.clear()
             sys.exit()
-        elif Cmd_bt.get_x_min() < x < Cmd_bt.get_x_max() and Cmd_bt.get_y_min() < y < Cmd_bt.get_y_max(): #Cmd button pressed
+        elif CLI_bt.get_x_min() < x < CLI_bt.get_x_max() and CLI_bt.get_y_min() < y < CLI_bt.get_y_max(): #CLI button pressed
             screen.clear()
             mode=1
             main() #Swap to command line interface
@@ -1407,7 +1407,7 @@ import turtle as t
 timer=threading.Thread(target=Timer) #Setup sub-thread
 mode=2
 cycle=0 #Threshold
-if mode == 1: #Cmd
+if mode == 1: #CLI
     main()
 elif mode == 2: #GUI
     menu_setup()
