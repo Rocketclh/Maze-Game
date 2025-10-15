@@ -98,27 +98,68 @@ def game(): #CLI game control
         time.sleep(0.5)
     game()
 
-def end(win): # win output
+def end(win): #win output
     global steps
     global rec_step
-    if win:
-        print("System: Congratulations!")
-        print("System: You have exited the maze!")
-        print("System: Total steps taken:", steps)
-        print("System: Maze recommended steps:", rec_step)
-    else:
-        print("System: Game Over")
-        print("System: You have used all of the steps")
-        print("System: Total steps taken:", steps)
-        print("System: Maze recommended steps:", rec_step)
-    time.sleep(0.5)
-    ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
-    if ans.lower() == "/restart":
-        for i in range(5):
-            print("")
-        main()
-    else:
-        sys.exit()
+    global mode
+    global screen
+    if mode == 1: #CLI end output
+        if win:
+            print("System: Congratulations!")
+            print("System: You have exited the maze!")
+            print("System: Total steps taken:", steps)
+            print("System: Maze recommended steps:", rec_step)
+        else:
+            print("System: Game Over")
+            print("System: You have used all of the steps")
+            print("System: Total steps taken:", steps)
+            print("System: Maze recommended steps:", rec_step)
+        time.sleep(0.5)
+        ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
+        if ans.lower() == "/restart":
+            for i in range(5):
+                print("")
+            main()
+        else:
+            sys.exit()
+    elif mode == 2: #GUI end output
+        screen.clear() #Clear board
+        screen.title("Maze Game")
+        screen.bgcolor("White")
+        screen.setup(width=550, height=650)
+        screen.tracer(0)
+        pen=t.Turtle()
+        pen.hideturtle()
+        pen.penup()
+        screen.update()
+        style="Arial", 25, "bold"
+        y=100
+        if win:
+            pen.goto(0,y)
+            pen.write("Congratulations!", align="center", font=(style))
+            y=y-50
+            pen.goto(0,y)
+            pen.write("You have exited the maze!", align="center", font=(style))
+        else:
+            pen.goto(0,y)
+            pen.write("Game Over", align="center", font=(style))
+            if Time_up: #Times up
+                pen.write("You ran out of time", align="center", font=(style))
+            else:
+                pen.write("You have used all of the steps", align="center", font=(style))
+        y=y-50
+        pen.goto(0,y)
+        text="Total steps taken:"+str(steps)
+        pen.write(text, align="center", font=(style))
+        y=y-50
+        pen.goto(0,y)
+        text="Maze recommended steps:"+str(rec_step)
+        pen.write(text, align="center", font=(style))
+        y=y-50
+        pen.goto(0,y)
+        text="Time spend:"
+        pen.write(text, align="center", font=(style))
+        screen.update()
 
 def print_board(): # board
     global Board
@@ -776,9 +817,7 @@ def menu(): #GUI main menu
     pen.penup()
     pen.clear() #Clear the board
     pen.goto(0,200)
-    pen.pendown()
     pen.write("Maze Game", align="center", font=("Arial", 50, "bold")) #Game title
-    pen.penup()
     style="Arial", 25, "bold"
     Instruction_bt=Button(-100,125,200,50,"Instruction",style)
     Instruction_bt.draw() #Draw instruction button
@@ -819,10 +858,10 @@ def button_click(x,y): #Mouse clicked
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
             setting()
         elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
-            screen.clear()
+            screen.bye()
             sys.exit()
         elif CLI_bt.get_x_min() < x < CLI_bt.get_x_max() and CLI_bt.get_y_min() < y < CLI_bt.get_y_max(): #CLI button pressed
-            screen.clear()
+            screen.bye()
             mode=1
             main() #Swap to command line interface
     elif page == 1: #From instruction
@@ -855,59 +894,37 @@ def instruction(): #GUI instruction
     style="Arial", 15, "bold"
     y=275 #Fist row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- This game is for single players -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Second row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- The green curser is the player -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Third row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- And red box is the exit -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Fourth row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- You can move in four directions -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Fifth row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- Up(W), Down(S), Left(A), Right(D) -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Sixth row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- Every steps you take will be recorded -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Seventh row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- Your goal is to exit the maze with fewest steps -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Eighth row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- In Hardcore Mode your steps was limmited -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Nineth row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- Think carefully before moving -", align="center", font=(style))
-    pen.penup()
     y=y-50 #Tenth row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("- You are not allow to use more steps than", align="center", font=(style))
-    pen.penup()
     y=y-50 #Eleventh row
     pen.goto(0,y)
-    pen.pendown()
     pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
-    pen.penup()
     style="Arial", 25, "bold"
     Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
@@ -930,9 +947,7 @@ def game_setting(): #GUI game setting
     y=25
     style="Arial", 25, "bold"
     pen.goto(x,y-42.5)
-    pen.pendown()
     pen.write("Difficulty:", align="center", font=(style))
-    pen.penup()
     x=x+85 #Difficulty text to difficulty left arrow button TL position
     Difficulty_btL=Button_L(x,y,25,50)
     Difficulty_btL.draw()
@@ -990,7 +1005,6 @@ def game_setup(): #Game GUI setup
     global menu_width
     page=4
     screen.clear()
-    screen=t.Screen()
     screen.title("Maze Game")
     screen.bgcolor("White")
     temp=Difficulty
@@ -1003,9 +1017,9 @@ def game_setup(): #Game GUI setup
     screen.tracer(0)
     pen=t.Turtle() #GUI drawing
     pen.shapesize((Ratio/20), (Ratio/20))
-    pen.penup()
     pen.color("black")
     pen.hideturtle()
+    pen.penup()
     pen.goto((Ratio/4),0) #Center
     player=t.Turtle() #Player character
     player.shapesize((Ratio/20), (Ratio/20))
@@ -1013,7 +1027,7 @@ def game_setup(): #Game GUI setup
     player.color("green")
     player.goto((Ratio/4),0)
     player.hideturtle()
-    system=t.Turtle()  #Output massage
+    system=t.Turtle() #Output massage
     system.shapesize(1,1)
     system.penup()
     system.color("red")
@@ -1148,19 +1162,15 @@ def wall_block(x,y,color):
     pen.penup()
     screen.update()
 
-def Invalid_move(direction):
+def Invalid_move(direction): #Error massage output
     global system
     global screen
     style="Arial", 25, "bold"
     system.goto(0,25)
-    system.pendown()
     system.write("Invalid Move", align="center", font=(style))
-    system.penup()
     system.goto(0,-25)
     text="You Cannot Move "+direction
-    system.pendown()
     system.write(text, align="center", font=(style))
-    system.penup()
     screen.ontimer(Sys_wait_2_second, 2000) #Execute after 2 second
     screen.update()
 
@@ -1196,6 +1206,7 @@ def move_up():
         Board[x][y]=" "
         y=y+1
         steps=steps+1
+        steps_upd()
         if Board[x][y] == "E":
             end(True)
         else:
@@ -1206,7 +1217,6 @@ def move_up():
             player.goto(x,y) #Player curser move up
     else:
         Invalid_move("Up")
-    steps_upd()
     screen.update()
 
 def move_down():
@@ -1237,6 +1247,7 @@ def move_down():
         Board[x][y]=" "
         y=y-1
         steps=steps+1
+        steps_upd()
         if Board[x][y] == "E":
             end(True)
         else:
@@ -1247,7 +1258,6 @@ def move_down():
             player.goto(x,y) #Player curser move down
     else:
         Invalid_move("Down")
-    steps_upd()
     screen.update()
 
 def move_left():
@@ -1278,6 +1288,7 @@ def move_left():
         Board[x][y]=" "
         x=x-1
         steps=steps+1
+        steps_upd()
         if Board[x][y] == "E":
             end(True)
         else:
@@ -1288,7 +1299,6 @@ def move_left():
             player.goto(x,y) #Player curser move left
     else:
         Invalid_move("Left")
-    steps_upd()
     screen.update()
 
 def move_right():
@@ -1319,6 +1329,7 @@ def move_right():
         Board[x][y]=" "
         x=x+1
         steps=steps+1
+        steps_upd()
         if Board[x][y] == "E":
             end(True)
         else:
@@ -1329,7 +1340,6 @@ def move_right():
             player.goto(x,y) #Player curser move right
     else:
         Invalid_move("Right")
-    steps_upd()
     screen.update()
 
 class Button:
@@ -1362,11 +1372,9 @@ class Button:
         pen.goto(self.x+self.width,self.y-self.height) #BR of the button
         pen.goto(self.x,self.y-self.height) #BL of the button
         pen.goto(self.x,self.y) #TL of the button
-        pen.penup()
-        pen.goto(self.x+(self.width/2),self.y-self.height+5)
-        pen.pendown() #Write text
-        pen.write(self.text, align="center", font=self.style)
         pen.penup() #Finish drawing the button
+        pen.goto(self.x+(self.width/2),self.y-self.height+5)
+        pen.write(self.text, align="center", font=self.style)#Write text
         screen.update()
 
 class Button_L: #Left arrow button
