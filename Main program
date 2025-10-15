@@ -137,6 +137,7 @@ def build_maze():
     global Board
     global Size
     global mode
+    global mn
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
@@ -778,15 +779,16 @@ def menu(): #GUI main menu
     pen.pendown()
     pen.write("Maze Game", align="center", font=("Arial", 50, "bold")) #Game title
     pen.penup()
-    Instruction_bt=Button(-100,125,200,50,"Instruction")
+    style="Arial", 25, "bold"
+    Instruction_bt=Button(-100,125,200,50,"Instruction",style)
     Instruction_bt.draw() #Draw instruction button
-    Start_bt=Button(-100,25,200,50,"Start")
+    Start_bt=Button(-100,25,200,50,"Start",style)
     Start_bt.draw() #Draw start button
-    Setting_bt=Button(-100,-75,200,50,"Setting")
+    Setting_bt=Button(-100,-75,200,50,"Setting",style)
     Setting_bt.draw() #Draw setting button
-    Exit_bt=Button(-250,-250,100,50,"Exit")
+    Exit_bt=Button(-250,-250,100,50,"Exit",style)
     Exit_bt.draw() #Draw exit button
-    CLI_bt=Button(150,-250,100,50,"CLI")
+    CLI_bt=Button(150,-250,100,50,"CLI",style)
     CLI_bt.draw() #Draw CLI button
     screen.update()
     screen.listen()
@@ -906,7 +908,8 @@ def instruction(): #GUI instruction
     pen.pendown()
     pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
     pen.penup()
-    Return_bt=Button(-250,-250,125,50,"Return")
+    style="Arial", 25, "bold"
+    Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
     screen.listen()
@@ -925,9 +928,10 @@ def game_setting(): #GUI game setting
     pen.clear() #Reset board
     x=-170 #Difficulty text position
     y=25
+    style="Arial", 25, "bold"
     pen.goto(x,y-42.5)
     pen.pendown()
-    pen.write("Difficulty:", align="center", font=("Arial", 25, "bold"))
+    pen.write("Difficulty:", align="center", font=(style))
     pen.penup()
     x=x+85 #Difficulty text to difficulty left arrow button TL position
     Difficulty_btL=Button_L(x,y,25,50)
@@ -944,15 +948,15 @@ def game_setting(): #GUI game setting
         text="4(51*51 Board)"
     elif Difficulty == 5:
         text="5(Hardcore Mode)"
-    Difficulty_dp=Button(x,y,285,50,text)
+    Difficulty_dp=Button(x,y,285,50,text,style)
     Difficulty_dp.draw() #Draw current difficulty display
     pen.penup() #Finish drawing current difficulty display
     x=x+290 #Difficulty display to difficulty right arrow button TL position
     Difficulty_btR=Button_R(x,y,25,50)
     Difficulty_btR.draw()
-    Start_bt=Button(-50,-100,100,50,"Start")
+    Start_bt=Button(-50,-100,100,50,"Start",style)
     Start_bt.draw() #Draw start button
-    Return_bt=Button(-250,-250,125,50,"Return")
+    Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
     screen.listen()
@@ -966,7 +970,8 @@ def setting(): #GUI setting
     page=3
     pen.clear() #Reset board
     pen.goto(0,0)
-    Return_bt=Button(-250,-250,125,50,"Return")
+    style="Arial", 25, "bold"
+    Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
     screen.listen()
@@ -980,7 +985,8 @@ def game_setup(): #Game GUI setup
     global player
     global system
     global page
-    global step
+    global step_pn
+    global timer_pn
     global menu_width
     page=4
     screen.clear()
@@ -1013,11 +1019,16 @@ def game_setup(): #Game GUI setup
     system.color("red")
     system.goto(0,0)
     system.hideturtle()
-    step=t.Turtle() #Steps count
-    step.shapesize(1,1)
-    step.penup()
-    step.color("yellow")
-    step.hideturtle()
+    step_pn=t.Turtle() #Steps count
+    step_pn.shapesize(1,1)
+    step_pn.penup()
+    step_pn.color("black")
+    step_pn.hideturtle()
+    timer_pn=t.Turtle() #Timer count
+    timer_pn.shapesize(1,1)
+    timer_pn.penup()
+    timer_pn.color("black")
+    timer_pn.hideturtle()
     screen.update()
     build_maze()
 
@@ -1073,19 +1084,53 @@ def draw_maze():
     draw_menu()
 
 def draw_menu():
-    global step
+    global step_pn
+    global timer_pn
     global pen
     global screen
     global Ratio
     global menu_width
+    global item_height
+    global mn
+    global rec_step
     menu_x0=-screen.window_width()/2
-    style="Arial", 25, "bold"
-    items=5
+    items=5 #Maze ID, Recommend steps, Steps, Timer, Return button
     margin=screen.window_height()*0.05
-    menu_heigh=screen.window_height()-margin
-    menu_width=menu_width*0.9
+    menu_height=screen.window_height()-margin #Menu available height
+    bounds=menu_width*0.05
+    menu_width=menu_width*0.9 #Menu available width
+    item_height=menu_height/6 #Items height
+    spacing=menu_height/6/4 #Distance between Items
+    style="Arial", int(item_height*0.1), "bold" #Set text format
+    menu_center=menu_x0+menu_width/2+bounds #Menu horizontal center x coordinate
+    y=screen.window_height()/2-margin/2-item_height/2 #First item y coordinate
+    pen.goto(menu_center,y)
+    text="Maze 0"+mn
+    pen.write(text, align="center", font=(style))
+    y=y-item_height/2-spacing-item_height/2 #Second item y coordinate
+    pen.goto(menu_center,y)
+    text="Recommend steps: "+ str(rec_step)
+    pen.write(text, align="center", font=(style))
+    y=y-item_height/2-spacing-item_height/2 #Third item y coordinate
+    step_pn.goto(menu_center,y)
+    text="Steps: 0"
+    step_pn.write(text, align="center", font=(style))
+    y=y-item_height/2-spacing-item_height/2 #Fourth item y coordinate
+    timer_pn.goto(menu_center,y)
+    text="Timer: 00:00"
+    timer_pn.write(text, align="center", font=(style))
     screen.update()
     screen.mainloop() #Keep the window open
+
+def steps_upd(): #Update steps count
+    global step_pn
+    global steps
+    global screen
+    global item_height
+    step_pn.clear()
+    text="Steps: "+str(steps)
+    step_pn.write(text, align="center", font=("Arial", int(item_height*0.1), "bold"))
+    screen.update()
 
 def wall_block(x,y,color):
     global pen
@@ -1161,6 +1206,7 @@ def move_up():
             player.goto(x,y) #Player curser move up
     else:
         Invalid_move("Up")
+    steps_upd()
     screen.update()
 
 def move_down():
@@ -1201,6 +1247,7 @@ def move_down():
             player.goto(x,y) #Player curser move down
     else:
         Invalid_move("Down")
+    steps_upd()
     screen.update()
 
 def move_left():
@@ -1241,6 +1288,7 @@ def move_left():
             player.goto(x,y) #Player curser move left
     else:
         Invalid_move("Left")
+    steps_upd()
     screen.update()
 
 def move_right():
@@ -1281,15 +1329,17 @@ def move_right():
             player.goto(x,y) #Player curser move right
     else:
         Invalid_move("Right")
+    steps_upd()
     screen.update()
 
 class Button:
-    def __init__(self, x, y, width, height, text):
+    def __init__(self, x, y, width, height, text, style):
         self.x=x #Top left x coordinate
         self.y=y #Top left y coordinate
         self.width=width
         self.height=height
         self.text=text
+        self.style=style
     
     def get_x_min(self): #Return the x value bottom bound
         return self.x
@@ -1315,7 +1365,7 @@ class Button:
         pen.penup()
         pen.goto(self.x+(self.width/2),self.y-self.height+5)
         pen.pendown() #Write text
-        pen.write(self.text, align="center", font=("Arial", 25, "bold"))
+        pen.write(self.text, align="center", font=self.style)
         pen.penup() #Finish drawing the button
         screen.update()
 
