@@ -182,23 +182,23 @@ def build_maze():
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
-    i=2 #Maze generation method using
-    if i == 1: #Loop-erased random walk method
+    Method=2 #Maze generation method using
+    if Method == 1: #Loop-erased random walk method
         #Maze format: node only
-        #Board format: node and line(path)
+        #Board format: node, path and wall
         #Grid format: Location vector in "0519" form, x=5 y=19
         Board=[["X"] * Size for z in range(Size)]
         x=1
         y=1
         Board[x][y]=" "
-        Maze=[["F"] * int((Size-1)/2) for n in range(int((Size-1)/2))] #Store the cell that are part of the maze, grid is stored in node form, lines are not included
+        Maze=[["F"] * int((Size-1)/2) for n in range(int((Size-1)/2))] #Store the cells that are part of the maze, stored in Maze format
         x=int((x+1)/2-1) #Converting location vector from Board format to Maze format
         y=int((x+1)/2-1)
         Maze[x][y]="T"
         Done=False #Register maze is fully finished
         while not(Done): #Check is all node included in the maze
             Done=True
-            Not_Maze=[] #The cell that are not part of the maze, 1D array, in maze format
+            Not_Maze=[] #The cells that are not part of the maze, 1D array, stored in maze format
             for h in range(0,len(Maze)): #x-axis
                 for v in range(0,len(Maze)): #y-axis
                     if Maze[h][v] == "F": #Check is it part of maze
@@ -210,7 +210,7 @@ def build_maze():
                 y=int(temp[2:4])
                 x=2*x+1 #Converting location vector from Maze format to Board format
                 y=2*y+1
-                Path=[temp] #Stored walked path, in Board format
+                Path=[temp] #Store walked path, stored in Board format
                 while Maze[int((x+1)/2-1)][int((y+1)/2-1)] != "T":
                     retry=False
                     Direction=random.randint(1,4) #1:Up 2:Down 3:Left 4:Right
@@ -290,7 +290,7 @@ def build_maze():
                     Board[Size-1][k] = "X"
                     Board[k][0] = "X"
                     Board[k][Size-1] = "X"
-    elif i == 2: #Recursive division method
+    elif Method == 2: #Recursive division method
         #Grid format: Location vector in "0519" form, x=5 y=19
         Board=[[" "] * Size for z in range(Size)]
         for k in range(Size): #Draw the edge
@@ -298,7 +298,7 @@ def build_maze():
             Board[Size-1][k] = "X"
             Board[k][0] = "X"
             Board[k][Size-1] = "X"
-        Chunk=[] #Store the chunks, each chunck stored in oreder of Top left corner, Top right corner, Bottom left corner, Bottom right corner in Grid format
+        Chunk=[] #Store the chunks, each chunk stored in order of Top left corner, Top right corner, Bottom left corner, Bottom right corner in Grid format
         Chunk_num=0 #Number of chunks
         Chunk_num_F=0 #Number of chunks that are fully finished
         for n in range(0,4):
@@ -318,10 +318,10 @@ def build_maze():
         Chunk_num=Chunk_num+1
         Done = False #Register maze is fully finished
         while not(Done): #Check is the maze finished
-            Chunk_TL=Chunk[0] #Top left corner of the chunk
-            Chunk_TR=Chunk[1] #Top right corner of the chunk
-            Chunk_BL=Chunk[2] #Bottom left corner of the chunk
-            Chunk_BR=Chunk[3] #Bottom right corner of the chunk
+            Chunk_TL=Chunk[0] #Top left corner of the chunk, stored in Grid format
+            Chunk_TR=Chunk[1] #Top right corner of the chunk, stored in Grid format
+            Chunk_BL=Chunk[2] #Bottom left corner of the chunk, stored in Grid format
+            Chunk_BR=Chunk[3] #Bottom right corner of the chunk, stored in Grid format
             x_TL=int(Chunk_TL[0:2]) #Converting Grid format to location vector (x), path
             y_TL=int(Chunk_TL[2:4]) #Converting Grid format to location vector (y), path
             x_TR=int(Chunk_TR[0:2])
@@ -591,8 +591,8 @@ def maze_solve():
         print("System: Calculating recommended steps...")
     while not (passed):
         rec_step=0
-        i=1
-        if i == 1: #Depth-First Search(DFS)
+        Method=1
+        if Method == 1: #Depth-First Search(DFS)
             Path=[] #Store the walked path in grid format
             Junctions=[] #Store the junctions in grid format
             Junction3=[] #Store the junctions that got 3 exit in grid format
@@ -691,9 +691,9 @@ def maze_solve():
                     y=y+1
                 if Board[x][y] != "X": #Replace the path
                     Board[x][y]=" "
-        elif i == 2: #Breadth-First Search(BFS)
+        elif Method == 2: #Breadth-First Search(BFS)
             None
-        elif i == 3: #A* Search
+        elif Method == 3: #A* Search
             None
         min_step=Size*Size*0.1 #Minimum steps for the maze
         if rec_step <= min_step: #Make sure the recommended steps is not too low
