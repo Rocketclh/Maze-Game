@@ -596,8 +596,8 @@ def maze_solve():
             Path=[] #Store the walked path in grid format
             Junctions=[] #Store the junctions in grid format
             Junction3=[] #Store the junctions that got 3 exit in grid format
-            reach=False #Register is the exit reached
-            found=False #Register is the player position found
+            reach=False #Register did the exit reached
+            found=False #Register did the player position found
             x=1
             y=Size-1
             while found != True: #Automated relocate player position
@@ -643,7 +643,7 @@ def maze_solve():
                     Junction3.append(grid(x,y))
                     direction=random.randint(0,2) #Random choose a way to walk
                 if reach != True:
-                    if direction != None:
+                    if direction != None: #Move
                         if exit_way[direction] == "up": #Walk up
                             y=y+1
                             rec_step=rec_step+1
@@ -666,7 +666,7 @@ def maze_solve():
                             Path.append(grid(x,y))
                     elif (direction == None) and (exit_num == 0): #Dead end
                         back=False
-                        while not(back): #Check did it arrive the previous junction
+                        while not(back): #Check did it arrive at the previous junction
                             Board[x][y]="/"
                             Path.pop()
                             rec_step=rec_step-1
@@ -695,7 +695,7 @@ def maze_solve():
             None
         elif Method == 3: #A* Search
             None
-        min_step=Size*Size*0.1 #Minimum steps for the maze
+        min_step=Size*Size*0.1 #Minimum steps to solve the maze depend on size
         if rec_step <= min_step: #Make sure the recommended steps is not too low
             for k in range(Size): #Redraw the top and bottom edge
                 Board[k][0] = "X"
@@ -742,7 +742,6 @@ def main(): # menu
     global Type_error
     global Difficulty
     global mode
-    Type_error=False
     print("System: This game is for single players")
     time.sleep(1)
     print("System: The icon 'X' represent the wall, and icon ' ' represent the path")
@@ -770,17 +769,18 @@ def main(): # menu
         mode=2
         menu_setup() #Swap to graphical user interface
     else:
-        passed=False
-        while not passed:
+        Type_error=False
+        while not Type_error:
             try:
                 ans=int(input("System: Please enter difficulty: 1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode) "))
                 if ans <=0 or ans > 5:
                     print("System: Out of bounds")
                 else:
-                    passed=True
+                    Type_error=True
                     Difficulty=ans
             except:
                 print("System: Formet error")
+        Type_error=False
         if Difficulty == 5:
             ans=4
         Size=(ans+1)*10+1 #Calculate board size
@@ -1075,7 +1075,7 @@ def draw_maze():
         if i == Size:
             i=0
             j=j-1
-    found=False #Register is the player position found
+    found=False #Register did the player position found
     i=1
     j=Size-1
     while found != True: #Automated relocate player position
