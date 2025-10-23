@@ -849,14 +849,20 @@ def menu_setup(): #GUI screen setup
     global t
     global screen
     global pen
-    screen=t.Screen()
+    try:
+        screen.clear()
+    except:
+        screen=t.Screen()
     screen.title("Maze Game")
     screen.bgcolor("White")
     screen.setup(width=550, height=650)
     screen.tracer(0)
-    pen=t.Turtle()
+    try:
+        pen.bye()
+    except:
+        pen=t.Turtle()
     pen.hideturtle()
-    pen.penup()
+s    pen.penup()
     screen.update()
     Menu_GUI()
 
@@ -949,9 +955,9 @@ def button_click(x,y): #Mouse clicked
             screen.bye()
             sys.exit()
         elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button pressed
-            screen.bye()
-            python=sys.executable #Path to the current Python interpreter
-            os.execv(python,[python]+sys.argv) #Restart the program
+            screen.reset()
+            cycle=0
+            main()
 
 def instruction(): #GUI instruction
     global screen
@@ -1089,24 +1095,36 @@ def game_setup(): #Game GUI setup
     pen.hideturtle()
     pen.penup()
     pen.goto((Ratio/4),0) #Center
-    player=t.Turtle() #Player character
+    try:
+        player.bye()
+    except:
+        player=t.Turtle() #Player character
     player.shapesize((Ratio/20), (Ratio/20))
     player.penup()
     player.color("green")
     player.goto((Ratio/4),0)
     player.hideturtle()
-    system=t.Turtle() #Output massage
+    try:
+        system.bye()
+    except:
+        system=t.Turtle() #Output massage
     system.shapesize(1,1)
     system.penup()
     system.color("red")
     system.goto(0,0)
     system.hideturtle()
-    step_pn=t.Turtle() #Steps count
+    try:
+        step_pn.bye()
+    except:
+        step_pn=t.Turtle() #Steps count
     step_pn.shapesize(1,1)
     step_pn.penup()
     step_pn.color("black")
     step_pn.hideturtle()
-    timer_pn=t.Turtle() #Timer count
+    try:
+        timer_pn.bye()
+    except:
+        timer_pn=t.Turtle() #Timer count
     timer_pn.shapesize(1,1)
     timer_pn.penup()
     timer_pn.color("black")
