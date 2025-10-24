@@ -862,7 +862,7 @@ def menu_setup(): #GUI screen setup
     except:
         pen=t.Turtle()
     pen.hideturtle()
-s    pen.penup()
+    pen.penup()
     screen.update()
     Menu_GUI()
 
@@ -1483,28 +1483,21 @@ class Button_R: #Right arrow button
         pen.penup() #Finish drawing the button
         screen.update()
 
-def main():
-    global timer
-    global mode
-    global cycle
-    timer=threading.Thread(target=Timer) #Setup sub-thread
-    mode=2
-    cycle=0 #Threshold
-    if mode == 1: #CLI
-        Menu_CLI()
-    elif mode == 2: #GUI
-        menu_setup()
-    else:
-        print("System: ERROR")
-        print("System: User interface initialize fail, please restart the game")
-        ans=input("System: Press Enter to exit the game ")
-        sys.exit()
-
 import time
 import random
 import sys
 import threading
 import turtle as t
 import os
-if __name__ == "__main__": #Make sure the program can execute normally
-    main()
+timer=threading.Thread(target=Timer) #Setup sub-thread
+mode=2
+cycle=0 #Threshold
+if mode == 1: #CLI
+    Menu_CLI()
+elif mode == 2: #GUI
+    menu_setup()
+else:
+    print("System: ERROR")
+    print("System: User interface initialize fail, please restart the game")
+    ans=input("System: Press Enter to exit the game ")
+    sys.exit()
