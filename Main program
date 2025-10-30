@@ -5,6 +5,7 @@ def game(): #CLI game control
     global Type_error
     global Difficulty
     global rec_step
+    global Time_up
     if Type_error:
         Type_error=False
     else:
@@ -17,73 +18,74 @@ def game(): #CLI game control
             end(False)
     ans=input("System: Please enter the direction you want to move ")
     ans=ans.lower()
-    if ans == "w": #Move up
-        if y < (Size-1) and Board[x][y+1] != "X":
-            Board[x][y]=" "
-            y=y+1
-            steps=steps+1
-            if Board[x][y] == "E":
-                end(True)
+    if Difficulty != 5 or not(Time_up): #Time up check for Hard mode
+        if ans == "w": #Move up
+            if y < (Size-1) and Board[x][y+1] != "X":
+                Board[x][y]=" "
+                y=y+1
+                steps=steps+1
+                if Board[x][y] == "E":
+                    end(True)
+                else:
+                    Board[x][y]="P"
             else:
-                Board[x][y]="P"
-        else:
-            print("System: Invalid move!")
-            print("System: You cannot move up")
+                print("System: Invalid move!")
+                print("System: You cannot move up")
+                Type_error=True
+                time.sleep(0.5)
+        elif ans == "s": #Move down
+            if y > 0 and Board[x][y-1] != "X":
+                Board[x][y]=" "
+                y=y-1
+                steps=steps+1
+                if Board[x][y] == "E":
+                    end(True)
+                else:
+                    Board[x][y]="P"
+            else:
+                print("System: Invalid move!")
+                print("System: You cannot move down")
+                Type_error=True
+                time.sleep(0.5)
+        elif ans == "a": #Move left
+            if x > 0 and Board[x-1][y] != "X":
+                Board[x][y]=" "
+                x=x-1
+                steps=steps+1
+                if Board[x][y] == "E":
+                    end(True)
+                else:
+                    Board[x][y]="P"
+            else:
+                print("System: Invalid move!")
+                print("System: You cannot move left")
+                Type_error=True
+                time.sleep(0.5)
+        elif ans == "d": #Move right
+            if x < (Size-1) and Board[x+1][y] != "X":
+                Board[x][y]=" "
+                x=x+1
+                steps=steps+1
+                if Board[x][y] == "E":
+                    end(True)
+                else:
+                    Board[x][y]="P"
+            else:
+                print("System: Invalid move!")
+                print("System: You cannot move right")
+                Type_error=True
+                time.sleep(0.5)
+        elif len(ans) != 1:
+            print("System: Out of Range!")
+            print("System: Please enter single character")
             Type_error=True
             time.sleep(0.5)
-    elif ans == "s": #Move down
-        if y > 0 and Board[x][y-1] != "X":
-            Board[x][y]=" "
-            y=y-1
-            steps=steps+1
-            if Board[x][y] == "E":
-                end(True)
-            else:
-                Board[x][y]="P"
         else:
-            print("System: Invalid move!")
-            print("System: You cannot move down")
+            print("System: Invalid input!")
+            print("System: Please enter 'W', 'A', 'S', or 'D'")
             Type_error=True
             time.sleep(0.5)
-    elif ans == "a": #Move left
-        if x > 0 and Board[x-1][y] != "X":
-            Board[x][y]=" "
-            x=x-1
-            steps=steps+1
-            if Board[x][y] == "E":
-                end(True)
-            else:
-                Board[x][y]="P"
-        else:
-            print("System: Invalid move!")
-            print("System: You cannot move left")
-            Type_error=True
-            time.sleep(0.5)
-    elif ans == "d": #Move right
-        if x < (Size-1) and Board[x+1][y] != "X":
-            Board[x][y]=" "
-            x=x+1
-            steps=steps+1
-            if Board[x][y] == "E":
-                end(True)
-            else:
-                Board[x][y]="P"
-        else:
-            print("System: Invalid move!")
-            print("System: You cannot move right")
-            Type_error=True
-            time.sleep(0.5)
-    elif len(ans) != 1:
-        print("System: Out of Range!")
-        print("System: Please enter single character")
-        Type_error=True
-        time.sleep(0.5)
-    else:
-        print("System: Invalid input!")
-        print("System: Please enter 'W', 'A', 'S', or 'D'")
-        Type_error=True
-        time.sleep(0.5)
-    game()
+        game()
 
 def end(win): #win output
     global steps
@@ -96,6 +98,8 @@ def end(win): #win output
     global Restart_bt
     global page
     global player
+    global Minutes
+    global Second
     if mode == 1: #CLI end output
         if win:
             print("System: Congratulations!")
@@ -136,6 +140,8 @@ def end(win): #win output
         else:
             pen.goto(0,y)
             pen.write("Game Over", align="center", font=(style))
+            y=y-50
+            pen.goto(0,y)
             if Time_up: #Times up
                 pen.write("You ran out of time", align="center", font=(style))
             else:
@@ -150,7 +156,7 @@ def end(win): #win output
         pen.write(text, align="center", font=(style))
         y=y-50
         pen.goto(0,y)
-        text="Time spend:"
+        text="Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds"
         pen.write(text, align="center", font=(style))
         y=y-50
         pen.goto(-200,y)
@@ -620,6 +626,7 @@ def maze_solve():
     global mode
     global cycle
     global steps
+    global timer
     retry_cycle=0
     passed = False
     if mode == 1:
@@ -739,6 +746,9 @@ def maze_solve():
         if mode == 1:
             print("System: Recommend steps for this maze:", rec_step)
             time.sleep(0.1)
+            if Difficulty == 5:
+                ans=input("System: Press Enter to start ")
+                timer.start()
             game()
         elif mode == 2:
             draw_maze()
@@ -762,36 +772,42 @@ def Timer(): #10 minutes timer (Sub-thread)
     global Second
     global mode
     global screen
+    global Timer_stop
+    Timer_stop=False
     Time_up=False
     Minutes=0
     Second=0
     if mode == 1:
         time.sleep(1)
-        click()
+        tick()
     elif mode == 2:
-        screen.ontime(click,1000)
+        screen.ontimer(tick,1000)
 
-def click():
+def tick():
     global Time_up
     global Minutes
     global Second
     global Difficulty
     global mode
     global screen
+    global Timer_stop
     Second=Second+1
-    if Second < 60:
+    if Second == 60:
         Minutes=Minutes+1
         Second=0
     if Difficulty == 5:
         if (Minutes == 10) and (Second == 0):
+            Timer_stop=True
             Time_up=True
+            if mode == 1:
+                print("\nSystem: Times up")
+            end(False)
     if mode == 1:
-        while not(Time_up):
-            time.sleep(1)
-            click()
-        print("Times up")
+        time.sleep(1)
+        tick()
     elif mode == 2:
-        screen.ontime(click,1000)
+        timer_upd()
+        screen.ontimer(tick, 1000) #Call tick function every second
 
 def Menu_CLI(): #CLI menu
     global Size
@@ -1203,12 +1219,34 @@ def draw_menu():
     text="Timer: 00:00"
     timer_pn.write(text, align="center", font=(style))
     screen.update()
+    ready()
+
+def ready(): #Ready to start the game
+    global screen
+    global system
+    global Ratio
+    system.clear()
+    system.write("Press Enter to start", align="center", font=("Arial", int(Ratio), "bold"))
+    screen.bgcolor("black")
+    screen.onkeypress(Start,"Return")
+    screen.listen()
+    screen.update()
+    screen.mainloop() #Keep the window open
+
+def Start(): #Start the game
+    global screen
+    global system
+    system.clear()
+    screen.bgcolor("white")
+    screen.onkeypress(None,"Return")
     screen.onkeypress(move_up,"w")
     screen.onkeypress(move_down,"s")
     screen.onkeypress(move_left,"a")
     screen.onkeypress(move_right,"d")
     screen.listen()
-    screen.mainloop() #Keep the window open
+    Timer() #Start timer
+    screen.update()
+
 
 def steps_upd(): #Update steps count
     global step_pn
@@ -1218,6 +1256,18 @@ def steps_upd(): #Update steps count
     step_pn.clear()
     text="Steps: "+str(steps)
     step_pn.write(text, align="center", font=("Arial", int(item_height*0.1), "bold"))
+    screen.update()
+
+def timer_upd(): #Update timer count
+    global timer_pn
+    global Minutes
+    global Second
+    global Screen
+    global item_height
+    timer_pn.clear()
+    temp=grid(Minutes,Second)
+    text="Timer: "+temp[0:2]+":"+temp[2:4]
+    timer_pn.write(text, align="center", font=("Arial", int(item_height*0.1), "bold"))
     screen.update()
 
 def wall_block(x,y,color):
@@ -1368,6 +1418,23 @@ def move_right():
         Invalid_move("Right")
     screen.update()
 
+def main(): #Start point
+    global timer
+    global mode
+    global cycle
+    timer=threading.Thread(target=Timer) #Setup sub-thread
+    mode=2
+    cycle=0 #Threshold
+    if mode == 1: #CLI
+        Menu_CLI()
+    elif mode == 2: #GUI
+        menu_setup()
+    else:
+        print("System: ERROR")
+        print("System: User interface initialize fail, please restart the game")
+        ans=input("System: Press Enter to exit the game ")
+        sys.exit()
+
 class Button:
     def __init__(self, x, y, width, height, text, style):
         self.x=x #Top left x coordinate
@@ -1489,15 +1556,4 @@ import sys
 import threading
 import turtle as t
 import os
-timer=threading.Thread(target=Timer) #Setup sub-thread
-mode=2
-cycle=0 #Threshold
-if mode == 1: #CLI
-    Menu_CLI()
-elif mode == 2: #GUI
-    menu_setup()
-else:
-    print("System: ERROR")
-    print("System: User interface initialize fail, please restart the game")
-    ans=input("System: Press Enter to exit the game ")
-    sys.exit()
+main()
