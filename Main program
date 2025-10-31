@@ -93,7 +93,8 @@ def end(win): #win output
     global mode
     global screen
     global pen
-    global Time_up
+    global Time_up #Time up register
+    global Timer_stop #Timer stop register
     global Exit_bt
     global Restart_bt
     global page
@@ -120,6 +121,7 @@ def end(win): #win output
         else:
             sys.exit()
     elif mode == 2: #GUI end output
+        Timer_stop=True
         page=5
         screen.clear() #Clear screen
         screen.setup(width=550, height=650)
@@ -767,12 +769,12 @@ def quick_test(): #Test
     Board[x][y]="E"
 
 def Timer(): #10 minutes timer (Sub-thread)
-    global Time_up
     global Minutes
     global Second
     global mode
     global screen
-    global Timer_stop
+    global Time_up #Register time is up
+    global Timer_stop #Register timer stop
     Timer_stop=False
     Time_up=False
     Minutes=0
@@ -784,13 +786,13 @@ def Timer(): #10 minutes timer (Sub-thread)
         screen.ontimer(tick,1000)
 
 def tick():
-    global Time_up
     global Minutes
     global Second
     global Difficulty
     global mode
     global screen
-    global Timer_stop
+    global Time_up #Register time is up
+    global Timer_stop #Register timer stop
     Second=Second+1
     if Second == 60:
         Minutes=Minutes+1
@@ -802,12 +804,13 @@ def tick():
             if mode == 1:
                 print("\nSystem: Times up")
             end(False)
-    if mode == 1:
-        time.sleep(1)
-        tick()
-    elif mode == 2:
-        timer_upd()
-        screen.ontimer(tick, 1000) #Call tick function every second
+    if not(Timer_stop):
+        if mode == 1:
+            time.sleep(1)
+            tick()
+        elif mode == 2:
+            timer_upd()
+            screen.ontimer(tick, 1000) #Call tick function every second
 
 def Menu_CLI(): #CLI menu
     global Size
@@ -909,8 +912,8 @@ def Menu_GUI(): #GUI main menu
     CLI_bt=Button(150,-250,100,50,"CLI",style)
     CLI_bt.draw() #Draw CLI button
     screen.update()
-    screen.listen()
     screen.onclick(button_click)
+    screen.listen()
     screen.mainloop() #Keep the window open
 
 def button_click(x,y): #Mouse clicked
@@ -929,6 +932,8 @@ def button_click(x,y): #Mouse clicked
     global Difficulty_btR #Difficulty right arrow button
     global Restart_bt #Restart button
     global cycle
+    global Timer_stop #Register timer stop
+    global Pause_bt #Pause button
     screen.update()
     if page == 0: #From menu
         if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
@@ -965,12 +970,20 @@ def button_click(x,y): #Mouse clicked
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             Menu_GUI()
     elif page == 4: #From in-game menu
-        None
+        if Pause_bt.get_x_min() < x < Pause_bt.get_x_max() and Pause_bt.get_y_min() < y < Pause_bt.get_y_max(): #Pause button pressed
+            pause_game()
     elif page == 5: #From end menu
         if Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
             screen.bye()
             sys.exit()
         elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button pressed
+            screen.reset()
+            cycle=0
+            main()
+    elif page == 6: #From game pause menu
+        if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
+            draw_maze()
+        elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
             screen.reset()
             cycle=0
             main()
@@ -1020,8 +1033,8 @@ def instruction(): #GUI instruction
     Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
-    screen.listen()
     screen.onclick(button_click)
+    screen.listen()
 
 def game_setting(): #GUI game setting
     global screen
@@ -1065,8 +1078,8 @@ def game_setting(): #GUI game setting
     Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
-    screen.listen()
     screen.onclick(button_click)
+    screen.listen()
 
 def setting(): #GUI setting
     global screen
@@ -1080,8 +1093,8 @@ def setting(): #GUI setting
     Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
-    screen.listen()
     screen.onclick(button_click)
+    screen.listen()
 
 def game_setup(): #Game GUI setup
     global t
@@ -1191,16 +1204,16 @@ def draw_menu():
     global item_height
     global mn
     global rec_step
-    global page
+    global steps
     menu_x0=-screen.window_width()/2
     items=5 #Maze ID, Recommend steps, Steps, Timer, Return button
     margin=screen.window_height()*0.05
-    menu_height=screen.window_height()-margin #Menu available height
+    menu_height=screen.window_height()-(margin*2) #Menu available height
     bounds=menu_width*0.05
-    menu_width=menu_width*0.9 #Menu available width
+    menu_width=menu_width-bounds*2 #Menu available width
     item_height=menu_height/6 #Items height
     spacing=menu_height/6/4 #Distance between Items
-    style="Arial", int(item_height*0.1), "bold" #Set text format
+    style="Arial", int(item_height*0.095), "bold" #Set text format
     menu_center=menu_x0+menu_width/2+bounds #Menu horizontal center x coordinate
     y=screen.window_height()/2-margin/2-item_height/2 #First item y coordinate
     pen.goto(menu_center,y)
@@ -1212,12 +1225,15 @@ def draw_menu():
     pen.write(text, align="center", font=(style))
     y=y-item_height/2-spacing-item_height/2 #Third item y coordinate
     step_pn.goto(menu_center,y)
-    text="Steps: 0"
+    text="Steps: "+ str(steps)
     step_pn.write(text, align="center", font=(style))
     y=y-item_height/2-spacing-item_height/2 #Fourth item y coordinate
     timer_pn.goto(menu_center,y)
     text="Timer: 00:00"
     timer_pn.write(text, align="center", font=(style))
+    y=y-item_height/2-spacing #Fifth item y coordinate
+    Pause_bt=Button(menu_x0+bounds,y,menu_width,item_height,"Pause",style)
+    Pause_bt.draw() #Draw Pause button
     screen.update()
     ready()
 
@@ -1228,9 +1244,9 @@ def ready(): #Ready to start the game
     system.clear()
     system.write("Press Enter to start", align="center", font=("Arial", int(Ratio), "bold"))
     screen.bgcolor("black")
+    screen.update()
     screen.onkeypress(Start,"Return")
     screen.listen()
-    screen.update()
     screen.mainloop() #Keep the window open
 
 def Start(): #Start the game
@@ -1238,15 +1254,29 @@ def Start(): #Start the game
     global system
     system.clear()
     screen.bgcolor("white")
+    screen.update()
     screen.onkeypress(None,"Return")
     screen.onkeypress(move_up,"w")
     screen.onkeypress(move_down,"s")
     screen.onkeypress(move_left,"a")
     screen.onkeypress(move_right,"d")
+    screen.onclick(button_click)
     screen.listen()
     Timer() #Start timer
-    screen.update()
 
+def pause_game(): #Pause the game:
+    global screen
+    global pen
+    global page
+    global Timer_stop
+    Timer_stop=True
+    page=6
+    screen.onclick(button_click)
+    screen.onkeypress(None,"w")
+    screen.onkeypress(None,"s")
+    screen.onkeypress(None,"a")
+    screen.onkeypress(None,"d")
+    screen.listen()
 
 def steps_upd(): #Update steps count
     global step_pn
@@ -1443,6 +1473,10 @@ class Button:
         self.height=height
         self.text=text
         self.style=style
+        text_front, text_size, text_weight=style #Unpack text style
+        self.text_front=text_front #Text font
+        self.text_size=text_size #Text size
+        self.text_weight=text_weight #Text weight
     
     def get_x_min(self): #Return the x value bottom bound
         return self.x
@@ -1466,8 +1500,8 @@ class Button:
         pen.goto(self.x,self.y-self.height) #BL of the button
         pen.goto(self.x,self.y) #TL of the button
         pen.penup() #Finish drawing the button
-        pen.goto(self.x+(self.width/2),self.y-self.height+5)
-        pen.write(self.text, align="center", font=self.style)#Write text
+        pen.goto(self.x+(self.width/2),self.y-(self.height/2)-(self.text_size*0.8))
+        pen.write(self.text, align="center", font=(self.style)) #Write text
         screen.update()
 
 class Button_L: #Left arrow button
