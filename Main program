@@ -193,9 +193,14 @@ def build_maze():
     global Size
     global mode
     global mn
+    global Difficulty
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
+    temp=Difficulty
+    if Difficulty == 5:
+        temp=4
+    Size=(temp+1)*10+1 #Calculate board size
     Method=2 #Maze generation method using
     if Method == 1: #Loop-erased random walk method
         #Maze format: node only
@@ -629,6 +634,8 @@ def maze_solve():
     global cycle
     global steps
     global timer
+    global Minutes
+    global Second
     retry_cycle=0
     passed = False
     if mode == 1:
@@ -745,6 +752,8 @@ def maze_solve():
     cycle=cycle+1
     if cycle == 1:
         steps=0
+        Minutes=0 #Timer minutes reset
+        Second=0 #Timer second reset
         if mode == 1:
             print("System: Recommend steps for this maze:", rec_step)
             time.sleep(0.1)
@@ -753,7 +762,7 @@ def maze_solve():
                 timer.start()
             game()
         elif mode == 2:
-            draw_maze()
+            game_setup()
         else:
             print("System: ERROR")
             print("System: User interface not recognised, please restart the game")
@@ -768,7 +777,7 @@ def quick_test(): #Test
     y=y-1
     Board[x][y]="E"
 
-def Timer(): #10 minutes timer (Sub-thread)
+def Timer(): #10 minutes timer (Main thread/Sub-thread)
     global Minutes
     global Second
     global mode
@@ -777,8 +786,6 @@ def Timer(): #10 minutes timer (Sub-thread)
     global Timer_stop #Register timer stop
     Timer_stop=False
     Time_up=False
-    Minutes=0
-    Second=0
     if mode == 1:
         time.sleep(1)
         tick()
@@ -857,9 +864,6 @@ def Menu_CLI(): #CLI menu
             except:
                 print("System: Formet error")
         Type_error=False
-        if Difficulty == 5:
-            ans=4
-        Size=(ans+1)*10+1 #Calculate board size
         print("System: Good luck!")
         time.sleep(0.5)
         build_maze()
@@ -869,19 +873,17 @@ def menu_setup(): #GUI screen setup
     global screen
     global pen
     try:
-        screen.clear()
+        screen.clear() #Test do the screen still exist
     except:
         screen=t.Screen()
     screen.title("Maze Game")
     screen.bgcolor("White")
     screen.setup(width=550, height=650)
     screen.tracer(0)
-    try:
-        pen.bye()
-    except:
-        pen=t.Turtle()
+    pen=t.Turtle()
     pen.hideturtle()
     pen.penup()
+    pen.shapesize(1,1)
     screen.update()
     Menu_GUI()
 
@@ -934,6 +936,9 @@ def button_click(x,y): #Mouse clicked
     global cycle
     global Timer_stop #Register timer stop
     global Pause_bt #Pause button
+    global Resume_bt #Resume button
+    global Menu_bt #Back to main menu button
+    global Paused #Register did game paused
     screen.update()
     if page == 0: #From menu
         if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
@@ -965,10 +970,13 @@ def button_click(x,y): #Mouse clicked
                 Difficulty=Difficulty+1
                 game_setting()
         elif Start_bt.get_x_min() < x < Start_bt.get_x_max() and Start_bt.get_y_min() < y < Start_bt.get_y_max(): #Start button pressed
-            game_setup()
+            build_maze()
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
-            Menu_GUI()
+            if Paused: #Go back to pause menu when game paused
+                pause_game()
+            else: #Go back to main menu
+                Menu_GUI()
     elif page == 4: #From in-game menu
         if Pause_bt.get_x_min() < x < Pause_bt.get_x_max() and Pause_bt.get_y_min() < y < Pause_bt.get_y_max(): #Pause button pressed
             pause_game()
@@ -978,15 +986,18 @@ def button_click(x,y): #Mouse clicked
             sys.exit()
         elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button pressed
             screen.reset()
-            cycle=0
-            main()
+            screen.ontimer(main,10) #Delay buffer
     elif page == 6: #From game pause menu
-        if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
-            draw_maze()
-        elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
+        if Resume_bt.get_x_min() < x < Resume_bt.get_x_max() and Resume_bt.get_y_min() < y < Resume_bt.get_y_max(): #Resume button pressed
+            game_setup()
+        elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
+            setting()
+        elif Menu_bt.get_x_min() < x < Menu_bt.get_x_max() and Menu_bt.get_y_min() < y < Menu_bt.get_y_max(): #Back to main menu button pressed
             screen.reset()
-            cycle=0
-            main()
+            screen.ontimer(main,10) #Delay buffer
+        elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
+            screen.bye()
+            sys.exit()
 
 def instruction(): #GUI instruction
     global screen
@@ -1107,13 +1118,11 @@ def game_setup(): #Game GUI setup
     global step_pn
     global timer_pn
     global menu_width
+    global Minutes
+    global Second
     page=4
     screen.clear() #Clear screen
-    temp=Difficulty
-    if Difficulty == 5:
-        temp=4
-    Size=(temp+1)*10+1 #Calculate board size
-    Ratio=min(screen.cv.winfo_screenwidth()/Size, screen.cv.winfo_screenheight()/Size)* 0.85 #Set screen size using monitor resolution
+    Ratio=min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*0.85 #Set screen size using monitor resolution
     menu_width=Size*Ratio/4 #In game menu width
     screen.setup(width=Size*Ratio+0.25*Ratio+menu_width, height=Size*Ratio+0.25*Ratio)
     screen.tracer(0)
@@ -1124,17 +1133,14 @@ def game_setup(): #Game GUI setup
     pen.hideturtle()
     pen.penup()
     pen.goto((Ratio/4),0) #Center
-    try:
-        player.bye()
-    except:
-        player=t.Turtle() #Player character
+    player=t.Turtle() #Player character
     player.shapesize((Ratio/20), (Ratio/20))
     player.penup()
     player.color("green")
     player.goto((Ratio/4),0)
     player.hideturtle()
     try:
-        system.bye()
+        system.goto(0,0)
     except:
         system=t.Turtle() #Output massage
     system.shapesize(1,1)
@@ -1143,7 +1149,7 @@ def game_setup(): #Game GUI setup
     system.goto(0,0)
     system.hideturtle()
     try:
-        step_pn.bye()
+        step_pn.goto(0,0)
     except:
         step_pn=t.Turtle() #Steps count
     step_pn.shapesize(1,1)
@@ -1151,7 +1157,7 @@ def game_setup(): #Game GUI setup
     step_pn.color("black")
     step_pn.hideturtle()
     try:
-        timer_pn.bye()
+        timer_pn.goto(0,0)
     except:
         timer_pn=t.Turtle() #Timer count
     timer_pn.shapesize(1,1)
@@ -1159,7 +1165,7 @@ def game_setup(): #Game GUI setup
     timer_pn.color("black")
     timer_pn.hideturtle()
     screen.update()
-    build_maze()
+    draw_maze()
 
 def draw_maze():
     global Board
@@ -1205,34 +1211,47 @@ def draw_menu():
     global mn
     global rec_step
     global steps
+    global Pause_bt
+    global Minutes
+    global Second
     menu_x0=-screen.window_width()/2
-    items=5 #Maze ID, Recommend steps, Steps, Timer, Return button
     margin=screen.window_height()*0.05
     menu_height=screen.window_height()-(margin*2) #Menu available height
     bounds=menu_width*0.05
     menu_width=menu_width-bounds*2 #Menu available width
-    item_height=menu_height/6 #Items height
-    spacing=menu_height/6/4 #Distance between Items
-    style="Arial", int(item_height*0.095), "bold" #Set text format
+    items=5 #Maze ID, Recommend steps, Steps, Timer, Return button
+    item_height=menu_height/(items+1) #Items height
+    spacing=menu_height/(items+1)/(items-1) #Distance between Items
+    style="Arial", int(item_height*0.17), "bold" #Set text format
+    text_front, text_size, text_weight=style #Unpack text style
     menu_center=menu_x0+menu_width/2+bounds #Menu horizontal center x coordinate
     y=screen.window_height()/2-margin/2-item_height/2 #First item y coordinate
     pen.goto(menu_center,y)
     text="Maze 0"+mn
     pen.write(text, align="center", font=(style))
-    y=y-item_height/2-spacing-item_height/2 #Second item y coordinate
+    y=y-item_height/2-spacing-item_height/2+text_size*0.75 #Second item y coordinate
     pen.goto(menu_center,y)
-    text="Recommend steps: "+ str(rec_step)
-    pen.write(text, align="center", font=(style))
-    y=y-item_height/2-spacing-item_height/2 #Third item y coordinate
+    text="Recommend"
+    pen.write(text, align="center", font=(style)) #Write first row
+    y=y-text_size*2.25 #Second row y coordinate
+    pen.goto(menu_center,y)
+    text="steps: "+ str(rec_step)
+    pen.write(text, align="center", font=(style)) #Write second row
+    y=y-item_height/2-spacing-item_height/2+text_size*2.25 #Third item y coordinate
     step_pn.goto(menu_center,y)
     text="Steps: "+ str(steps)
     step_pn.write(text, align="center", font=(style))
     y=y-item_height/2-spacing-item_height/2 #Fourth item y coordinate
     timer_pn.goto(menu_center,y)
-    text="Timer: 00:00"
-    timer_pn.write(text, align="center", font=(style))
+    temp=grid(Minutes,Second)
+    text="Timer: "+temp[0:2]+":"+temp[2:4] #Concast minutes and seconds to timer format
+    timer_pn.write(text, align="center", font=("Arial", text_size, "bold"))
     y=y-item_height/2-spacing #Fifth item y coordinate
-    Pause_bt=Button(menu_x0+bounds,y,menu_width,item_height,"Pause",style)
+    text="Pause"
+    y=y-item_height/2+text_size*1.5 #Button top side y coordinate
+    height=text_size*3 #Button height
+    width=len(text)*1.5*text_size #Button width
+    Pause_bt=Button(menu_x0+bounds/2+(menu_width-width)/2,y,width,height,text,style)
     Pause_bt.draw() #Draw Pause button
     screen.update()
     ready()
@@ -1241,8 +1260,13 @@ def ready(): #Ready to start the game
     global screen
     global system
     global Ratio
-    system.clear()
-    system.write("Press Enter to start", align="center", font=("Arial", int(Ratio), "bold"))
+    global steps
+    global Paused #Register did game paused
+    if not(Paused):
+        text="Press Enter to start"
+    elif Paused:
+        text="Press Enter to resume"
+    system.write(text, align="center", font=("Arial", int(Ratio), "bold"))
     screen.bgcolor("black")
     screen.update()
     screen.onkeypress(Start,"Return")
@@ -1267,10 +1291,40 @@ def Start(): #Start the game
 def pause_game(): #Pause the game:
     global screen
     global pen
+    global player
     global page
     global Timer_stop
+    global Resume_bt #Resume button
+    global Setting_bt #Setting button
+    global Menu_bt #Back to main menu button
+    global Exit_bt #Exit button
+    global Paused #Register did game paused
     Timer_stop=True
+    Paused=True
     page=6
+    screen.clear()
+    screen.setup(width=550, height=650)
+    screen.tracer(0)
+    screen.update()
+    pen.penup() #Debug TKinter bug
+    pen.goto(0,10)
+    pen.pendown()
+    pen.goto(0,-10)
+    pen.penup()
+    pen.clear() #Debug TKinter bug
+    pen.shapesize(1,1)
+    pen.goto(0,200)
+    pen.write("Game Paused", align="center", font=("Arial", 50, "bold")) #Game state
+    style="Arial", 25, "bold"
+    Resume_bt=Button(-100,125,200,50,"Resume",style)
+    Resume_bt.draw() #Draw resume button
+    Setting_bt=Button(-100,25,200,50,"Setting",style)
+    Setting_bt.draw() #Draw setting button
+    Menu_bt=Button(-100,-75,200,50,"Main menu",style)
+    Menu_bt.draw() #Draw Back to main menu button
+    Exit_bt=Button(-100,-175,200,50,"Exit",style)
+    Exit_bt.draw() #Draw exit button
+    screen.update()
     screen.onclick(button_click)
     screen.onkeypress(None,"w")
     screen.onkeypress(None,"s")
@@ -1283,9 +1337,10 @@ def steps_upd(): #Update steps count
     global steps
     global screen
     global item_height
+    global Pause_bt
     step_pn.clear()
     text="Steps: "+str(steps)
-    step_pn.write(text, align="center", font=("Arial", int(item_height*0.1), "bold"))
+    step_pn.write(text, align="center", font=("Arial", Pause_bt.get_text_size(), "bold"))
     screen.update()
 
 def timer_upd(): #Update timer count
@@ -1294,10 +1349,11 @@ def timer_upd(): #Update timer count
     global Second
     global Screen
     global item_height
+    global Pause_bt
     timer_pn.clear()
     temp=grid(Minutes,Second)
-    text="Timer: "+temp[0:2]+":"+temp[2:4]
-    timer_pn.write(text, align="center", font=("Arial", int(item_height*0.1), "bold"))
+    text="Timer: "+temp[0:2]+":"+temp[2:4] #Concast minutes and seconds to timer format
+    timer_pn.write(text, align="center", font=("Arial", Pause_bt.get_text_size(), "bold"))
     screen.update()
 
 def wall_block(x,y,color):
@@ -1452,9 +1508,11 @@ def main(): #Start point
     global timer
     global mode
     global cycle
+    global Paused #Register did game paused
     timer=threading.Thread(target=Timer) #Setup sub-thread
     mode=2
     cycle=0 #Threshold
+    Paused=False
     if mode == 1: #CLI
         Menu_CLI()
     elif mode == 2: #GUI
@@ -1489,6 +1547,9 @@ class Button:
     
     def get_y_max(self): #Return the y value upper bound
         return self.y
+    
+    def get_text_size(self): #Return the text size
+        return self.text_size
 
     def draw(self): #Draw button
         global pen
