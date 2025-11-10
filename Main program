@@ -784,6 +784,10 @@ def Timer(): #10 minutes timer (Main thread/Sub-thread)
     global screen
     global Time_up #Register time is up
     global Timer_stop #Register timer stop
+    global Max_Minute #Maximum time minutes allowed in hardcore mode
+    global Max_Second #Maximum time seconds allowed in hardcore mode
+    Max_Minute=5
+    Max_Second=0
     Timer_stop=False
     Time_up=False
     if mode == 1:
@@ -800,12 +804,14 @@ def tick():
     global screen
     global Time_up #Register time is up
     global Timer_stop #Register timer stop
+    global Max_Minute #Maximum time minutes allowed in hardcore mode
+    global Max_Second #Maximum time seconds allowed in hardcore mode
     Second=Second+1
     if Second == 60:
         Minutes=Minutes+1
         Second=0
     if Difficulty == 5:
-        if (Minutes == 10) and (Second == 0):
+        if (Minutes == Max_Minute) and (Second == Max_Second):
             Timer_stop=True
             Time_up=True
             if mode == 1:
@@ -1139,27 +1145,18 @@ def game_setup(): #Game GUI setup
     player.color("green")
     player.goto((Ratio/4),0)
     player.hideturtle()
-    try:
-        system.goto(0,0)
-    except:
-        system=t.Turtle() #Output massage
+    system=t.Turtle() #Output massage
     system.shapesize(1,1)
     system.penup()
     system.color("red")
     system.goto(0,0)
     system.hideturtle()
-    try:
-        step_pn.goto(0,0)
-    except:
-        step_pn=t.Turtle() #Steps count
+    step_pn=t.Turtle() #Steps count
     step_pn.shapesize(1,1)
     step_pn.penup()
     step_pn.color("black")
     step_pn.hideturtle()
-    try:
-        timer_pn.goto(0,0)
-    except:
-        timer_pn=t.Turtle() #Timer count
+    timer_pn=t.Turtle() #Timer count
     timer_pn.shapesize(1,1)
     timer_pn.penup()
     timer_pn.color("black")
@@ -1207,7 +1204,6 @@ def draw_menu():
     global screen
     global Ratio
     global menu_width
-    global item_height
     global mn
     global rec_step
     global steps
@@ -1221,9 +1217,9 @@ def draw_menu():
     menu_width=menu_width-bounds*2 #Menu available width
     items=5 #Maze ID, Recommend steps, Steps, Timer, Return button
     item_height=menu_height/(items+1) #Items height
-    spacing=menu_height/(items+1)/(items-1) #Distance between Items
+    spacing=menu_height/(items+1)/(items-1) #Distance between items
     style="Arial", int(item_height*0.17), "bold" #Set text format
-    text_front, text_size, text_weight=style #Unpack text style
+    text_font, text_size, text_weight=style #Unpack text style
     menu_center=menu_x0+menu_width/2+bounds #Menu horizontal center x coordinate
     y=screen.window_height()/2-margin/2-item_height/2 #First item y coordinate
     pen.goto(menu_center,y)
@@ -1299,8 +1295,10 @@ def pause_game(): #Pause the game:
     global Menu_bt #Back to main menu button
     global Exit_bt #Exit button
     global Paused #Register did game paused
+    global Second
     Timer_stop=True
     Paused=True
+    Second=Second-1 #Adjust timer
     page=6
     screen.clear()
     screen.setup(width=550, height=650)
@@ -1336,7 +1334,6 @@ def steps_upd(): #Update steps count
     global step_pn
     global steps
     global screen
-    global item_height
     global Pause_bt
     step_pn.clear()
     text="Steps: "+str(steps)
@@ -1348,10 +1345,17 @@ def timer_upd(): #Update timer count
     global Minutes
     global Second
     global Screen
-    global item_height
     global Pause_bt
+    global Max_Minute #Maximum time minutes allowed in hardcore mode
+    global Max_Second #Maximum time seconds allowed in hardcore mode
+    global Difficulty
     timer_pn.clear()
-    temp=grid(Minutes,Second)
+    if Difficulty == 5: #Convert to countdown
+        minu=Max_Minute-Minutes-1
+        seco=60-Second
+        temp=grid(minu,seco)
+    else:
+        temp=grid(Minutes,Second)
     text="Timer: "+temp[0:2]+":"+temp[2:4] #Concast minutes and seconds to timer format
     timer_pn.write(text, align="center", font=("Arial", Pause_bt.get_text_size(), "bold"))
     screen.update()
@@ -1390,7 +1394,7 @@ def Sys_wait_2_second(): #System massage clear after 2 second
 
 def move_up():
     global Board
-    global Player
+    global player
     global Size
     global Screen
     global Ratio
@@ -1419,7 +1423,7 @@ def move_up():
 
 def move_down():
     global Board
-    global Player
+    global player
     global Size
     global Screen
     global Ratio
@@ -1448,7 +1452,7 @@ def move_down():
 
 def move_left():
     global Board
-    global Player
+    global player
     global Size
     global Screen
     global Ratio
@@ -1477,7 +1481,7 @@ def move_left():
 
 def move_right():
     global Board
-    global Player
+    global player
     global Size
     global Screen
     global Ratio
@@ -1531,8 +1535,8 @@ class Button:
         self.height=height
         self.text=text
         self.style=style
-        text_front, text_size, text_weight=style #Unpack text style
-        self.text_front=text_front #Text font
+        text_font, text_size, text_weight=style #Unpack text style
+        self.text_font=text_font #Text font
         self.text_size=text_size #Text size
         self.text_weight=text_weight #Text weight
     
@@ -1643,6 +1647,159 @@ class Button_R: #Right arrow button
         pen.goto(self.x+5,self.y-5) #Arrow top left point
         pen.end_fill()
         pen.penup() #Finish drawing the button
+        screen.update()
+
+class Player: #Player character class, mainly used for 2 player mode. Development paused
+    def __init__(self,Board,color,shape):
+        self.Board=Board #Game board
+        self.color=color #Character color
+        self.shape=shape #Character shape
+        self.steps=0 #Steps taken
+        self.setup()
+
+    def setup(self): #Character setup
+        global t
+        global Ratio
+        self.character=t.Turtle() #Player character
+        self.character.shapesize((Ratio/20), (Ratio/20))
+        self.character.penup()
+        self.character.color(self.color)
+        self.character.shape(self.shape)
+        self.character.goto((Ratio/4),0)
+        self.character.hideturtle()
+
+    def get_steps(self): #Return steps taken
+        return self.steps
+
+    def player_found(self): #Automated relocate player position
+        global Size
+        found=False #Register did the player position found
+        x=0
+        y=0
+        try_n=0
+        while found != True: #Automated relocate player position
+            if self.Board[x][y] == "P":
+                found=True
+            else:
+                y=y+1
+                if y > (Size-1):
+                    x=x+1
+                    y=0
+                    if x > (Size-1):
+                        if try_n != 3:
+                            x=0
+                            y=0
+                            try_n=try_n+1
+                        else:
+                            print("System: ERROR")
+                            print("System: Player position not found, please restart the game")
+                            ans=input("System: Press Enter to exit the game ")
+                            sys.exit()
+        coordinate=grid(x,y)
+        return coordinate #Return player coordinate in Grid fromat
+
+    def move_up(self): #Character move up
+        global Size
+        global Screen
+        global Ratio
+        temp=self.player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        self.character.setheading(90) #Curser turn toward up
+        if y < (Size-1) and self.Board[x][y+1] != "X":
+            self.Board[x][y]=" "
+            y=y+1
+            self.steps=self.steps+1
+            steps_upd()
+            if self.Board[x][y] == "E":
+                self.Board[x][y]="P"
+                end(True)
+            else:
+                self.Board[x][y]="P" #Change player postion in board
+                x=self.character.xcor()
+                y=self.character.ycor()
+                y=y+Ratio
+                self.character.goto(x,y) #Player curser move up
+        else:
+            Invalid_move("Up")
+        screen.update()
+
+    def move_down(self): #Character move down
+        global Size
+        global Screen
+        global Ratio
+        temp=self.player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        self.character.setheading(270) #Curser turn toward down
+        if y > 0 and self.Board[x][y-1] != "X":
+            self.Board[x][y]=" "
+            y=y-1
+            self.steps=self.steps+1
+            steps_upd()
+            if self.Board[x][y] == "E":
+                self.Board[x][y]="P"
+                end(True)
+            else:
+                self.Board[x][y]="P" #Change player postion in board
+                x=self.character.xcor()
+                y=self.character.ycor()
+                y=y-Ratio
+                self.character.goto(x,y) #Player curser move down
+        else:
+            Invalid_move("Down")
+        screen.update()
+
+    def move_left(self): #Character move left
+        global Size
+        global Screen
+        global Ratio
+        temp=self.player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        self.character.setheading(180) #Curser turn toward left
+        if x > 0 and self.Board[x-1][y] != "X":
+            self.Board[x][y]=" "
+            x=x-1
+            self.steps=self.steps+1
+            steps_upd()
+            if self.Board[x][y] == "E":
+                self.Board[x][y]="P"
+                end(True)
+            else:
+                self.Board[x][y]="P" #Change player postion in board
+                x=self.character.xcor()
+                y=self.character.ycor()
+                x=x-Ratio
+                self.character.goto(x,y) #Player curser move left
+        else:
+            Invalid_move("Left")
+        screen.update()
+
+    def move_right(self): #Character move right
+        global Size
+        global Screen
+        global Ratio
+        temp=self.player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        self.character.setheading(0) #Curser turn toward right
+        if x < (Size-1) and Board[x+1][y] != "X":
+            self.Board[x][y]=" "
+            x=x+1
+            self.steps=self.steps+1
+            steps_upd()
+            if self.Board[x][y] == "E":
+                self.Board[x][y]="P"
+                end(True)
+            else:
+                self.Board[x][y]="P" #Change player postion in board
+                x=self.character.xcor()
+                y=self.character.ycor()
+                x=x+Ratio
+                self.character.goto(x,y) #Player curser move right
+        else:
+            Invalid_move("Right")
         screen.update()
 
 import time
