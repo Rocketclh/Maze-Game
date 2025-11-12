@@ -105,13 +105,12 @@ def end(win): #win output
         if win:
             print("System: Congratulations!")
             print("System: You have exited the maze!")
-            print("System: Total steps taken:", steps)
-            print("System: Maze recommended steps:", rec_step)
         else:
             print("System: Game Over")
             print("System: You have used all of the steps")
-            print("System: Total steps taken:", steps)
-            print("System: Maze recommended steps:", rec_step)
+        print("System: Total steps taken:", steps)
+        print("System: Maze recommended steps:", rec_step)
+        print("System: Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds")
         time.sleep(0.5)
         ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
         if ans.lower() == "/restart":
@@ -759,7 +758,7 @@ def maze_solve():
             time.sleep(0.1)
             if Difficulty == 5:
                 ans=input("System: Press Enter to start ")
-                timer.start()
+            timer.start()
             game()
         elif mode == 2:
             game_setup()
@@ -847,11 +846,11 @@ def Menu_CLI(): #CLI menu
     time.sleep(1)
     print("System: Every steps you take will be recorded")
     time.sleep(1)
-    print("System: Your goal is to exit the maze with fewest steps")
+    print("System: Your goal is to exit the maze with shortest time")
     time.sleep(1)
-    print("System: In Hardcore Mode your steps was limmited, think carefully before moving")
+    print("System: In Hardcore Mode your steps and time was limmited, think carefully before moving")
     time.sleep(1)
-    print("System: You are not allow to use more steps than the system recommended in Hardcore Mode")
+    print("System: You are not allow to use more steps and time than the system recommended in Hardcore Mode")
     time.sleep(1)
     ans=input("System: Press Enter to start the game or enter /GUI to swap to GUI manu")
     if ans.lower() == "/gui":
@@ -891,6 +890,7 @@ def menu_setup(): #GUI screen setup
     pen.penup()
     pen.shapesize(1,1)
     screen.update()
+    def_set() #Setting options set to default
     Menu_GUI()
 
 def Menu_GUI(): #GUI main menu
@@ -936,8 +936,7 @@ def button_click(x,y): #Mouse clicked
     global Exit_bt #Exit button
     global Return_bt #Return button
     global CLI_bt #CLI button
-    global Difficulty_btL #Difficulty left arrow button
-    global Difficulty_btR #Difficulty right arrow button
+    global Difficulty_set #Difficulty option set
     global Restart_bt #Restart button
     global cycle
     global Timer_stop #Register timer stop
@@ -945,6 +944,11 @@ def button_click(x,y): #Mouse clicked
     global Resume_bt #Resume button
     global Menu_bt #Back to main menu button
     global Paused #Register did game paused
+    global PShape #Player shape
+    global PShape_set #Player shape option set
+    global Apply_bt #Apply button
+    global Reset_bt #Reset button
+    global RAM
     screen.update()
     if page == 0: #From menu
         if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
@@ -953,6 +957,7 @@ def button_click(x,y): #Mouse clicked
             Difficulty=1
             game_setting()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
+            RAM=[PShape] #Store the currtent setting
             setting()
         elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
             screen.bye()
@@ -967,11 +972,11 @@ def button_click(x,y): #Mouse clicked
     elif page == 2: #From game_setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             Menu_GUI()
-        elif Difficulty_btL.get_x_min() < x < Difficulty_btL.get_x_max() and Difficulty_btL.get_y_min() < y < Difficulty_btL.get_y_max(): #Difficulty left arrow button pressed
+        elif Difficulty_set.get_btL_x_min() < x < Difficulty_set.get_btL_x_max() and Difficulty_set.get_btL_y_min() < y < Difficulty_set.get_btL_y_max(): #Difficulty option set left arrow button pressed
             if Difficulty > 1: #Decrease difficulty
                 Difficulty=Difficulty-1
                 game_setting()
-        elif Difficulty_btR.get_x_min() < x < Difficulty_btR.get_x_max() and Difficulty_btR.get_y_min() < y < Difficulty_btR.get_y_max(): #Difficulty right arrow button pressed
+        elif Difficulty_set.get_btR_x_min() < x < Difficulty_set.get_btR_x_max() and Difficulty_set.get_btR_y_min() < y < Difficulty_set.get_btR_y_max(): #Difficulty option set right arrow button pressed
             if Difficulty < 5: #Increase difficulty
                 Difficulty=Difficulty+1
                 game_setting()
@@ -979,10 +984,24 @@ def button_click(x,y): #Mouse clicked
             build_maze()
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
+            PShape=RAM[0]
             if Paused: #Go back to pause menu when game paused
                 pause_game()
             else: #Go back to main menu
                 Menu_GUI()
+        elif PShape_set.get_btL_x_min() < x < PShape_set.get_btL_x_max() and PShape_set.get_btL_y_min() < y < PShape_set.get_btL_y_max(): #Player shape option set left arrow button pressed
+            if PShape > 1: #Change player shape
+                PShape=PShape-1
+                setting()
+        elif PShape_set.get_btR_x_min() < x < PShape_set.get_btR_x_max() and PShape_set.get_btR_y_min() < y < PShape_set.get_btR_y_max(): #Player shape option set right arrow button pressed
+            if PShape < 6: #Change player shape
+                PShape=PShape+1
+                setting()
+        elif Apply_bt.get_x_min() < x < Apply_bt.get_x_max() and Apply_bt.get_y_min() < y < Apply_bt.get_y_max(): #Apply button pressed
+            RAM=[PShape] #Update the currtent setting
+        elif Reset_bt.get_x_min() < x < Reset_bt.get_x_max() and Reset_bt.get_y_min() < y < Reset_bt.get_y_max(): #Reset button pressed
+            def_set() #Reset setting options back to default
+            setting()
     elif page == 4: #From in-game menu
         if Pause_bt.get_x_min() < x < Pause_bt.get_x_max() and Pause_bt.get_y_min() < y < Pause_bt.get_y_max(): #Pause button pressed
             pause_game()
@@ -997,6 +1016,7 @@ def button_click(x,y): #Mouse clicked
         if Resume_bt.get_x_min() < x < Resume_bt.get_x_max() and Resume_bt.get_y_min() < y < Resume_bt.get_y_max(): #Resume button pressed
             game_setup()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
+            RAM=[PShape] #Store the currtent setting
             setting()
         elif Menu_bt.get_x_min() < x < Menu_bt.get_x_max() and Menu_bt.get_y_min() < y < Menu_bt.get_y_max(): #Back to main menu button pressed
             screen.reset()
@@ -1033,16 +1053,16 @@ def instruction(): #GUI instruction
     pen.write("- Every steps you take will be recorded -", align="center", font=(style))
     y=y-50 #Seventh row
     pen.goto(0,y)
-    pen.write("- Your goal is to exit the maze with fewest steps -", align="center", font=(style))
+    pen.write("- Your goal is to exit the maze with shortest time -", align="center", font=(style))
     y=y-50 #Eighth row
     pen.goto(0,y)
-    pen.write("- In Hardcore Mode your steps was limmited -", align="center", font=(style))
+    pen.write("- In Hardcore Mode your steps and time was limmited -", align="center", font=(style))
     y=y-50 #Nineth row
     pen.goto(0,y)
     pen.write("- Think carefully before moving -", align="center", font=(style))
     y=y-50 #Tenth row
     pen.goto(0,y)
-    pen.write("- You are not allow to use more steps than", align="center", font=(style))
+    pen.write("- You are not allow to use more steps and time than", align="center", font=(style))
     y=y-50 #Eleventh row
     pen.goto(0,y)
     pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
@@ -1058,38 +1078,20 @@ def game_setting(): #GUI game setting
     global page
     global pen
     global Difficulty
-    global Difficulty_btL
-    global Difficulty_btR
+    global Difficulty_set
     global Start_bt
     global Return_bt
     page=2
     pen.clear() #Clear screen
-    x=-170 #Difficulty text position
-    y=25
     style="Arial", 25, "bold"
-    pen.goto(x,y-42.5)
-    pen.write("Difficulty:", align="center", font=(style))
-    x=x+85 #Difficulty text to difficulty left arrow button TL position
-    Difficulty_btL=Button_L(x,y,25,50)
-    Difficulty_btL.draw()
-    x=x+30 #Difficulty left arrow button TL to difficulty display TL position
-    pen.penup() #Finish drawing left arrow button
-    if Difficulty == 1: #Set difficulty
-        text="1(21*21 Board)"
-    elif Difficulty == 2:
-        text="2(31*31 Board)"
-    elif Difficulty == 3:
-        text="3(41*41 Board)"
-    elif Difficulty == 4:
-        text="4(51*51 Board)"
-    elif Difficulty == 5:
-        text="5(Hardcore Mode)"
-    Difficulty_dp=Button(x,y,285,50,text,style)
-    Difficulty_dp.draw() #Draw current difficulty display
-    pen.penup() #Finish drawing current difficulty display
-    x=x+290 #Difficulty display to difficulty right arrow button TL position
-    Difficulty_btR=Button_R(x,y,25,50)
-    Difficulty_btR.draw()
+    try:
+        Difficulty_set.set_n(Difficulty) #Update difficulty
+    except:
+        x=-170 #Difficulty text position
+        y=25
+        options=["1(21*21 Board)","2(31*31 Board)","3(41*41 Board)","4(51*51 Board)","5(Hardcore Mode)"] #Available difficulty
+        Difficulty_set=Option_set(x, y, style, "Difficulty:", options, Difficulty)
+    Difficulty_set.draw() #Draw difficulty option set
     Start_bt=Button(-50,-100,100,50,"Start",style)
     Start_bt.draw() #Draw start button
     Return_bt=Button(-250,-250,125,50,"Return",style)
@@ -1098,15 +1100,34 @@ def game_setting(): #GUI game setting
     screen.onclick(button_click)
     screen.listen()
 
+def def_set(): #Setting default
+    global PShape
+    PShape=1 #Classic
+
 def setting(): #GUI setting
     global screen
     global page
     global pen
     global Return_bt
+    global PShape
+    global PShape_set
+    global Apply_bt
+    global Reset_bt
     page=3
     pen.clear() #Clear screen
-    pen.goto(0,0)
     style="Arial", 25, "bold"
+    try:
+        PShape_set.set_n(PShape) #Update player shape
+    except:
+        x=-100 #Player shape text position
+        y=25 #Player shape section row
+        options=["Classic","Turtle","Arrow","Circle","Square","Triangle"] #Available player shape
+        PShape_set=Option_set(x, y, style, "Player Shape:  ", options,PShape)
+    PShape_set.draw() #Draw player shape option set
+    Apply_bt=Button(-112.5,-100,100,50,"Apply",style)
+    Apply_bt.draw() #Draw apply button
+    Reset_bt=Button(12.5,-100,100,50,"Reset",style)
+    Reset_bt.draw() #Draw reset button
     Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
@@ -1126,6 +1147,7 @@ def game_setup(): #Game GUI setup
     global menu_width
     global Minutes
     global Second
+    global PShape
     page=4
     screen.clear() #Clear screen
     Ratio=min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*0.85 #Set screen size using monitor resolution
@@ -1142,6 +1164,18 @@ def game_setup(): #Game GUI setup
     player=t.Turtle() #Player character
     player.shapesize((Ratio/20), (Ratio/20))
     player.penup()
+    if PShape == 1: #Set player shape
+        player.shape("classic")
+    elif PShape == 2:
+        player.shape("turtle")
+    elif PShape == 3:
+        player.shape("arrow")
+    elif PShape == 4:
+        player.shape("circle")
+    elif PShape == 5:
+        player.shape("square")
+    elif PShape == 6:
+        player.shape("triangle")
     player.color("green")
     player.goto((Ratio/4),0)
     player.hideturtle()
@@ -1272,7 +1306,9 @@ def ready(): #Ready to start the game
 def Start(): #Start the game
     global screen
     global system
+    global cooldown
     system.clear()
+    cooldown=False
     screen.bgcolor("white")
     screen.update()
     screen.onkeypress(None,"Return")
@@ -1379,17 +1415,36 @@ def wall_block(x,y,color):
 def Invalid_move(direction): #Error massage output
     global system
     global screen
-    style="Arial", 25, "bold"
-    system.goto(0,25)
-    system.write("Invalid Move", align="center", font=(style))
-    system.goto(0,-25)
+    global Ratio
+    global Size
+    global cooldown
+    style="Arial", int(25/Size*Ratio*0.75), "bold"
+    text_font, text_size, text_weight=style #Unpack text style
     text="You Cannot Move "+direction
+    system.clear()
+    system.goto(-text_size*len(text)*0.4,text_size*3) #TL of the display
+    system.pendown() #Start drawing the display
+    system.begin_fill()
+    system.fillcolor("white")
+    system.goto(text_size*len(text)*0.4,text_size*3) #TR of the display
+    system.goto(text_size*len(text)*0.4,-text_size*1.5) #BR of the display
+    system.goto(-text_size*len(text)*0.4,-text_size*1.5) #BL of the display
+    system.goto(-text_size*len(text)*0.4,text_size*3) #TL of the display
+    system.end_fill()
+    system.penup() #Finish drawing the display
+    system.goto(0,text_size/1.25)
+    system.write("Invalid Move", align="center", font=(style))
+    system.goto(0,-text_size/1.75)
     system.write(text, align="center", font=(style))
-    screen.ontimer(Sys_wait_2_second, 2000) #Execute after 2 second
+    if not(cooldown): #Preventing Sys_wait_2_second procedure execute multiple times
+        screen.ontimer(Sys_wait_2_second, 2000) #Execute after 2 second
+        cooldown=True
     screen.update()
 
 def Sys_wait_2_second(): #System massage clear after 2 second
     global system
+    global cooldown
+    cooldown=False
     system.clear()
 
 def move_up():
@@ -1648,6 +1703,67 @@ class Button_R: #Right arrow button
         pen.end_fill()
         pen.penup() #Finish drawing the button
         screen.update()
+
+class Option_set:
+    def __init__(self, x, y, style, text, text_list ,n):
+        self.x=x #Top left x coordinate
+        self.y=y #Top left y coordinate
+        self.style=style #Text style
+        text_font, text_size, text_weight=style #Unpack text style
+        self.text_font=text_font #Text font
+        self.text_size=text_size #Text size
+        self.text_weight=text_weight #Text weight
+        self.text=text #Text
+        self.text_list=text_list #List of text show on display
+        self.n=n-1 #nth item of the list to diaplay
+
+    def get_btL_x_min(self): #Return the x value bottom bound of the left arrow button
+        return self.btL.get_x_min()
+
+    def get_btL_x_max(self): #Return the x value upper bound of the left arrow button
+        return self.btL.get_x_max()
+    
+    def get_btL_y_min(self): #Return the y value bottom bound of the left arrow button
+        return self.btL.get_y_min()
+    
+    def get_btL_y_max(self): #Return the y value upper bound of the left arrow button
+        return self.btL.get_y_max()
+    
+    def get_btR_x_min(self): #Return the x value bottom bound of the right arrow button
+        return self.btR.get_x_min()
+    
+    def get_btR_x_max(self): #Return the x value upper bound of the right arrow button
+        return self.btR.get_x_max()
+    
+    def get_btR_y_min(self): #Return the y value bottom bound of the right arrow button
+        return self.btR.get_y_min()
+    
+    def get_btR_y_max(self): #Return the y value upper bound of the right arrow button
+        return self.btR.get_y_max()
+
+    def set_n(self,n): #Change the display
+        self.n=n-1
+
+    def draw(self):
+        global pen
+        x=self.x #X coordinate of the pen
+        pen.goto(x,self.y-(self.text_size+self.text_size/2+5)) #Text centre bottom position
+        pen.write(self.text, align="center", font=(self.style))
+        x=x+(len(self.text)*self.text_size/3.5) #Text to left arrow button TL position
+        self.btL=Button_L(x,self.y,self.text_size,self.text_size*2) #Left arrow button setup
+        self.btL.draw()
+        x=x+self.text_size+5 #Left arrow button TL to display TL position
+        max_length=0 #Longest string length
+        for i in range(len(self.text_list)): #Found the longest string length
+            length=len(self.text_list[i]) #String length of current string
+            if length > max_length:
+                max_length=length
+        width=max_length*self.text_size/1.375
+        self.dp=Button(x,self.y,width,self.text_size*2,self.text_list[self.n],self.style) #Display setup
+        self.dp.draw() #Draw the display
+        x=x+width+5 #Display to right arrow button TL position
+        self.btR=Button_R(x,self.y,self.text_size,self.text_size*2) #Right arrow button setup
+        self.btR.draw()
 
 class Player: #Player character class, mainly used for 2 player mode. Development paused
     def __init__(self,Board,color,shape):
