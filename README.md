@@ -2,7 +2,7 @@ A maze game developed for A-level NEA project
 
 
 
-How do play the game?
+How do play this game?
 
 1. Download the project as a zip file
 
@@ -19,7 +19,7 @@ How do play the game?
 7. Press Enter
 
 8. Press F5 to execute the code
-
-
-
+  
+  
+  
 This game is still in development, sometimes may not work.
