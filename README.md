@@ -4,7 +4,7 @@ A maze game developed for A-level NEA project
 
 How do play the game?
 
-1 .Download the project as a zip file
+1. Download the project as a zip file
 
 2. Decompress the file called "Maze-Game-main"
 
