@@ -1,3 +1,4 @@
+
 def game(): #CLI game control
     global steps
     global Board
@@ -168,10 +169,7 @@ def end(win): #win output
         Exit_bt.draw()
         screen.update()
         screen.onclick(button_click)
-        screen.onkeypress(None,"w")
-        screen.onkeypress(None,"s")
-        screen.onkeypress(None,"a")
-        screen.onkeypress(None,"d")
+        movement_unblind()
         screen.listen()
 
 def print_board(): # board
@@ -619,7 +617,7 @@ def player_found(): #Automated relocate player position
                     else:
                         print("System: ERROR")
                         print("System: Player position not found, please restart the game")
-                        ans=input("System: Press Enter to exit the game ")
+                        input("System: Press Enter to exit the game ")
                         sys.exit()
     coordinate=grid(x,y)
     return coordinate #Return player coordinate in Grid fromat
@@ -747,7 +745,7 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    quick_test() #Test
+    #quick_test() #Test
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -757,7 +755,7 @@ def maze_solve():
             print("System: Recommend steps for this maze:", rec_step)
             time.sleep(0.1)
             if Difficulty == 5:
-                ans=input("System: Press Enter to start ")
+                input("System: Press Enter to start ")
             timer.start()
             game()
         elif mode == 2:
@@ -765,7 +763,7 @@ def maze_solve():
         else:
             print("System: ERROR")
             print("System: User interface not recognised, please restart the game")
-            ans=input("System: Press Enter to exit the game ")
+            input("System: Press Enter to exit the game ")
             sys.exit()
 
 def quick_test(): #Test
@@ -785,7 +783,7 @@ def Timer(): #10 minutes timer (Main thread/Sub-thread)
     global Timer_stop #Register timer stop
     global Max_Minute #Maximum time minutes allowed in hardcore mode
     global Max_Second #Maximum time seconds allowed in hardcore mode
-    Max_Minute=5
+    Max_Minute=3
     Max_Second=0
     Timer_stop=False
     Time_up=False
@@ -852,10 +850,10 @@ def Menu_CLI(): #CLI menu
     time.sleep(1)
     print("System: You are not allow to use more steps and time than the system recommended in Hardcore Mode")
     time.sleep(1)
-    ans=input("System: Press Enter to start the game or enter /GUI to swap to GUI manu")
+    ans=input("System: Press Enter to start the game or enter /GUI to switch to GUI manu")
     if ans.lower() == "/gui":
         mode=2
-        menu_setup() #Swap to graphical user interface
+        menu_setup() #Switch to graphical user interface
     else:
         Type_error=False
         while not Type_error:
@@ -891,6 +889,7 @@ def menu_setup(): #GUI screen setup
     pen.shapesize(1,1)
     screen.update()
     def_set() #Setting options set to default
+    volume_set() #Set audio volume
     Menu_GUI()
 
 def Menu_GUI(): #GUI main menu
@@ -944,8 +943,14 @@ def button_click(x,y): #Mouse clicked
     global Resume_bt #Resume button
     global Menu_bt #Back to main menu button
     global Paused #Register did game paused
-    global PShape #Player shape
     global PShape_set #Player shape option set
+    global PShape #Player shape
+    global PColour_set #Player colour option set
+    global PColour #Player colour
+    global Animation_set #Animation option set
+    global Animation #Animation
+    global AVolume_set #Audio volume option set
+    global AVolume #Audio volume
     global Apply_bt #Apply button
     global Reset_bt #Reset button
     global RAM
@@ -957,7 +962,7 @@ def button_click(x,y): #Mouse clicked
             Difficulty=1
             game_setting()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
-            RAM=[PShape] #Store the currtent setting
+            RAM=[PShape,PColour,Animation,AVolume] #Store the currtent setting
             setting()
         elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
             screen.bye()
@@ -965,7 +970,7 @@ def button_click(x,y): #Mouse clicked
         elif CLI_bt.get_x_min() < x < CLI_bt.get_x_max() and CLI_bt.get_y_min() < y < CLI_bt.get_y_max(): #CLI button pressed
             screen.bye()
             mode=1
-            Menu_CLI() #Swap to command line interface
+            Menu_CLI() #Switch to command line interface
     elif page == 1: #From instruction
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             Menu_GUI()
@@ -984,7 +989,10 @@ def button_click(x,y): #Mouse clicked
             build_maze()
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
-            PShape=RAM[0]
+            PShape=RAM[0] #Set back to original setting
+            PColour=RAM[1]
+            Animation=RAM[2]
+            AVolume=RAM[3]
             if Paused: #Go back to pause menu when game paused
                 pause_game()
             else: #Go back to main menu
@@ -997,8 +1005,33 @@ def button_click(x,y): #Mouse clicked
             if PShape < 6: #Change player shape
                 PShape=PShape+1
                 setting()
+        elif PColour_set.get_btL_x_min() < x < PColour_set.get_btL_x_max() and PColour_set.get_btL_y_min() < y < PColour_set.get_btL_y_max(): #Player colour option set left arrow button pressed
+            if PColour > 1: #Change player colour
+                PColour=PColour-1
+                setting()
+        elif PColour_set.get_btR_x_min() < x < PColour_set.get_btR_x_max() and PColour_set.get_btR_y_min() < y < PColour_set.get_btR_y_max(): #Player colour option set right arrow button pressed
+            if PColour < 6: #Change player colour
+                PColour=PColour+1
+                setting()
+        elif Animation_set.get_btL_x_min() < x < Animation_set.get_btL_x_max() and Animation_set.get_btL_y_min() < y < Animation_set.get_btL_y_max(): #Animation option set left arrow button pressed
+            if Animation == 2: #Turn animation on
+                Animation=1
+                setting()
+        elif Animation_set.get_btR_x_min() < x < Animation_set.get_btR_x_max() and Animation_set.get_btR_y_min() < y < Animation_set.get_btR_y_max(): #Animation option set right arrow button pressed
+            if Animation == 1: #Turn animation off
+                Animation=2
+                setting()
+        elif AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
+            if AVolume > 1: #Change audio volume
+                AVolume=AVolume-1
+                setting()
+        elif AVolume_set.get_btR_x_min() < x < AVolume_set.get_btR_x_max() and AVolume_set.get_btR_y_min() < y < AVolume_set.get_btR_y_max(): #Audio volume option set right arrow button pressed
+            if AVolume < 5: #Change audio volume
+                AVolume=AVolume+1
+                setting()
         elif Apply_bt.get_x_min() < x < Apply_bt.get_x_max() and Apply_bt.get_y_min() < y < Apply_bt.get_y_max(): #Apply button pressed
-            RAM=[PShape] #Update the currtent setting
+            RAM=[PShape,PColour,Animation,AVolume] #Update the currtent setting
+            volume_set() #Apply audio volume setting
         elif Reset_bt.get_x_min() < x < Reset_bt.get_x_max() and Reset_bt.get_y_min() < y < Reset_bt.get_y_max(): #Reset button pressed
             def_set() #Reset setting options back to default
             setting()
@@ -1016,7 +1049,7 @@ def button_click(x,y): #Mouse clicked
         if Resume_bt.get_x_min() < x < Resume_bt.get_x_max() and Resume_bt.get_y_min() < y < Resume_bt.get_y_max(): #Resume button pressed
             game_setup()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
-            RAM=[PShape] #Store the currtent setting
+            RAM=[PShape,PColour,Animation,AVolume] #Store the currtent setting
             setting()
         elif Menu_bt.get_x_min() < x < Menu_bt.get_x_max() and Menu_bt.get_y_min() < y < Menu_bt.get_y_max(): #Back to main menu button pressed
             screen.reset()
@@ -1100,30 +1133,89 @@ def game_setting(): #GUI game setting
     screen.onclick(button_click)
     screen.listen()
 
+def load_audio(): #Load in all audio
+    error=False
+    audio=""
+    try:
+        mixer.music.load("Maze_game_audio_pack/Test")
+    except:
+        error=True
+        audio=audio+"Test.mp3"+", "
+    if error: #Error message
+        print("System: ERROR")
+        print("System: Failed to load "+audio[0:len(audio)-2])
+        print("System: Please make sure full audio package was installed")
+        input("System: Press Enter to exit the game ")
+
+def volume_set(): #Audio volume set
+    global AVolume
+    volume=AVolume/100
+    mixer.music.set_volume(volume)
+
+def play_sound(i): #Play sound
+    if i == 1:
+        mixer.music.play()
+
 def def_set(): #Setting default
     global PShape
+    global PColour
+    global Animation
+    global AVolume
     PShape=1 #Classic
+    PColour=1 #Green
+    Animation=1 #On
+    AVolume=3 #50
 
 def setting(): #GUI setting
     global screen
     global page
     global pen
     global Return_bt
-    global PShape
-    global PShape_set
     global Apply_bt
     global Reset_bt
+    global PShape_set
+    global PShape
+    global PColour_set
+    global PColour
+    global Animation_set
+    global Animation
+    global AVolume_set
+    global AVolume
     page=3
     pen.clear() #Clear screen
     style="Arial", 25, "bold"
     try:
         PShape_set.set_n(PShape) #Update player shape
     except:
-        x=-100 #Player shape text position
-        y=25 #Player shape section row
+        x=-100 #Player shape set position
+        y=250 #Player shape section row
         options=["Classic","Turtle","Arrow","Circle","Square","Triangle"] #Available player shape
         PShape_set=Option_set(x, y, style, "Player Shape:  ", options,PShape)
     PShape_set.draw() #Draw player shape option set
+    try:
+        Colour_set.set_n(PColour) #Update player colour
+    except:
+        x=-75 #Player colour set position
+        y=175 #Player colour section row
+        options=["Green","Red","Blue","Yellow","White","Black"] #Available player colour
+        PColour_set=Option_set(x, y, style, "Player Colour:  ", options,PColour)
+    PColour_set.draw() #Draw player colour option set
+    try:
+        Animation_set.set_n(Animation) #Update animation
+    except:
+        x=-50 #Animation set position
+        y=100 #Animation section row
+        options=["On", "Off"] #Available option
+        Animation_set=Option_set(x, y, style, "Animation:  ", options,Animation)
+    Animation_set.draw() #Draw animation option set
+    try:
+        AVolume_set.set_n(AVolume) #Update audio volume
+    except:
+        x=-50 #Audio volume set position
+        y=25 #Audio volume section row
+        options=["0","25", "50", "75", "100"] #Available option
+        AVolume_set=Option_set(x, y, style, "Volume:  ", options,AVolume)
+    AVolume_set.draw() #Draw audio volume option set
     Apply_bt=Button(-112.5,-100,100,50,"Apply",style)
     Apply_bt.draw() #Draw apply button
     Reset_bt=Button(12.5,-100,100,50,"Reset",style)
@@ -1147,7 +1239,10 @@ def game_setup(): #Game GUI setup
     global menu_width
     global Minutes
     global Second
+    global PShape_set
     global PShape
+    global PColour_set
+    global PColour
     page=4
     screen.clear() #Clear screen
     Ratio=min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*0.85 #Set screen size using monitor resolution
@@ -1164,19 +1259,16 @@ def game_setup(): #Game GUI setup
     player=t.Turtle() #Player character
     player.shapesize((Ratio/20), (Ratio/20))
     player.penup()
-    if PShape == 1: #Set player shape
+    try: #Set player shape
+        player.shape(PShape_set.get_text_list_nth_item(PShape))
+        if PShape != 1: #Size adjust
+            player.shapesize((Ratio/30), (Ratio/30))
+    except: #If user didn't open setting
         player.shape("classic")
-    elif PShape == 2:
-        player.shape("turtle")
-    elif PShape == 3:
-        player.shape("arrow")
-    elif PShape == 4:
-        player.shape("circle")
-    elif PShape == 5:
-        player.shape("square")
-    elif PShape == 6:
-        player.shape("triangle")
-    player.color("green")
+    try: #Set player colour
+        player.fillcolor(PColour_set.get_text_list_nth_item(PColour))
+    except: #If user didn't open setting
+        player.fillcolor("green")
     player.goto((Ratio/4),0)
     player.hideturtle()
     system=t.Turtle() #Output massage
@@ -1292,11 +1384,12 @@ def ready(): #Ready to start the game
     global Ratio
     global steps
     global Paused #Register did game paused
+    style="Arial", int(25/min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*Ratio*1.5), "bold"
     if not(Paused):
         text="Press Enter to start"
     elif Paused:
         text="Press Enter to resume"
-    system.write(text, align="center", font=("Arial", int(Ratio), "bold"))
+    system.write(text, align="center", font=(style))
     screen.bgcolor("black")
     screen.update()
     screen.onkeypress(Start,"Return")
@@ -1312,10 +1405,7 @@ def Start(): #Start the game
     screen.bgcolor("white")
     screen.update()
     screen.onkeypress(None,"Return")
-    screen.onkeypress(move_up,"w")
-    screen.onkeypress(move_down,"s")
-    screen.onkeypress(move_left,"a")
-    screen.onkeypress(move_right,"d")
+    movement_blind() #Set movement
     screen.onclick(button_click)
     screen.listen()
     Timer() #Start timer
@@ -1360,10 +1450,7 @@ def pause_game(): #Pause the game:
     Exit_bt.draw() #Draw exit button
     screen.update()
     screen.onclick(button_click)
-    screen.onkeypress(None,"w")
-    screen.onkeypress(None,"s")
-    screen.onkeypress(None,"a")
-    screen.onkeypress(None,"d")
+    movement_unblind()
     screen.listen()
 
 def steps_upd(): #Update steps count
@@ -1400,6 +1487,7 @@ def wall_block(x,y,color):
     global pen
     global screen
     global Ratio
+    global Animation
     pen.color(color)
     pen.goto(x,y) #Top left
     pen.pendown()
@@ -1410,7 +1498,8 @@ def wall_block(x,y,color):
     pen.goto(x,y) #Top left
     pen.end_fill()
     pen.penup()
-    screen.update()
+    if Animation == 1: #Animation on
+        screen.update()
 
 def Invalid_move(direction): #Error massage output
     global system
@@ -1418,7 +1507,7 @@ def Invalid_move(direction): #Error massage output
     global Ratio
     global Size
     global cooldown
-    style="Arial", int(25/Size*Ratio*0.75), "bold"
+    style="Arial", int(25/min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*Ratio*1.5), "bold"
     text_font, text_size, text_weight=style #Unpack text style
     text="You Cannot Move "+direction
     system.clear()
@@ -1447,6 +1536,20 @@ def Sys_wait_2_second(): #System massage clear after 2 second
     cooldown=False
     system.clear()
 
+def movement_unblind(): #Unblind keys to movement
+    global screen
+    screen.onkeypress(None,"w")
+    screen.onkeypress(None,"s")
+    screen.onkeypress(None,"a")
+    screen.onkeypress(None,"d")
+
+def movement_blind(): #Blind keys to movement
+    global screen
+    screen.onkeypress(move_up,"w")
+    screen.onkeypress(move_down,"s")
+    screen.onkeypress(move_left,"a")
+    screen.onkeypress(move_right,"d")
+
 def move_up():
     global Board
     global player
@@ -1454,6 +1557,7 @@ def move_up():
     global Screen
     global Ratio
     global steps
+    movement_unblind() #Prevent rapid calling
     temp=player_found() #Found player location
     x=int(temp[0:2])
     y=int(temp[2:4])
@@ -1474,6 +1578,7 @@ def move_up():
             player.goto(x,y) #Player curser move up
     else:
         Invalid_move("Up")
+    screen.ontimer(movement_blind, 10) #Delay 0.01 second
     screen.update()
 
 def move_down():
@@ -1483,6 +1588,7 @@ def move_down():
     global Screen
     global Ratio
     global steps
+    movement_unblind() #Prevent rapid calling
     temp=player_found() #Found player location
     x=int(temp[0:2])
     y=int(temp[2:4])
@@ -1503,6 +1609,7 @@ def move_down():
             player.goto(x,y) #Player curser move down
     else:
         Invalid_move("Down")
+    screen.ontimer(movement_blind, 10) #Delay 0.01 second
     screen.update()
 
 def move_left():
@@ -1512,6 +1619,7 @@ def move_left():
     global Screen
     global Ratio
     global steps
+    movement_unblind() #Prevent rapid calling
     temp=player_found() #Found player location
     x=int(temp[0:2])
     y=int(temp[2:4])
@@ -1532,6 +1640,7 @@ def move_left():
             player.goto(x,y) #Player curser move left
     else:
         Invalid_move("Left")
+    screen.ontimer(movement_blind, 10) #Delay 0.01 second
     screen.update()
 
 def move_right():
@@ -1541,6 +1650,7 @@ def move_right():
     global Screen
     global Ratio
     global steps
+    movement_unblind() #Prevent rapid calling
     temp=player_found() #Found player location
     x=int(temp[0:2])
     y=int(temp[2:4])
@@ -1561,6 +1671,7 @@ def move_right():
             player.goto(x,y) #Player curser move right
     else:
         Invalid_move("Right")
+    screen.ontimer(movement_blind, 10) #Delay 0.01 second
     screen.update()
 
 def main(): #Start point
@@ -1579,7 +1690,7 @@ def main(): #Start point
     else:
         print("System: ERROR")
         print("System: User interface initialize fail, please restart the game")
-        ans=input("System: Press Enter to exit the game ")
+        input("System: Press Enter to exit the game ")
         sys.exit()
 
 class Button:
@@ -1741,6 +1852,11 @@ class Option_set:
     def get_btR_y_max(self): #Return the y value upper bound of the right arrow button
         return self.btR.get_y_max()
 
+    def get_text_list_nth_item(self,n): #Return specific item from text list
+        text=self.text_list[n-1]
+        text=text.lower()
+        return text
+
     def set_n(self,n): #Change the display
         self.n=n-1
 
@@ -1809,7 +1925,7 @@ class Player: #Player character class, mainly used for 2 player mode. Developmen
                         else:
                             print("System: ERROR")
                             print("System: Player position not found, please restart the game")
-                            ans=input("System: Press Enter to exit the game ")
+                            input("System: Press Enter to exit the game ")
                             sys.exit()
         coordinate=grid(x,y)
         return coordinate #Return player coordinate in Grid fromat
@@ -1923,5 +2039,23 @@ import random
 import sys
 import threading
 import turtle as t
-import os
+try: #Check did pygame installed
+    import pygame
+    pygame.init() #Initialise pygame
+    if not(pygame.get_init()): #Check did pygame fully initialised
+        print("System: ERROR")
+        print("System: Failed to fully initialise pygame")
+        print("System: Please restart the game or restore pygame")
+        input("System: Press Enter to exit the game ")
+        sys.exit()
+    else:
+        from pygame import mixer #Import mixer
+        mixer.init() #Pygame mixer initialised
+        load_audio() #Load in audio
+except:
+    print("System: ERROR")
+    print("System: Failed to import pygame")
+    print("System: Please make sure pygame was installed")
+    input("System: Press Enter to exit the game ")
+    sys.exit()
 main()
