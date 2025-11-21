@@ -1,4 +1,3 @@
-
 def game(): #CLI game control
     global steps
     global Board
