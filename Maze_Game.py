@@ -1136,10 +1136,10 @@ def load_audio(): #Load in all audio
     error=False
     audio=""
     try:
-        mixer.music.load("Maze_game_audio_pack/Test")
+        mixer.Button_Click.load("Audio_pack\Button_Click.mp3")
     except:
         error=True
-        audio=audio+"Test.mp3"+", "
+        audio=audio+"Button_Click.mp3"+", "
     if error: #Error message
         print("System: ERROR")
         print("System: Failed to load "+audio[0:len(audio)-2])
@@ -1149,11 +1149,11 @@ def load_audio(): #Load in all audio
 def volume_set(): #Audio volume set
     global AVolume
     volume=AVolume/100
-    mixer.music.set_volume(volume)
+    mixer.Button_Click.set_volume(volume)
 
 def play_sound(i): #Play sound
     if i == 1:
-        mixer.music.play()
+        mixer.Button_Click.play()
 
 def def_set(): #Setting default
     global PShape
