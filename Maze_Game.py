@@ -889,7 +889,8 @@ def menu_setup(): #GUI screen setup
     pen.shapesize(1,1)
     screen.update()
     def_set() #Setting options set to default
-    volume_set() #Set audio volume
+    if Pyg: #Pygame was imported
+        volume_set() #Set audio volume
     Menu_GUI()
 
 def Menu_GUI(): #GUI main menu
@@ -954,7 +955,7 @@ def button_click(x,y): #Mouse clicked
     global AVolume #Audio volume
     global Apply_bt #Apply button
     global Reset_bt #Reset button
-    global RAM #Temporary storage for setting
+    global RAM #Temporary setting
     screen.update()
     if page == 0: #From menu
         if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
@@ -1002,61 +1003,63 @@ def button_click(x,y): #Mouse clicked
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             play_sound(1) #Play sound effect
-            PShape=RAM[0] #Set back to original setting
-            PColour=RAM[1]
-            Animation=RAM[2]
-            AVolume=RAM[3]
             if Paused: #Go back to pause menu when game paused
                 pause_game()
             else: #Go back to main menu
                 Menu_GUI()
         elif PShape_set.get_btL_x_min() < x < PShape_set.get_btL_x_max() and PShape_set.get_btL_y_min() < y < PShape_set.get_btL_y_max(): #Player shape option set left arrow button pressed
             play_sound(1) #Play sound effect
-            if PShape > 1: #Change player shape
-                PShape=PShape-1
+            if RAM[0] > 1: #Change player shape
+                RAM[0]=RAM[0]-1 #Update temporary setting
                 setting()
         elif PShape_set.get_btR_x_min() < x < PShape_set.get_btR_x_max() and PShape_set.get_btR_y_min() < y < PShape_set.get_btR_y_max(): #Player shape option set right arrow button pressed
             play_sound(1) #Play sound effect
-            if PShape < 6: #Change player shape
-                PShape=PShape+1
+            if RAM[0] < PShape_set.get_text_list_length(): #Change player shape
+                RAM[0]=RAM[0]+1 #Update temporary setting
                 setting()
         elif PColour_set.get_btL_x_min() < x < PColour_set.get_btL_x_max() and PColour_set.get_btL_y_min() < y < PColour_set.get_btL_y_max(): #Player colour option set left arrow button pressed
             play_sound(1) #Play sound effect
-            if PColour > 1: #Change player colour
-                PColour=PColour-1
+            if RAM[1] > 1: #Change player colour
+                RAM[1]=RAM[1]-1 #Update temporary setting 
                 setting()
         elif PColour_set.get_btR_x_min() < x < PColour_set.get_btR_x_max() and PColour_set.get_btR_y_min() < y < PColour_set.get_btR_y_max(): #Player colour option set right arrow button pressed
             play_sound(1) #Play sound effect
-            if PColour < 6: #Change player colour
-                PColour=PColour+1
+            if RAM[1] < PColour_set.get_text_list_length(): #Change player colour
+                RAM[1]=RAM[1]+1 #Update temporary setting
                 setting()
         elif Animation_set.get_btL_x_min() < x < Animation_set.get_btL_x_max() and Animation_set.get_btL_y_min() < y < Animation_set.get_btL_y_max(): #Animation option set left arrow button pressed
             play_sound(1) #Play sound effect
-            if Animation == 2: #Turn animation on
-                Animation=1
+            if RAM[2] == 2: #Turn animation on
+                RAM[2]=1 #Update temporary setting
                 setting()
         elif Animation_set.get_btR_x_min() < x < Animation_set.get_btR_x_max() and Animation_set.get_btR_y_min() < y < Animation_set.get_btR_y_max(): #Animation option set right arrow button pressed
-            play_sound(1) #Play sound effect
-            if Animation == 1: #Turn animation off
-                Animation=2
+            play_sound(1) #Play sound effec
+            if RAM[2] == 1: #Turn animation off
+                RAM[2]=2 #Update temporary setting 
                 setting()
-        elif AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
-            play_sound(1) #Play sound effect
-            if AVolume > 1: #Change audio volume
-                AVolume=AVolume-1
-                setting()
-        elif AVolume_set.get_btR_x_min() < x < AVolume_set.get_btR_x_max() and AVolume_set.get_btR_y_min() < y < AVolume_set.get_btR_y_max(): #Audio volume option set right arrow button pressed
-            play_sound(1) #Play sound effect
-            if AVolume < 5: #Change audio volume
-                AVolume=AVolume+1
-                setting()
+        elif Pyg: #Pygame was imported
+            if AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
+                play_sound(1) #Play sound effect
+                if temp > 1: #Change audio volume
+                    RAM[3]=RAM[3]-1 #Update temporary setting 
+                    setting()
+            elif AVolume_set.get_btR_x_min() < x < AVolume_set.get_btR_x_max() and AVolume_set.get_btR_y_min() < y < AVolume_set.get_btR_y_max(): #Audio volume option set right arrow button pressed
+                play_sound(1) #Play sound effect
+                if RAM[3] < AVolume_set.get_text_list_length(): #Change audio volume
+                    RAM[3]=RAM[3]+1 #Update temporary setting
+                    setting()
         elif Apply_bt.get_x_min() < x < Apply_bt.get_x_max() and Apply_bt.get_y_min() < y < Apply_bt.get_y_max(): #Apply button pressed
             play_sound(1) #Play sound effect
-            RAM=[PShape,PColour,Animation,AVolume] #Update the currtent setting
-            volume_set() #Apply audio volume setting
+            PShape=RAM[0] #Apply setting
+            PColour=RAM[1]
+            Animation=RAM[2]
+            if Pyg: #Pygame was imported
+                AVolume=RAM[3]
+                volume_set() #Apply audio volume setting
         elif Reset_bt.get_x_min() < x < Reset_bt.get_x_max() and Reset_bt.get_y_min() < y < Reset_bt.get_y_max(): #Reset button pressed
             play_sound(1) #Play sound effect
             def_set() #Reset setting options back to default
+            RAM=[PShape,PColour,Animation,AVolume] #Update the current setting
             setting()
     elif page == 4: #From in-game menu
         if Pause_bt.get_x_min() < x < Pause_bt.get_x_max() and Pause_bt.get_y_min() < y < Pause_bt.get_y_max(): #Pause button pressed
@@ -1197,8 +1200,9 @@ def volume_set(): #Audio volume set
 
 def play_sound(i): #Play sound
     global BtCl_SoundEffect #Button click sound effect
-    if i == 1: #ID one
-        BtCl_SoundEffect.play()
+    if Pyg: #Pygame was imported
+        if i == 1: #ID one
+            BtCl_SoundEffect.play()
 
 def def_set(): #Setting default
     global PShape
@@ -1217,16 +1221,17 @@ def setting(): #GUI setting
     global Return_bt
     global Apply_bt
     global Reset_bt
+    global RAM
     global PShape_set
-    global PShape
     global PColour_set
-    global PColour
     global Animation_set
-    global Animation
     global AVolume_set
-    global AVolume
     page=3
     pen.clear() #Clear screen
+    PShape=RAM[0] #Load in temporary setting
+    PColour=RAM[1]
+    Animation=RAM[2]
+    AVolume=RAM[3]
     style="Arial", 25, "bold"
     try:
         PShape_set.set_n(PShape) #Update player shape
@@ -1252,14 +1257,15 @@ def setting(): #GUI setting
         options=["On", "Off"] #Available option
         Animation_set=Option_set(x, y, style, "Animation:  ", options,Animation)
     Animation_set.draw() #Draw animation option set
-    try:
-        AVolume_set.set_n(AVolume) #Update audio volume
-    except:
-        x=-50 #Audio volume set position
-        y=25 #Audio volume section row
-        options=["0","25", "50", "75", "100"] #Available option
-        AVolume_set=Option_set(x, y, style, "Volume:  ", options,AVolume)
-    AVolume_set.draw() #Draw audio volume option set
+    if Pyg: #Pygame was imported
+        try:
+            AVolume_set.set_n(AVolume) #Update audio volume
+        except:
+            x=-50 #Audio volume set position
+            y=25 #Audio volume section row
+            options=["0","25", "50", "75", "100"] #Available option
+            AVolume_set=Option_set(x, y, style, "Volume:  ", options,AVolume)
+        AVolume_set.draw() #Draw audio volume option set
     Apply_bt=Button(-112.5,-100,100,50,"Apply",style)
     Apply_bt.draw() #Draw apply button
     Reset_bt=Button(12.5,-100,100,50,"Reset",style)
@@ -1909,6 +1915,9 @@ class Option_set:
         text=text.lower()
         return text
 
+    def get_text_list_length(self): #Return list length
+        return len(self.text_list)
+
     def set_n(self,n): #Change the display
         self.n=n-1
 
@@ -2097,16 +2106,23 @@ try: #Check did pygame installed
         print("System: ERROR")
         print("System: Failed to fully initialise pygame")
         print("System: Please restart the game or restore pygame")
-        input("System: Press Enter to exit the game ")
-        sys.exit()
+        ans=input("System: Press Enter to exit the game or type '/Run' to continue without pygame ")
+        if ans.lower() == "/run":
+            Pyg=False
+        else:
+            sys.exit()
     else:
         from pygame import mixer #Import mixer
         mixer.init() #Pygame mixer initialised
         load_audio() #Load in audio
+        Pyg=True
 except:
     print("System: ERROR")
     print("System: Failed to import pygame")
     print("System: Please make sure pygame was installed")
-    input("System: Press Enter to exit the game ")
-    sys.exit()
+    ans=input("System: Press Enter to exit the game or type '/Run' to continue without pygame ")
+    if ans.lower() == "/run":
+        Pyg=False
+    else:
+        sys.exit()
 main()
