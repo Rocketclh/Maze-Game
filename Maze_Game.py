@@ -822,6 +822,7 @@ def tick():
             screen.ontimer(tick, 1000) #Call tick function every second
 
 def Menu_CLI(): #CLI menu
+    global root
     global Size
     global Board
     global Type_error
@@ -851,6 +852,7 @@ def Menu_CLI(): #CLI menu
     time.sleep(1)
     ans=input("System: Press Enter to start the game or enter /GUI to switch to GUI manu")
     if ans.lower() == "/gui":
+        root.deiconify() #Restores the turtle screen window
         mode=2
         menu_setup() #Switch to graphical user interface
     else:
@@ -871,7 +873,6 @@ def Menu_CLI(): #CLI menu
         build_maze()
 
 def menu_setup(): #GUI screen setup
-    global t
     global screen
     global pen
     try:
@@ -892,7 +893,6 @@ def menu_setup(): #GUI screen setup
     Menu_GUI()
 
 def Menu_GUI(): #GUI main menu
-    global t
     global screen
     global page
     global pen
@@ -906,6 +906,7 @@ def Menu_GUI(): #GUI main menu
     pen.clear() #Clear the board
     pen.goto(0,200)
     pen.write("Maze Game", align="center", font=("Arial", 50, "bold")) #Game title
+    Play_anime()
     style="Arial", 25, "bold"
     Instruction_bt=Button(-100,125,200,50,"Instruction",style)
     Instruction_bt.draw() #Draw instruction button
@@ -923,6 +924,7 @@ def Menu_GUI(): #GUI main menu
     screen.mainloop() #Keep the window open
 
 def button_click(x,y): #Mouse clicked
+    global root
     global screen
     global page
     global Difficulty
@@ -952,42 +954,54 @@ def button_click(x,y): #Mouse clicked
     global AVolume #Audio volume
     global Apply_bt #Apply button
     global Reset_bt #Reset button
-    global RAM
+    global RAM #Temporary storage for setting
     screen.update()
     if page == 0: #From menu
         if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
+            play_sound(1) #Play sound effect
             instruction()
         elif Start_bt.get_x_min() < x < Start_bt.get_x_max() and Start_bt.get_y_min() < y < Start_bt.get_y_max(): #Start button pressed
+            play_sound(1) #Play sound effect
             Difficulty=1
             game_setting()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
+            play_sound(1) #Play sound effect
             RAM=[PShape,PColour,Animation,AVolume] #Store the currtent setting
             setting()
         elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
+            play_sound(1) #Play sound effect
             screen.bye()
             sys.exit()
         elif CLI_bt.get_x_min() < x < CLI_bt.get_x_max() and CLI_bt.get_y_min() < y < CLI_bt.get_y_max(): #CLI button pressed
-            screen.bye()
+            play_sound(1) #Play sound effect
+            screen.clear()
+            root.iconify() #Minimizes the turtle screen window
             mode=1
             Menu_CLI() #Switch to command line interface
     elif page == 1: #From instruction
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
+            play_sound(1) #Play sound effect
             Menu_GUI()
     elif page == 2: #From game_setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
+            play_sound(1) #Play sound effect
             Menu_GUI()
         elif Difficulty_set.get_btL_x_min() < x < Difficulty_set.get_btL_x_max() and Difficulty_set.get_btL_y_min() < y < Difficulty_set.get_btL_y_max(): #Difficulty option set left arrow button pressed
+            play_sound(1) #Play sound effect
             if Difficulty > 1: #Decrease difficulty
                 Difficulty=Difficulty-1
                 game_setting()
         elif Difficulty_set.get_btR_x_min() < x < Difficulty_set.get_btR_x_max() and Difficulty_set.get_btR_y_min() < y < Difficulty_set.get_btR_y_max(): #Difficulty option set right arrow button pressed
+            play_sound(1) #Play sound effect
             if Difficulty < 5: #Increase difficulty
                 Difficulty=Difficulty+1
                 game_setting()
         elif Start_bt.get_x_min() < x < Start_bt.get_x_max() and Start_bt.get_y_min() < y < Start_bt.get_y_max(): #Start button pressed
+            play_sound(1) #Play sound effect
             build_maze()
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
+            play_sound(1) #Play sound effect
             PShape=RAM[0] #Set back to original setting
             PColour=RAM[1]
             Animation=RAM[2]
@@ -997,63 +1011,80 @@ def button_click(x,y): #Mouse clicked
             else: #Go back to main menu
                 Menu_GUI()
         elif PShape_set.get_btL_x_min() < x < PShape_set.get_btL_x_max() and PShape_set.get_btL_y_min() < y < PShape_set.get_btL_y_max(): #Player shape option set left arrow button pressed
+            play_sound(1) #Play sound effect
             if PShape > 1: #Change player shape
                 PShape=PShape-1
                 setting()
         elif PShape_set.get_btR_x_min() < x < PShape_set.get_btR_x_max() and PShape_set.get_btR_y_min() < y < PShape_set.get_btR_y_max(): #Player shape option set right arrow button pressed
+            play_sound(1) #Play sound effect
             if PShape < 6: #Change player shape
                 PShape=PShape+1
                 setting()
         elif PColour_set.get_btL_x_min() < x < PColour_set.get_btL_x_max() and PColour_set.get_btL_y_min() < y < PColour_set.get_btL_y_max(): #Player colour option set left arrow button pressed
+            play_sound(1) #Play sound effect
             if PColour > 1: #Change player colour
                 PColour=PColour-1
                 setting()
         elif PColour_set.get_btR_x_min() < x < PColour_set.get_btR_x_max() and PColour_set.get_btR_y_min() < y < PColour_set.get_btR_y_max(): #Player colour option set right arrow button pressed
+            play_sound(1) #Play sound effect
             if PColour < 6: #Change player colour
                 PColour=PColour+1
                 setting()
         elif Animation_set.get_btL_x_min() < x < Animation_set.get_btL_x_max() and Animation_set.get_btL_y_min() < y < Animation_set.get_btL_y_max(): #Animation option set left arrow button pressed
+            play_sound(1) #Play sound effect
             if Animation == 2: #Turn animation on
                 Animation=1
                 setting()
         elif Animation_set.get_btR_x_min() < x < Animation_set.get_btR_x_max() and Animation_set.get_btR_y_min() < y < Animation_set.get_btR_y_max(): #Animation option set right arrow button pressed
+            play_sound(1) #Play sound effect
             if Animation == 1: #Turn animation off
                 Animation=2
                 setting()
         elif AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
+            play_sound(1) #Play sound effect
             if AVolume > 1: #Change audio volume
                 AVolume=AVolume-1
                 setting()
         elif AVolume_set.get_btR_x_min() < x < AVolume_set.get_btR_x_max() and AVolume_set.get_btR_y_min() < y < AVolume_set.get_btR_y_max(): #Audio volume option set right arrow button pressed
+            play_sound(1) #Play sound effect
             if AVolume < 5: #Change audio volume
                 AVolume=AVolume+1
                 setting()
         elif Apply_bt.get_x_min() < x < Apply_bt.get_x_max() and Apply_bt.get_y_min() < y < Apply_bt.get_y_max(): #Apply button pressed
+            play_sound(1) #Play sound effect
             RAM=[PShape,PColour,Animation,AVolume] #Update the currtent setting
             volume_set() #Apply audio volume setting
         elif Reset_bt.get_x_min() < x < Reset_bt.get_x_max() and Reset_bt.get_y_min() < y < Reset_bt.get_y_max(): #Reset button pressed
+            play_sound(1) #Play sound effect
             def_set() #Reset setting options back to default
             setting()
     elif page == 4: #From in-game menu
         if Pause_bt.get_x_min() < x < Pause_bt.get_x_max() and Pause_bt.get_y_min() < y < Pause_bt.get_y_max(): #Pause button pressed
+            play_sound(1) #Play sound effect
             pause_game()
     elif page == 5: #From end menu
         if Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
+            play_sound(1) #Play sound effect
             screen.bye()
             sys.exit()
         elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button pressed
+            play_sound(1) #Play sound effect
             screen.reset()
             screen.ontimer(main,10) #Delay buffer
     elif page == 6: #From game pause menu
         if Resume_bt.get_x_min() < x < Resume_bt.get_x_max() and Resume_bt.get_y_min() < y < Resume_bt.get_y_max(): #Resume button pressed
+            play_sound(1) #Play sound effect
             game_setup()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
+            play_sound(1) #Play sound effect
             RAM=[PShape,PColour,Animation,AVolume] #Store the currtent setting
             setting()
         elif Menu_bt.get_x_min() < x < Menu_bt.get_x_max() and Menu_bt.get_y_min() < y < Menu_bt.get_y_max(): #Back to main menu button pressed
+            play_sound(1) #Play sound effect
             screen.reset()
             screen.ontimer(main,10) #Delay buffer
         elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
+            play_sound(1) #Play sound effect
             screen.bye()
             sys.exit()
 
@@ -1068,36 +1099,47 @@ def instruction(): #GUI instruction
     y=275 #Fist row
     pen.goto(0,y)
     pen.write("- This game is for single players -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Second row
     pen.goto(0,y)
     pen.write("- The green curser is the player -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Third row
     pen.goto(0,y)
     pen.write("- And red box is the exit -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Fourth row
     pen.goto(0,y)
     pen.write("- You can move in four directions -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Fifth row
     pen.goto(0,y)
     pen.write("- Up(W), Down(S), Left(A), Right(D) -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Sixth row
     pen.goto(0,y)
     pen.write("- Every steps you take will be recorded -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Seventh row
     pen.goto(0,y)
     pen.write("- Your goal is to exit the maze with shortest time -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Eighth row
     pen.goto(0,y)
     pen.write("- In Hardcore Mode your steps and time was limmited -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Nineth row
     pen.goto(0,y)
     pen.write("- Think carefully before moving -", align="center", font=(style))
+    Play_anime()
     y=y-50 #Tenth row
     pen.goto(0,y)
     pen.write("- You are not allow to use more steps and time than", align="center", font=(style))
+    Play_anime()
     y=y-50 #Eleventh row
     pen.goto(0,y)
     pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
+    Play_anime()
     style="Arial", 25, "bold"
     Return_bt=Button(-250,-250,125,50,"Return",style)
     Return_bt.draw() #Draw return button
@@ -1133,11 +1175,12 @@ def game_setting(): #GUI game setting
     screen.listen()
 
 def load_audio(): #Load in all audio
+    global BtCl_SoundEffect
     error=False
     audio=""
-    try:
-        mixer.Button_Click.load("Audio_pack\Button_Click.mp3")
-    except:
+    try: #Try to load audio track
+        BtCl_SoundEffect=mixer.Sound(r"Audio_pack\Button_Click.mp3")
+    except: #Failed to load in
         error=True
         audio=audio+"Button_Click.mp3"+", "
     if error: #Error message
@@ -1148,12 +1191,14 @@ def load_audio(): #Load in all audio
 
 def volume_set(): #Audio volume set
     global AVolume
+    global BtCl_SoundEffect #Button click sound effect
     volume=AVolume/100
-    mixer.Button_Click.set_volume(volume)
+    BtCl_SoundEffect.set_volume(volume)
 
 def play_sound(i): #Play sound
-    if i == 1:
-        mixer.Button_Click.play()
+    global BtCl_SoundEffect #Button click sound effect
+    if i == 1: #ID one
+        BtCl_SoundEffect.play()
 
 def def_set(): #Setting default
     global PShape
@@ -1226,7 +1271,6 @@ def setting(): #GUI setting
     screen.listen()
 
 def game_setup(): #Game GUI setup
-    global t
     global screen
     global Size
     global Ratio
@@ -1429,15 +1473,16 @@ def pause_game(): #Pause the game:
     screen.setup(width=550, height=650)
     screen.tracer(0)
     screen.update()
-    pen.penup() #Debug TKinter bug
+    pen.penup() #Debug TKinter
     pen.goto(0,10)
     pen.pendown()
     pen.goto(0,-10)
     pen.penup()
-    pen.clear() #Debug TKinter bug
+    pen.clear() #Debug TKinter
     pen.shapesize(1,1)
     pen.goto(0,200)
     pen.write("Game Paused", align="center", font=("Arial", 50, "bold")) #Game state
+    Play_anime()
     style="Arial", 25, "bold"
     Resume_bt=Button(-100,125,200,50,"Resume",style)
     Resume_bt.draw() #Draw resume button
@@ -1450,7 +1495,6 @@ def pause_game(): #Pause the game:
     screen.update()
     screen.onclick(button_click)
     movement_unblind()
-    screen.listen()
 
 def steps_upd(): #Update steps count
     global step_pn
@@ -1497,6 +1541,11 @@ def wall_block(x,y,color):
     pen.goto(x,y) #Top left
     pen.end_fill()
     pen.penup()
+    Play_anime()
+
+def Play_anime(): #Play animation
+    global screen
+    global Animation
     if Animation == 1: #Animation on
         screen.update()
 
@@ -1541,6 +1590,7 @@ def movement_unblind(): #Unblind keys to movement
     screen.onkeypress(None,"s")
     screen.onkeypress(None,"a")
     screen.onkeypress(None,"d")
+    screen.listen()
 
 def movement_blind(): #Blind keys to movement
     global screen
@@ -1548,6 +1598,7 @@ def movement_blind(): #Blind keys to movement
     screen.onkeypress(move_down,"s")
     screen.onkeypress(move_left,"a")
     screen.onkeypress(move_right,"d")
+    screen.listen()
 
 def move_up():
     global Board
@@ -1674,10 +1725,12 @@ def move_right():
     screen.update()
 
 def main(): #Start point
+    global root
     global timer
     global mode
     global cycle
     global Paused #Register did game paused
+    root=t.Screen()._root #Access the underlying Tk window
     timer=threading.Thread(target=Timer) #Setup sub-thread
     mode=2
     cycle=0 #Threshold
@@ -1732,7 +1785,7 @@ class Button:
         pen.penup() #Finish drawing the button
         pen.goto(self.x+(self.width/2),self.y-(self.height/2)-(self.text_size*0.8))
         pen.write(self.text, align="center", font=(self.style)) #Write text
-        screen.update()
+        Play_anime()
 
 class Button_L: #Left arrow button
     def __init__(self, x, y, width, height):
@@ -1772,7 +1825,7 @@ class Button_L: #Left arrow button
         pen.goto(self.x+5,self.y-self.height/2) #Arrow left point
         pen.end_fill()
         pen.penup() #Finish drawing the button
-        screen.update()
+        Play_anime()
 
 class Button_R: #Right arrow button
     def __init__(self, x, y, width, height):
@@ -1812,7 +1865,7 @@ class Button_R: #Right arrow button
         pen.goto(self.x+5,self.y-5) #Arrow top left point
         pen.end_fill()
         pen.penup() #Finish drawing the button
-        screen.update()
+        Play_anime()
 
 class Option_set:
     def __init__(self, x, y, style, text, text_list ,n):
@@ -1889,7 +1942,6 @@ class Player: #Player character class, mainly used for 2 player mode. Developmen
         self.setup()
 
     def setup(self): #Character setup
-        global t
         global Ratio
         self.character=t.Turtle() #Player character
         self.character.shapesize((Ratio/20), (Ratio/20))
