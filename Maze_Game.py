@@ -1040,7 +1040,7 @@ def button_click(x,y): #Mouse clicked
         elif Pyg: #Pygame was imported
             if AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
                 play_sound(1) #Play sound effect
-                if temp > 1: #Change audio volume
+                if RAM[3] > 1: #Change audio volume
                     RAM[3]=RAM[3]-1 #Update temporary setting 
                     setting()
             elif AVolume_set.get_btR_x_min() < x < AVolume_set.get_btR_x_max() and AVolume_set.get_btR_y_min() < y < AVolume_set.get_btR_y_max(): #Audio volume option set right arrow button pressed
