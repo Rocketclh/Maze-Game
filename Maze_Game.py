@@ -123,49 +123,48 @@ def end(win): #win output
         Timer_stop=True
         page=5
         screen.clear() #Clear screen
-        screen.setup(width=550, height=650)
+        screen.setup(width=Rat_convert(550), height=Rat_convert(650))
         screen.tracer(0)
         screen.update()
         pen.clear() #Reset pen
         pen.penup()
+        pen.shapesize(Rat_convert(1),Rat_convert(1))
         player.hideturtle()
         screen.update()
-        style="Arial", 25, "bold"
-        y=100
+        style="Arial", int(Rat_convert(25)), "bold"
+        y=Rat_convert(100)
         if win:
             pen.goto(0,y)
             pen.write("Congratulations!", align="center", font=(style))
-            y=y-50
+            y=y-Rat_convert(50)
             pen.goto(0,y)
             pen.write("You have exited the maze!", align="center", font=(style))
         else:
             pen.goto(0,y)
             pen.write("Game Over", align="center", font=(style))
-            y=y-50
+            y=y-Rat_convert(50)
             pen.goto(0,y)
             if Time_up: #Times up
                 pen.write("You ran out of time", align="center", font=(style))
-            else:
+            else: #Steps run out
                 pen.write("You have used all of the steps", align="center", font=(style))
-        y=y-50
+        y=y-Rat_convert(50)
         pen.goto(0,y)
         text="Total steps taken:"+str(steps)
         pen.write(text, align="center", font=(style))
-        y=y-50
+        y=y-Rat_convert(50)
         pen.goto(0,y)
         text="Maze recommended steps:"+str(rec_step)
         pen.write(text, align="center", font=(style))
-        y=y-50
+        y=y-Rat_convert(50)
         pen.goto(0,y)
         text="Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds"
         pen.write(text, align="center", font=(style))
-        y=y-50
-        pen.goto(-200,y)
-        Restart_bt=Button(-175,y,200,50,"Restart",style)
-        Restart_bt.draw()
-        pen.goto(50,y)
-        Exit_bt=Button(50,y,150,50,"Exit",style)
-        Exit_bt.draw()
+        y=y-Rat_convert(50)
+        Restart_bt=Button(Rat_convert(-175),y,Rat_convert(200),Rat_convert(50),"Restart",style)
+        Restart_bt.draw() #Draw restart button
+        Exit_bt=Button(Rat_convert(50),y,Rat_convert(150),Rat_convert(50),"Exit",style)
+        Exit_bt.draw() #Draw exit button
         screen.update()
         screen.onclick(button_click)
         movement_unblind()
@@ -881,17 +880,23 @@ def menu_setup(): #GUI screen setup
         screen=t.Screen()
     screen.title("Maze Game")
     screen.bgcolor("White")
-    screen.setup(width=550, height=650)
+    screen.setup(width=Rat_convert(550), height=Rat_convert(650)) #Set screen size
     screen.tracer(0)
     pen=t.Turtle()
     pen.hideturtle()
     pen.penup()
-    pen.shapesize(1,1)
+    pen.shapesize(Rat_convert(1),Rat_convert(1))
     screen.update()
     def_set() #Setting options set to default
     if Pyg: #Pygame was imported
         volume_set() #Set audio volume
     Menu_GUI()
+
+def Rat_convert(init): #Convert the size in ratio
+    global screen
+    Ratio=min(screen.cv.winfo_screenwidth()/550*0.875,screen.cv.winfo_screenheight()/650*0.875) #Set ratio using monitor resolution
+    Result=init*Ratio
+    return Result
 
 def Menu_GUI(): #GUI main menu
     global screen
@@ -905,19 +910,19 @@ def Menu_GUI(): #GUI main menu
     page=0 #Menu id
     pen.penup()
     pen.clear() #Clear the board
-    pen.goto(0,200)
-    pen.write("Maze Game", align="center", font=("Arial", 50, "bold")) #Game title
+    pen.goto(0,Rat_convert(200))
+    pen.write("Maze Game", align="center", font=("Arial", int(Rat_convert(50)), "bold")) #Game title
     Play_anime()
-    style="Arial", 25, "bold"
-    Instruction_bt=Button(-100,125,200,50,"Instruction",style)
+    style="Arial", int(Rat_convert(25)), "bold"
+    Instruction_bt=Button(Rat_convert(-100),Rat_convert(125),Rat_convert(200),Rat_convert(50),"Instruction",style)
     Instruction_bt.draw() #Draw instruction button
-    Start_bt=Button(-100,25,200,50,"Start",style)
+    Start_bt=Button(Rat_convert(-100),Rat_convert(25),Rat_convert(200),Rat_convert(50),"Start",style)
     Start_bt.draw() #Draw start button
-    Setting_bt=Button(-100,-75,200,50,"Setting",style)
+    Setting_bt=Button(Rat_convert(-100),Rat_convert(-75),Rat_convert(200),Rat_convert(50),"Setting",style)
     Setting_bt.draw() #Draw setting button
-    Exit_bt=Button(-250,-250,100,50,"Exit",style)
+    Exit_bt=Button(Rat_convert(-250),Rat_convert(-250),Rat_convert(100),Rat_convert(50),"Exit",style)
     Exit_bt.draw() #Draw exit button
-    CLI_bt=Button(150,-250,100,50,"CLI",style)
+    CLI_bt=Button(Rat_convert(150),Rat_convert(-250),Rat_convert(100),Rat_convert(50),"CLI",style)
     CLI_bt.draw() #Draw CLI button
     screen.update()
     screen.onclick(button_click)
@@ -1037,17 +1042,6 @@ def button_click(x,y): #Mouse clicked
             if RAM[2] == 1: #Turn animation off
                 RAM[2]=2 #Update temporary setting 
                 setting()
-        elif Pyg: #Pygame was imported
-            if AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
-                play_sound(1) #Play sound effect
-                if RAM[3] > 1: #Change audio volume
-                    RAM[3]=RAM[3]-1 #Update temporary setting 
-                    setting()
-            elif AVolume_set.get_btR_x_min() < x < AVolume_set.get_btR_x_max() and AVolume_set.get_btR_y_min() < y < AVolume_set.get_btR_y_max(): #Audio volume option set right arrow button pressed
-                play_sound(1) #Play sound effect
-                if RAM[3] < AVolume_set.get_text_list_length(): #Change audio volume
-                    RAM[3]=RAM[3]+1 #Update temporary setting
-                    setting()
         elif Apply_bt.get_x_min() < x < Apply_bt.get_x_max() and Apply_bt.get_y_min() < y < Apply_bt.get_y_max(): #Apply button pressed
             play_sound(1) #Play sound effect
             PShape=RAM[0] #Apply setting
@@ -1061,6 +1055,17 @@ def button_click(x,y): #Mouse clicked
             def_set() #Reset setting options back to default
             RAM=[PShape,PColour,Animation,AVolume] #Update the current setting
             setting()
+        elif Pyg: #Pygame was imported
+            if AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
+                play_sound(1) #Play sound effect
+                if RAM[3] > 1: #Change audio volume
+                    RAM[3]=RAM[3]-1 #Update temporary setting 
+                    setting()
+            elif AVolume_set.get_btR_x_min() < x < AVolume_set.get_btR_x_max() and AVolume_set.get_btR_y_min() < y < AVolume_set.get_btR_y_max(): #Audio volume option set right arrow button pressed
+                play_sound(1) #Play sound effect
+                if RAM[3] < AVolume_set.get_text_list_length(): #Change audio volume
+                    RAM[3]=RAM[3]+1 #Update temporary setting
+                    setting()
     elif page == 4: #From in-game menu
         if Pause_bt.get_x_min() < x < Pause_bt.get_x_max() and Pause_bt.get_y_min() < y < Pause_bt.get_y_max(): #Pause button pressed
             play_sound(1) #Play sound effect
@@ -1098,53 +1103,53 @@ def instruction(): #GUI instruction
     global Return_bt
     page=1
     pen.clear() #Clear screen
-    style="Arial", 15, "bold"
-    y=275 #Fist row
+    style="Arial", int(Rat_convert(15)), "bold"
+    y=Rat_convert(275) #Fist row
     pen.goto(0,y)
     pen.write("- This game is for single players -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Second row
+    y=y-Rat_convert(50) #Second row
     pen.goto(0,y)
-    pen.write("- The green curser is the player -", align="center", font=(style))
+    pen.write("- The green curser is the player character -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Third row
+    y=y-Rat_convert(50) #Third row
     pen.goto(0,y)
     pen.write("- And red box is the exit -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Fourth row
+    y=y-Rat_convert(50) #Fourth row
     pen.goto(0,y)
     pen.write("- You can move in four directions -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Fifth row
+    y=y-Rat_convert(50) #Fifth row
     pen.goto(0,y)
     pen.write("- Up(W), Down(S), Left(A), Right(D) -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Sixth row
+    y=y-Rat_convert(50) #Sixth row
     pen.goto(0,y)
     pen.write("- Every steps you take will be recorded -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Seventh row
+    y=y-Rat_convert(50) #Seventh row
     pen.goto(0,y)
     pen.write("- Your goal is to exit the maze with shortest time -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Eighth row
+    y=y-Rat_convert(50) #Eighth row
     pen.goto(0,y)
     pen.write("- In Hardcore Mode your steps and time was limmited -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Nineth row
+    y=y-Rat_convert(50) #Nineth row
     pen.goto(0,y)
     pen.write("- Think carefully before moving -", align="center", font=(style))
     Play_anime()
-    y=y-50 #Tenth row
+    y=y-Rat_convert(50) #Tenth row
     pen.goto(0,y)
     pen.write("- You are not allow to use more steps and time than", align="center", font=(style))
     Play_anime()
-    y=y-50 #Eleventh row
+    y=y-Rat_convert(50) #Eleventh row
     pen.goto(0,y)
     pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
     Play_anime()
-    style="Arial", 25, "bold"
-    Return_bt=Button(-250,-250,125,50,"Return",style)
+    style="Arial", int(Rat_convert(25)), "bold"
+    Return_bt=Button(Rat_convert(-250),Rat_convert(-250),Rat_convert(125),Rat_convert(50),"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
     screen.onclick(button_click)
@@ -1160,18 +1165,18 @@ def game_setting(): #GUI game setting
     global Return_bt
     page=2
     pen.clear() #Clear screen
-    style="Arial", 25, "bold"
+    style="Arial", int(Rat_convert(25)), "bold"
     try:
         Difficulty_set.set_n(Difficulty) #Update difficulty
     except:
-        x=-170 #Difficulty text position
-        y=25
+        x=Rat_convert(-170) #Difficulty text position
+        y=Rat_convert(25)
         options=["1(21*21 Board)","2(31*31 Board)","3(41*41 Board)","4(51*51 Board)","5(Hardcore Mode)"] #Available difficulty
         Difficulty_set=Option_set(x, y, style, "Difficulty:", options, Difficulty)
     Difficulty_set.draw() #Draw difficulty option set
-    Start_bt=Button(-50,-100,100,50,"Start",style)
+    Start_bt=Button(Rat_convert(-50),Rat_convert(-100),Rat_convert(100),Rat_convert(50),"Start",style)
     Start_bt.draw() #Draw start button
-    Return_bt=Button(-250,-250,125,50,"Return",style)
+    Return_bt=Button(Rat_convert(-250),Rat_convert(-250),Rat_convert(125),Rat_convert(50),"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
     screen.onclick(button_click)
@@ -1232,28 +1237,28 @@ def setting(): #GUI setting
     PColour=RAM[1]
     Animation=RAM[2]
     AVolume=RAM[3]
-    style="Arial", 25, "bold"
+    style="Arial", int(Rat_convert(25)), "bold"
     try:
         PShape_set.set_n(PShape) #Update player shape
     except:
-        x=-100 #Player shape set position
-        y=250 #Player shape section row
+        x=Rat_convert(-100) #Player shape set position
+        y=Rat_convert(250) #Player shape section row
         options=["Classic","Turtle","Arrow","Circle","Square","Triangle"] #Available player shape
         PShape_set=Option_set(x, y, style, "Player Shape:  ", options,PShape)
     PShape_set.draw() #Draw player shape option set
     try:
         Colour_set.set_n(PColour) #Update player colour
     except:
-        x=-75 #Player colour set position
-        y=175 #Player colour section row
+        x=Rat_convert(-75) #Player colour set position
+        y=Rat_convert(175) #Player colour section row
         options=["Green","Red","Blue","Yellow","White","Black"] #Available player colour
         PColour_set=Option_set(x, y, style, "Player Colour:  ", options,PColour)
     PColour_set.draw() #Draw player colour option set
     try:
         Animation_set.set_n(Animation) #Update animation
     except:
-        x=-50 #Animation set position
-        y=100 #Animation section row
+        x=Rat_convert(-50) #Animation set position
+        y=Rat_convert(100) #Animation section row
         options=["On", "Off"] #Available option
         Animation_set=Option_set(x, y, style, "Animation:  ", options,Animation)
     Animation_set.draw() #Draw animation option set
@@ -1261,16 +1266,16 @@ def setting(): #GUI setting
         try:
             AVolume_set.set_n(AVolume) #Update audio volume
         except:
-            x=-50 #Audio volume set position
-            y=25 #Audio volume section row
+            x=Rat_convert(-50) #Audio volume set position
+            y=Rat_convert(25) #Audio volume section row
             options=["0","25", "50", "75", "100"] #Available option
             AVolume_set=Option_set(x, y, style, "Volume:  ", options,AVolume)
         AVolume_set.draw() #Draw audio volume option set
-    Apply_bt=Button(-112.5,-100,100,50,"Apply",style)
+    Apply_bt=Button(Rat_convert(-112.5),Rat_convert(-100),Rat_convert(100),Rat_convert(50),"Apply",style)
     Apply_bt.draw() #Draw apply button
-    Reset_bt=Button(12.5,-100,100,50,"Reset",style)
+    Reset_bt=Button(Rat_convert(12.5),Rat_convert(-100),Rat_convert(100),Rat_convert(50),"Reset",style)
     Reset_bt.draw() #Draw reset button
-    Return_bt=Button(-250,-250,125,50,"Return",style)
+    Return_bt=Button(Rat_convert(-250),Rat_convert(-250),Rat_convert(125),Rat_convert(50),"Return",style)
     Return_bt.draw() #Draw return button
     screen.update()
     screen.onclick(button_click)
@@ -1294,9 +1299,9 @@ def game_setup(): #Game GUI setup
     global PColour
     page=4
     screen.clear() #Clear screen
-    Ratio=min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*0.85 #Set screen size using monitor resolution
+    Ratio=min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*0.85 #Set ratio using monitor resolution
     menu_width=Size*Ratio/4 #In game menu width
-    screen.setup(width=Size*Ratio+0.25*Ratio+menu_width, height=Size*Ratio+0.25*Ratio)
+    screen.setup(width=Size*Ratio+0.25*Ratio+menu_width, height=Size*Ratio+0.25*Ratio) #Set screen size
     screen.tracer(0)
     screen.update()
     pen.clear() #GUI drawing
@@ -1476,7 +1481,7 @@ def pause_game(): #Pause the game:
     Second=Second-1 #Adjust timer
     page=6
     screen.clear()
-    screen.setup(width=550, height=650)
+    screen.setup(width=Rat_convert(550), height=Rat_convert(650))
     screen.tracer(0)
     screen.update()
     pen.penup() #Debug TKinter
@@ -1485,18 +1490,18 @@ def pause_game(): #Pause the game:
     pen.goto(0,-10)
     pen.penup()
     pen.clear() #Debug TKinter
-    pen.shapesize(1,1)
-    pen.goto(0,200)
+    pen.shapesize(Rat_convert(1),Rat_convert(1))
+    pen.goto(0,Rat_convert(200))
     pen.write("Game Paused", align="center", font=("Arial", 50, "bold")) #Game state
     Play_anime()
-    style="Arial", 25, "bold"
-    Resume_bt=Button(-100,125,200,50,"Resume",style)
+    style="Arial", int(Rat_convert(25)), "bold"
+    Resume_bt=Button(Rat_convert(-100),Rat_convert(125),Rat_convert(200),Rat_convert(50),"Resume",style)
     Resume_bt.draw() #Draw resume button
-    Setting_bt=Button(-100,25,200,50,"Setting",style)
+    Setting_bt=Button(Rat_convert(-100),Rat_convert(25),Rat_convert(200),Rat_convert(50),"Setting",style)
     Setting_bt.draw() #Draw setting button
-    Menu_bt=Button(-100,-75,200,50,"Main menu",style)
+    Menu_bt=Button(Rat_convert(-100),Rat_convert(-75),Rat_convert(200),Rat_convert(50),"Main menu",style)
     Menu_bt.draw() #Draw Back to main menu button
-    Exit_bt=Button(-100,-175,200,50,"Exit",style)
+    Exit_bt=Button(Rat_convert(-100),Rat_convert(-175),Rat_convert(200),Rat_convert(50),"Exit",style)
     Exit_bt.draw() #Draw exit button
     screen.update()
     screen.onclick(button_click)
@@ -1789,7 +1794,7 @@ class Button:
         pen.goto(self.x,self.y-self.height) #BL of the button
         pen.goto(self.x,self.y) #TL of the button
         pen.penup() #Finish drawing the button
-        pen.goto(self.x+(self.width/2),self.y-(self.height/2)-(self.text_size*0.8))
+        pen.goto(self.x+(self.width/2),self.y-(self.height/2)-(self.text_size*0.8)) #Center of the button
         pen.write(self.text, align="center", font=(self.style)) #Write text
         Play_anime()
 
