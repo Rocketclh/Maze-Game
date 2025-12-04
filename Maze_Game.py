@@ -167,7 +167,7 @@ def end(win): #win output
         Exit_bt.draw() #Draw exit button
         screen.update()
         screen.onclick(button_click)
-        movement_unblind()
+        movement_unbind()
         screen.listen()
 
 def print_board(): # board
@@ -1459,7 +1459,7 @@ def Start(): #Start the game
     screen.bgcolor("white")
     screen.update()
     screen.onkeypress(None,"Return")
-    movement_blind() #Set movement
+    movement_bind() #Set movement
     screen.onclick(button_click)
     screen.listen()
     Timer() #Start timer
@@ -1505,7 +1505,7 @@ def pause_game(): #Pause the game:
     Exit_bt.draw() #Draw exit button
     screen.update()
     screen.onclick(button_click)
-    movement_unblind()
+    movement_unbind()
 
 def steps_upd(): #Update steps count
     global step_pn
@@ -1595,7 +1595,7 @@ def Sys_wait_2_second(): #System massage clear after 2 second
     cooldown=False
     system.clear()
 
-def movement_unblind(): #Unblind keys to movement
+def movement_unbind(): #Unbind keys to movement
     global screen
     screen.onkeypress(None,"w")
     screen.onkeypress(None,"s")
@@ -1603,7 +1603,7 @@ def movement_unblind(): #Unblind keys to movement
     screen.onkeypress(None,"d")
     screen.listen()
 
-def movement_blind(): #Blind keys to movement
+def movement_bind(): #bind keys to movement
     global screen
     screen.onkeypress(move_up,"w")
     screen.onkeypress(move_down,"s")
@@ -1618,29 +1618,31 @@ def move_up():
     global Screen
     global Ratio
     global steps
-    movement_unblind() #Prevent rapid calling
-    temp=player_found() #Found player location
-    x=int(temp[0:2])
-    y=int(temp[2:4])
-    player.setheading(90) #Curser turn toward up
-    if y < (Size-1) and Board[x][y+1] != "X":
-        Board[x][y]=" "
-        y=y+1
-        steps=steps+1
-        steps_upd()
-        if Board[x][y] == "E":
-            Board[x][y]="P"
-            end(True)
+    global Timer_stop
+    if not(Timer_stop): #Check is the game running
+        movement_unbind() #Prevent rapid calling
+        temp=player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        player.setheading(90) #Curser turn toward up
+        if y < (Size-1) and Board[x][y+1] != "X":
+            Board[x][y]=" "
+            y=y+1
+            steps=steps+1
+            steps_upd()
+            if Board[x][y] == "E":
+                Board[x][y]="P"
+                end(True)
+            else:
+                Board[x][y]="P" #Change player postion in board
+                x=player.xcor()
+                y=player.ycor()
+                y=y+Ratio
+                player.goto(x,y) #Player curser move up
         else:
-            Board[x][y]="P" #Change player postion in board
-            x=player.xcor()
-            y=player.ycor()
-            y=y+Ratio
-            player.goto(x,y) #Player curser move up
-    else:
-        Invalid_move("Up")
-    screen.ontimer(movement_blind, 10) #Delay 0.01 second
-    screen.update()
+            Invalid_move("Up")
+        screen.ontimer(movement_bind, 10) #Delay 0.01 second
+        screen.update()
 
 def move_down():
     global Board
@@ -1649,29 +1651,31 @@ def move_down():
     global Screen
     global Ratio
     global steps
-    movement_unblind() #Prevent rapid calling
-    temp=player_found() #Found player location
-    x=int(temp[0:2])
-    y=int(temp[2:4])
-    player.setheading(270) #Curser turn toward down
-    if y > 0 and Board[x][y-1] != "X":
-        Board[x][y]=" "
-        y=y-1
-        steps=steps+1
-        steps_upd()
-        if Board[x][y] == "E":
-            Board[x][y]="P"
-            end(True)
+    global Timer_stop
+    if not(Timer_stop): #Check is the game running
+        movement_unbind() #Prevent rapid calling
+        temp=player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        player.setheading(270) #Curser turn toward down
+        if y > 0 and Board[x][y-1] != "X":
+            Board[x][y]=" "
+            y=y-1
+            steps=steps+1
+            steps_upd()
+            if Board[x][y] == "E":
+                Board[x][y]="P"
+                end(True)
+            else:
+                Board[x][y]="P" #Change player postion in board
+                x=player.xcor()
+                y=player.ycor()
+                y=y-Ratio
+                player.goto(x,y) #Player curser move down
         else:
-            Board[x][y]="P" #Change player postion in board
-            x=player.xcor()
-            y=player.ycor()
-            y=y-Ratio
-            player.goto(x,y) #Player curser move down
-    else:
-        Invalid_move("Down")
-    screen.ontimer(movement_blind, 10) #Delay 0.01 second
-    screen.update()
+            Invalid_move("Down")
+        screen.ontimer(movement_bind, 10) #Delay 0.01 second
+        screen.update()
 
 def move_left():
     global Board
@@ -1680,29 +1684,31 @@ def move_left():
     global Screen
     global Ratio
     global steps
-    movement_unblind() #Prevent rapid calling
-    temp=player_found() #Found player location
-    x=int(temp[0:2])
-    y=int(temp[2:4])
-    player.setheading(180) #Curser turn toward left
-    if x > 0 and Board[x-1][y] != "X":
-        Board[x][y]=" "
-        x=x-1
-        steps=steps+1
-        steps_upd()
-        if Board[x][y] == "E":
-            Board[x][y]="P"
-            end(True)
+    global Timer_stop
+    if not(Timer_stop): #Check is the game running
+        movement_unbind() #Prevent rapid calling
+        temp=player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        player.setheading(180) #Curser turn toward left
+        if x > 0 and Board[x-1][y] != "X":
+            Board[x][y]=" "
+            x=x-1
+            steps=steps+1
+            steps_upd()
+            if Board[x][y] == "E":
+                Board[x][y]="P"
+                end(True)
+            else:
+                Board[x][y]="P" #Change player postion in board
+                x=player.xcor()
+                y=player.ycor()
+                x=x-Ratio
+                player.goto(x,y) #Player curser move left
         else:
-            Board[x][y]="P" #Change player postion in board
-            x=player.xcor()
-            y=player.ycor()
-            x=x-Ratio
-            player.goto(x,y) #Player curser move left
-    else:
-        Invalid_move("Left")
-    screen.ontimer(movement_blind, 10) #Delay 0.01 second
-    screen.update()
+            Invalid_move("Left")
+        screen.ontimer(movement_bind, 10) #Delay 0.01 second
+        screen.update()
 
 def move_right():
     global Board
@@ -1711,29 +1717,31 @@ def move_right():
     global Screen
     global Ratio
     global steps
-    movement_unblind() #Prevent rapid calling
-    temp=player_found() #Found player location
-    x=int(temp[0:2])
-    y=int(temp[2:4])
-    player.setheading(0) #Curser turn toward right
-    if x < (Size-1) and Board[x+1][y] != "X":
-        Board[x][y]=" "
-        x=x+1
-        steps=steps+1
-        steps_upd()
-        if Board[x][y] == "E":
-            Board[x][y]="P"
-            end(True)
+    global Timer_stop
+    if not(Timer_stop): #Check is the game running
+        movement_unbind() #Prevent rapid calling
+        temp=player_found() #Found player location
+        x=int(temp[0:2])
+        y=int(temp[2:4])
+        player.setheading(0) #Curser turn toward right
+        if x < (Size-1) and Board[x+1][y] != "X":
+            Board[x][y]=" "
+            x=x+1
+            steps=steps+1
+            steps_upd()
+            if Board[x][y] == "E":
+                Board[x][y]="P"
+                end(True)
+            else:
+                Board[x][y]="P" #Change player postion in board
+                x=player.xcor()
+                y=player.ycor()
+                x=x+Ratio
+                player.goto(x,y) #Player curser move right
         else:
-            Board[x][y]="P" #Change player postion in board
-            x=player.xcor()
-            y=player.ycor()
-            x=x+Ratio
-            player.goto(x,y) #Player curser move right
-    else:
-        Invalid_move("Right")
-    screen.ontimer(movement_blind, 10) #Delay 0.01 second
-    screen.update()
+            Invalid_move("Right")
+        screen.ontimer(movement_bind, 10) #Delay 0.01 second
+        screen.update()
 
 def main(): #Start point
     global root
