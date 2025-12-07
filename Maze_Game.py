@@ -134,12 +134,14 @@ def end(win): #win output
         style="Arial", int(Rat_convert(25)), "bold"
         y=Rat_convert(100)
         if win:
+            play_sound(3)
             pen.goto(0,y)
             pen.write("Congratulations!", align="center", font=(style))
             y=y-Rat_convert(50)
             pen.goto(0,y)
             pen.write("You have exited the maze!", align="center", font=(style))
         else:
+            play_sound(2)
             pen.goto(0,y)
             pen.write("Game Over", align="center", font=(style))
             y=y-Rat_convert(50)
@@ -1184,13 +1186,25 @@ def game_setting(): #GUI game setting
 
 def load_audio(): #Load in all audio
     global BtCl_SoundEffect
+    global GaOv_SoundEffect
+    global Vict_SoundEffect
     error=False
     audio=""
-    try: #Try to load audio track
+    try: #Try to load button click sound effect
         BtCl_SoundEffect=mixer.Sound(r"Audio_pack\Button_Click.mp3")
     except: #Failed to load in
         error=True
         audio=audio+"Button_Click.mp3"+", "
+    try: #Try to load game over sound effect
+        GaOv_SoundEffect=mixer.Sound(r"Audio_pack\Game_Over.mp3")
+    except: #Failed to load in
+        error=True
+        audio=audio+"Game_Over.mp3"+", "
+    try: #Try to load victory sound effect
+        Vict_SoundEffect=mixer.Sound(r"Audio_pack\Victory.mp3")
+    except: #Failed to load in
+        error=True
+        audio=audio+"Victory.mp3"+", "
     if error: #Error message
         print("System: ERROR")
         print("System: Failed to load "+audio[0:len(audio)-2])
@@ -1200,14 +1214,26 @@ def load_audio(): #Load in all audio
 def volume_set(): #Audio volume set
     global AVolume
     global BtCl_SoundEffect #Button click sound effect
-    volume=AVolume/100
+    global GaOv_SoundEffect #Game over sound effect
+    global Vict_SoundEffect #Victory sound effect
+    print(AVolume)
+    volume=25*(AVolume-1)/100 #Convert volume setting to volume percentage
+    print(volume)
     BtCl_SoundEffect.set_volume(volume)
+    GaOv_SoundEffect.set_volume(volume)
+    Vict_SoundEffect.set_volume(volume)
 
 def play_sound(i): #Play sound
     global BtCl_SoundEffect #Button click sound effect
+    global GaOv_SoundEffect #Game over sound effect
+    global Vict_SoundEffect #Victory sound effect
     if Pyg: #Pygame was imported
-        if i == 1: #ID one
+        if i == 1: #Sound track one
             BtCl_SoundEffect.play()
+        elif i == 2: #Sound track two
+            GaOv_SoundEffect.play()
+        elif i == 3: #Sound track three
+            Vict_SoundEffect.play()
 
 def def_set(): #Setting default
     global PShape
@@ -1247,7 +1273,7 @@ def setting(): #GUI setting
         PShape_set=Option_set(x, y, style, "Player Shape:  ", options,PShape)
     PShape_set.draw() #Draw player shape option set
     try:
-        Colour_set.set_n(PColour) #Update player colour
+        PColour_set.set_n(PColour) #Update player colour
     except:
         x=Rat_convert(-75) #Player colour set position
         y=Rat_convert(175) #Player colour section row
@@ -1619,6 +1645,8 @@ def move_up():
     global Ratio
     global steps
     global Timer_stop
+    global rec_step
+    global Difficulty
     if not(Timer_stop): #Check is the game running
         movement_unbind() #Prevent rapid calling
         temp=player_found() #Found player location
@@ -1639,6 +1667,8 @@ def move_up():
                 y=player.ycor()
                 y=y+Ratio
                 player.goto(x,y) #Player curser move up
+            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+                end(False)
         else:
             Invalid_move("Up")
         screen.ontimer(movement_bind, 10) #Delay 0.01 second
@@ -1652,6 +1682,8 @@ def move_down():
     global Ratio
     global steps
     global Timer_stop
+    global rec_step
+    global Difficulty
     if not(Timer_stop): #Check is the game running
         movement_unbind() #Prevent rapid calling
         temp=player_found() #Found player location
@@ -1672,6 +1704,8 @@ def move_down():
                 y=player.ycor()
                 y=y-Ratio
                 player.goto(x,y) #Player curser move down
+            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+                end(False)
         else:
             Invalid_move("Down")
         screen.ontimer(movement_bind, 10) #Delay 0.01 second
@@ -1685,6 +1719,8 @@ def move_left():
     global Ratio
     global steps
     global Timer_stop
+    global rec_step
+    global Difficulty
     if not(Timer_stop): #Check is the game running
         movement_unbind() #Prevent rapid calling
         temp=player_found() #Found player location
@@ -1705,6 +1741,8 @@ def move_left():
                 y=player.ycor()
                 x=x-Ratio
                 player.goto(x,y) #Player curser move left
+            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+                end(False)
         else:
             Invalid_move("Left")
         screen.ontimer(movement_bind, 10) #Delay 0.01 second
@@ -1718,6 +1756,8 @@ def move_right():
     global Ratio
     global steps
     global Timer_stop
+    global rec_step
+    global Difficulty
     if not(Timer_stop): #Check is the game running
         movement_unbind() #Prevent rapid calling
         temp=player_found() #Found player location
@@ -1738,6 +1778,8 @@ def move_right():
                 y=player.ycor()
                 x=x+Ratio
                 player.goto(x,y) #Player curser move right
+            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+                end(False)
         else:
             Invalid_move("Right")
         screen.ontimer(movement_bind, 10) #Delay 0.01 second
