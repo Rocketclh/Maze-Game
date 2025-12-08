@@ -1216,9 +1216,7 @@ def volume_set(): #Audio volume set
     global BtCl_SoundEffect #Button click sound effect
     global GaOv_SoundEffect #Game over sound effect
     global Vict_SoundEffect #Victory sound effect
-    print(AVolume)
     volume=25*(AVolume-1)/100 #Convert volume setting to volume percentage
-    print(volume)
     BtCl_SoundEffect.set_volume(volume)
     GaOv_SoundEffect.set_volume(volume)
     Vict_SoundEffect.set_volume(volume)
