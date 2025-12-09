@@ -781,8 +781,8 @@ def Timer(): #10 minutes timer (Main thread/Sub-thread)
     global screen
     global Time_up #Register time is up
     global Timer_stop #Register timer stop
-    global Max_Minute #Maximum time minutes allowed in hardcore mode
-    global Max_Second #Maximum time seconds allowed in hardcore mode
+    global Max_Minute #Maximum time minutes allowed in challenge mode
+    global Max_Second #Maximum time seconds allowed in challenge mode
     Max_Minute=3
     Max_Second=0
     Timer_stop=False
@@ -801,8 +801,8 @@ def tick():
     global screen
     global Time_up #Register time is up
     global Timer_stop #Register timer stop
-    global Max_Minute #Maximum time minutes allowed in hardcore mode
-    global Max_Second #Maximum time seconds allowed in hardcore mode
+    global Max_Minute #Maximum time minutes allowed in challenge mode
+    global Max_Second #Maximum time seconds allowed in challenge mode
     Second=Second+1
     if Second == 60:
         Minutes=Minutes+1
@@ -847,9 +847,9 @@ def Menu_CLI(): #CLI menu
     time.sleep(1)
     print("System: Your goal is to exit the maze with shortest time")
     time.sleep(1)
-    print("System: In Hardcore Mode your steps and time was limmited, think carefully before moving")
+    print("System: In Challenge Mode your steps and time was limmited, think carefully before moving")
     time.sleep(1)
-    print("System: You are not allow to use more steps and time than the system recommended in Hardcore Mode")
+    print("System: You are not allow to use more steps and time than the system recommended in Challenge Mode")
     time.sleep(1)
     ans=input("System: Press Enter to start the game or enter /GUI to switch to GUI manu")
     if ans.lower() == "/gui":
@@ -860,7 +860,7 @@ def Menu_CLI(): #CLI menu
         Type_error=False
         while not Type_error:
             try:
-                ans=int(input("System: Please enter difficulty: 1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Hardcore Mode) "))
+                ans=int(input("System: Please enter difficulty: 1(21*21 Board), 2(31*31 Board), 3(41*41 Board), 4(51*51 Board), 5(Challenge Mode) "))
                 if ans <=0 or ans > 5:
                     print("System: Out of bounds")
                 else:
@@ -1136,7 +1136,7 @@ def instruction(): #GUI instruction
     Play_anime()
     y=y-Rat_convert(50) #Eighth row
     pen.goto(0,y)
-    pen.write("- In Hardcore Mode your steps and time was limmited -", align="center", font=(style))
+    pen.write("- In Challenge Mode your steps and time was limmited -", align="center", font=(style))
     Play_anime()
     y=y-Rat_convert(50) #Nineth row
     pen.goto(0,y)
@@ -1148,7 +1148,7 @@ def instruction(): #GUI instruction
     Play_anime()
     y=y-Rat_convert(50) #Eleventh row
     pen.goto(0,y)
-    pen.write("the system recommended in Hardcore Mode -", align="center", font=(style))
+    pen.write("the system recommended in Challenge Mode -", align="center", font=(style))
     Play_anime()
     style="Arial", int(Rat_convert(25)), "bold"
     Return_bt=Button(Rat_convert(-250),Rat_convert(-250),Rat_convert(125),Rat_convert(50),"Return",style)
@@ -1173,7 +1173,7 @@ def game_setting(): #GUI game setting
     except:
         x=Rat_convert(-170) #Difficulty text position
         y=Rat_convert(25)
-        options=["1(21*21 Board)","2(31*31 Board)","3(41*41 Board)","4(51*51 Board)","5(Hardcore Mode)"] #Available difficulty
+        options=["1(21*21 Board)","2(31*31 Board)","3(41*41 Board)","4(51*51 Board)","5(Challenge Mode)"] #Available difficulty
         Difficulty_set=Option_set(x, y, style, "Difficulty:", options, Difficulty)
     Difficulty_set.draw() #Draw difficulty option set
     Start_bt=Button(Rat_convert(-50),Rat_convert(-100),Rat_convert(100),Rat_convert(50),"Start",style)
@@ -1547,8 +1547,8 @@ def timer_upd(): #Update timer count
     global Second
     global Screen
     global Pause_bt
-    global Max_Minute #Maximum time minutes allowed in hardcore mode
-    global Max_Second #Maximum time seconds allowed in hardcore mode
+    global Max_Minute #Maximum time minutes allowed in challenge mode
+    global Max_Second #Maximum time seconds allowed in challenge mode
     global Difficulty
     timer_pn.clear()
     if Difficulty == 5: #Convert to countdown
@@ -1665,7 +1665,7 @@ def move_up():
                 y=player.ycor()
                 y=y+Ratio
                 player.goto(x,y) #Player curser move up
-            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+            if steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
                 end(False)
         else:
             Invalid_move("Up")
@@ -1702,7 +1702,7 @@ def move_down():
                 y=player.ycor()
                 y=y-Ratio
                 player.goto(x,y) #Player curser move down
-            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+            if steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
                 end(False)
         else:
             Invalid_move("Down")
@@ -1739,7 +1739,7 @@ def move_left():
                 y=player.ycor()
                 x=x-Ratio
                 player.goto(x,y) #Player curser move left
-            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+            if steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
                 end(False)
         else:
             Invalid_move("Left")
@@ -1776,7 +1776,7 @@ def move_right():
                 y=player.ycor()
                 x=x+Ratio
                 player.goto(x,y) #Player curser move right
-            if steps == rec_step and Difficulty == 5: #Hardcore mode step limit reached
+            if steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
                 end(False)
         else:
             Invalid_move("Right")
