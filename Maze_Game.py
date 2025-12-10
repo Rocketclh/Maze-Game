@@ -599,17 +599,17 @@ def player_found(): #Automated relocate player position
     global Size
     found=False #Register did the player position found
     x=0
-    y=0
+    y=Size-1
     try_n=0
     while found != True: #Automated relocate player position
         if Board[x][y] == "P":
             found=True
         else:
-            y=y+1
-            if y > (Size-1):
-                x=x+1
-                y=0
-                if x > (Size-1):
+            x=x+1
+            if x > (Size-1):
+                y=y-1
+                x=0
+                if y < 0:
                     if try_n != 3:
                         x=0
                         y=0
@@ -774,7 +774,7 @@ def quick_test(): #Test
     y=y-1
     Board[x][y]="E"
 
-def Timer(): #10 minutes timer (Main thread/Sub-thread)
+def Timer(): #Timer setup (Main thread/Sub-thread)
     global Minutes
     global Second
     global mode
@@ -793,7 +793,7 @@ def Timer(): #10 minutes timer (Main thread/Sub-thread)
     elif mode == 2:
         screen.ontimer(tick,1000)
 
-def tick():
+def tick(): #Timer count
     global Minutes
     global Second
     global Difficulty
@@ -876,6 +876,8 @@ def Menu_CLI(): #CLI menu
 def menu_setup(): #GUI screen setup
     global screen
     global pen
+    global system
+    global cooldown
     try:
         screen.clear() #Test do the screen still exist
     except:
@@ -884,10 +886,17 @@ def menu_setup(): #GUI screen setup
     screen.bgcolor("White")
     screen.setup(width=Rat_convert(550), height=Rat_convert(650)) #Set screen size
     screen.tracer(0)
-    pen=t.Turtle()
+    pen=t.Turtle() #GUI draw
     pen.hideturtle()
     pen.penup()
     pen.shapesize(Rat_convert(1),Rat_convert(1))
+    system=t.Turtle() #System output message
+    system.shapesize(Rat_convert(1),Rat_convert(1))
+    system.penup()
+    system.color("red")
+    system.goto(0,0)
+    system.hideturtle()
+    cooldown=False
     screen.update()
     def_set() #Setting options set to default
     if Pyg: #Pygame was imported
@@ -963,7 +972,12 @@ def button_click(x,y): #Mouse clicked
     global Apply_bt #Apply button
     global Reset_bt #Reset button
     global RAM #Temporary setting
+    global system #System output message
+    global cooldown
+    global KeyBind_set #Key bind option set
+    global KeyBind #Key bind
     screen.update()
+    style="Arial", int(Rat_convert(12.5)), "bold"
     if page == 0: #From menu
         if Instruction_bt.get_x_min() < x < Instruction_bt.get_x_max() and Instruction_bt.get_y_min() < y < Instruction_bt.get_y_max(): #Instruction button pressed
             play_sound(1) #Play sound effect
@@ -974,7 +988,7 @@ def button_click(x,y): #Mouse clicked
             game_setting()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
             play_sound(1) #Play sound effect
-            RAM=[PShape,PColour,Animation,AVolume] #Store the currtent setting
+            RAM=[PShape,PColour,Animation,AVolume,KeyBind] #Store the currtent setting
             setting()
         elif Exit_bt.get_x_min() < x < Exit_bt.get_x_max() and Exit_bt.get_y_min() < y < Exit_bt.get_y_max(): #Exit button pressed
             play_sound(1) #Play sound effect
@@ -1040,7 +1054,7 @@ def button_click(x,y): #Mouse clicked
                 RAM[2]=1 #Update temporary setting
                 setting()
         elif Animation_set.get_btR_x_min() < x < Animation_set.get_btR_x_max() and Animation_set.get_btR_y_min() < y < Animation_set.get_btR_y_max(): #Animation option set right arrow button pressed
-            play_sound(1) #Play sound effec
+            play_sound(1) #Play sound effect
             if RAM[2] == 1: #Turn animation off
                 RAM[2]=2 #Update temporary setting 
                 setting()
@@ -1052,11 +1066,36 @@ def button_click(x,y): #Mouse clicked
             if Pyg: #Pygame was imported
                 AVolume=RAM[3]
                 volume_set() #Apply audio volume setting
+            KeyBind=RAM[4]
+            x=Apply_bt.get_x_min()+(Apply_bt.get_x_max()-Apply_bt.get_x_min())/2
+            y=Apply_bt.get_y_min()-25
+            system.goto(x,y)
+            system.write("Setting applied", align="center", font=(style))
+            if not(cooldown): #Preventing Sys_wait_1_second procedure execute multiple times
+                screen.ontimer(Sys_wait_1_second, 1000) #Execute after 1 second
+                cooldown=True
         elif Reset_bt.get_x_min() < x < Reset_bt.get_x_max() and Reset_bt.get_y_min() < y < Reset_bt.get_y_max(): #Reset button pressed
             play_sound(1) #Play sound effect
             def_set() #Reset setting options back to default
-            RAM=[PShape,PColour,Animation,AVolume] #Update the current setting
+            RAM=[PShape,PColour,Animation,AVolume,KeyBind] #Update the current setting
+            x=Reset_bt.get_x_min()+(Reset_bt.get_x_max()-Reset_bt.get_x_min())/2
+            y=Reset_bt.get_y_min()-25
+            system.goto(x,y)
+            system.write("Setting reset", align="center", font=(style))
+            if not(cooldown): #Preventing Sys_wait_1_second procedure execute multiple times
+                screen.ontimer(Sys_wait_1_second, 1000) #Execute after 1 second
+                cooldown=True
             setting()
+        elif KeyBind_set.get_btL_x_min() < x < KeyBind_set.get_btL_x_max() and KeyBind_set.get_btL_y_min() < y < KeyBind_set.get_btL_y_max(): #Key bind option set left arrow button pressed
+            play_sound(1) #Play sound effect
+            if RAM[4] == 2: #Change key bind
+                RAM[4]=1 #Update temporary setting
+                setting()
+        elif KeyBind_set.get_btR_x_min() < x < KeyBind_set.get_btR_x_max() and KeyBind_set.get_btR_y_min() < y < KeyBind_set.get_btR_y_max(): #Key bind option set right arrow button pressed
+            play_sound(1) #Play sound effect
+            if RAM[4] == 1: #Change key bind
+                RAM[4]=2 #Update temporary setting 
+                setting()
         elif Pyg: #Pygame was imported
             if AVolume_set.get_btL_x_min() < x < AVolume_set.get_btL_x_max() and AVolume_set.get_btL_y_min() < y < AVolume_set.get_btL_y_max(): #Audio volume option set left arrow button pressed
                 play_sound(1) #Play sound effect
@@ -1087,7 +1126,7 @@ def button_click(x,y): #Mouse clicked
             game_setup()
         elif Setting_bt.get_x_min() < x < Setting_bt.get_x_max() and Setting_bt.get_y_min() < y < Setting_bt.get_y_max(): #Setting button pressed
             play_sound(1) #Play sound effect
-            RAM=[PShape,PColour,Animation,AVolume] #Store the currtent setting
+            RAM=[PShape,PColour,Animation,AVolume,KeyBind] #Store the currtent setting
             setting()
         elif Menu_bt.get_x_min() < x < Menu_bt.get_x_max() and Menu_bt.get_y_min() < y < Menu_bt.get_y_max(): #Back to main menu button pressed
             play_sound(1) #Play sound effect
@@ -1167,11 +1206,11 @@ def game_setting(): #GUI game setting
     global Return_bt
     page=2
     pen.clear() #Clear screen
-    style="Arial", int(Rat_convert(25)), "bold"
+    style="Arial", int(Rat_convert(23.5)), "bold"
     try:
         Difficulty_set.set_n(Difficulty) #Update difficulty
     except:
-        x=Rat_convert(-170) #Difficulty text position
+        x=Rat_convert(-185) #Difficulty text position
         y=Rat_convert(25)
         options=["1(21*21 Board)","2(31*31 Board)","3(41*41 Board)","4(51*51 Board)","5(Challenge Mode)"] #Available difficulty
         Difficulty_set=Option_set(x, y, style, "Difficulty:", options, Difficulty)
@@ -1238,10 +1277,12 @@ def def_set(): #Setting default
     global PColour
     global Animation
     global AVolume
+    global KeyBind
     PShape=1 #Classic
     PColour=1 #Green
     Animation=1 #On
     AVolume=3 #50
+    KeyBind=1 #WASD
 
 def setting(): #GUI setting
     global screen
@@ -1255,12 +1296,14 @@ def setting(): #GUI setting
     global PColour_set
     global Animation_set
     global AVolume_set
+    global KeyBind_set
     page=3
     pen.clear() #Clear screen
     PShape=RAM[0] #Load in temporary setting
     PColour=RAM[1]
     Animation=RAM[2]
     AVolume=RAM[3]
+    KeyBind=RAM[4]
     style="Arial", int(Rat_convert(25)), "bold"
     try:
         PShape_set.set_n(PShape) #Update player shape
@@ -1295,9 +1338,17 @@ def setting(): #GUI setting
             options=["0","25", "50", "75", "100"] #Available option
             AVolume_set=Option_set(x, y, style, "Volume:  ", options,AVolume)
         AVolume_set.draw() #Draw audio volume option set
-    Apply_bt=Button(Rat_convert(-112.5),Rat_convert(-100),Rat_convert(100),Rat_convert(50),"Apply",style)
+    try:
+        KeyBind_set.set_n(KeyBind) #Update key bind
+    except:
+        x=Rat_convert(-75) #Key bind option set position
+        y=Rat_convert(-50) #Key bind option set section row
+        options=["WASD", "Arrows"] #Available option
+        KeyBind_set=Option_set(x, y, style, "Key Bind:  ", options,KeyBind)
+    KeyBind_set.draw() #Draw key bind option set
+    Apply_bt=Button(Rat_convert(-112.5),Rat_convert(-150),Rat_convert(100),Rat_convert(50),"Apply",style)
     Apply_bt.draw() #Draw apply button
-    Reset_bt=Button(Rat_convert(12.5),Rat_convert(-100),Rat_convert(100),Rat_convert(50),"Reset",style)
+    Reset_bt=Button(Rat_convert(12.5),Rat_convert(-150),Rat_convert(100),Rat_convert(50),"Reset",style)
     Reset_bt.draw() #Draw reset button
     Return_bt=Button(Rat_convert(-250),Rat_convert(-250),Rat_convert(125),Rat_convert(50),"Return",style)
     Return_bt.draw() #Draw return button
@@ -1321,6 +1372,10 @@ def game_setup(): #Game GUI setup
     global PShape
     global PColour_set
     global PColour
+    global Test
+    if Test:
+        global P1
+        global KeyBind
     page=4
     screen.clear() #Clear screen
     Ratio=min(screen.cv.winfo_screenwidth()/Size,screen.cv.winfo_screenheight()/Size)*0.85 #Set ratio using monitor resolution
@@ -1334,32 +1389,40 @@ def game_setup(): #Game GUI setup
     pen.hideturtle()
     pen.penup()
     pen.goto((Ratio/4),0) #Center
-    player=t.Turtle() #Player character
-    player.shapesize((Ratio/20), (Ratio/20))
-    player.penup()
-    try: #Set player shape
-        player.shape(PShape_set.get_text_list_nth_item(PShape))
-        if PShape != 1: #Size adjust
-            player.shapesize((Ratio/30), (Ratio/30))
-    except: #If user didn't open setting
-        player.shape("classic")
-    try: #Set player colour
-        player.fillcolor(PColour_set.get_text_list_nth_item(PColour))
-    except: #If user didn't open setting
-        player.fillcolor("green")
-    player.goto((Ratio/4),0)
-    player.hideturtle()
-    system=t.Turtle() #Output massage
-    system.shapesize(1,1)
-    system.penup()
-    system.color("red")
-    system.goto(0,0)
-    system.hideturtle()
-    step_pn=t.Turtle() #Steps count
-    step_pn.shapesize(1,1)
-    step_pn.penup()
-    step_pn.color("black")
-    step_pn.hideturtle()
+    if not(Test): #Original method
+        player=t.Turtle() #Player character
+        player.shapesize((Ratio/20), (Ratio/20))
+        player.penup()
+        try: #Set player shape
+            player.shape(PShape_set.get_text_list_nth_item(PShape))
+            if PShape != 1: #Size adjust
+                player.shapesize((Ratio/30), (Ratio/30))
+        except: #If user didn't open setting
+            player.shape("classic")
+        try: #Set player colour
+            player.fillcolor(PColour_set.get_text_list_nth_item(PColour))
+        except: #If user didn't open setting
+            player.fillcolor("green")
+        player.goto((Ratio/4),0)
+        player.hideturtle()
+        system.shapesize(1,1) #System output message
+        system.penup()
+        system.goto(0,0)
+        system.hideturtle()
+        step_pn=t.Turtle() #Steps count
+        step_pn.shapesize(1,1)
+        step_pn.penup()
+        step_pn.color("black")
+        step_pn.hideturtle()
+    else: #New method
+        try: #Setup player 1
+            if PShape != 1: #Size adjust
+                shapesize=Ratio/30
+            else:
+                shapesize=Ratio/20
+            P1=Player(Board,PColour_set.get_text_list_nth_item(PColour),PShape_set.get_text_list_nth_item(PShape),shapesize,KeyBind)
+        except:
+            P1=Player(Board,"green","classic",Ratio/20,KeyBind)
     timer_pn=t.Turtle() #Timer count
     timer_pn.shapesize(1,1)
     timer_pn.penup()
@@ -1378,9 +1441,8 @@ def draw_maze():
     global menu_width
     i=0
     j=Size-1 #Board top left corner
-    #Maze bottom-left corner setted
-    maze_x0=-screen.window_width()/2-Ratio/1.25+menu_width
-    maze_y0=-screen.window_height()/2+Ratio/1.25
+    maze_x0=-screen.window_width()/2-Ratio/1.25+menu_width #Maze bottom left corner coordinate
+    maze_y0=-screen.window_height()/2+Ratio/1.25 #Maze bottom left corner coordinate
     while (i < Size) and (j != -1):
         #Convert Board[i][j] location vecter to Screen x,y
         x=maze_x0+i*Ratio+Ratio/2
@@ -1477,9 +1539,7 @@ def ready(): #Ready to start the game
 def Start(): #Start the game
     global screen
     global system
-    global cooldown
     system.clear()
-    cooldown=False
     screen.bgcolor("white")
     screen.update()
     screen.onkeypress(None,"Return")
@@ -1584,7 +1644,7 @@ def Play_anime(): #Play animation
     if Animation == 1: #Animation on
         screen.update()
 
-def Invalid_move(direction): #Error massage output
+def Invalid_move(direction): #Error message output
     global system
     global screen
     global Ratio
@@ -1608,12 +1668,12 @@ def Invalid_move(direction): #Error massage output
     system.write("Invalid Move", align="center", font=(style))
     system.goto(0,-text_size/1.75)
     system.write(text, align="center", font=(style))
-    if not(cooldown): #Preventing Sys_wait_2_second procedure execute multiple times
-        screen.ontimer(Sys_wait_2_second, 2000) #Execute after 2 second
+    if not(cooldown): #Preventing Sys_wait_1_second procedure execute multiple times
+        screen.ontimer(Sys_wait_1_second, 1000) #Execute after 1 second
         cooldown=True
     screen.update()
 
-def Sys_wait_2_second(): #System massage clear after 2 second
+def Sys_wait_1_second(): #System message clear after 1 second
     global system
     global cooldown
     cooldown=False
@@ -1621,18 +1681,32 @@ def Sys_wait_2_second(): #System massage clear after 2 second
 
 def movement_unbind(): #Unbind keys to movement
     global screen
-    screen.onkeypress(None,"w")
-    screen.onkeypress(None,"s")
-    screen.onkeypress(None,"a")
-    screen.onkeypress(None,"d")
+    global KeyBind
+    if KeyBind == 1:
+        screen.onkeypress(None,"w")
+        screen.onkeypress(None,"s")
+        screen.onkeypress(None,"a")
+        screen.onkeypress(None,"d")
+    elif KeyBind == 2:
+        screen.onkeypress(None,"Up")
+        screen.onkeypress(None,"Down")
+        screen.onkeypress(None,"Left")
+        screen.onkeypress(None,"Right")
     screen.listen()
 
 def movement_bind(): #bind keys to movement
     global screen
-    screen.onkeypress(move_up,"w")
-    screen.onkeypress(move_down,"s")
-    screen.onkeypress(move_left,"a")
-    screen.onkeypress(move_right,"d")
+    global KeyBind
+    if KeyBind == 1:
+        screen.onkeypress(move_up,"w")
+        screen.onkeypress(move_down,"s")
+        screen.onkeypress(move_left,"a")
+        screen.onkeypress(move_right,"d")
+    elif KeyBind == 2:
+        screen.onkeypress(move_up,"Up")
+        screen.onkeypress(move_down,"Down")
+        screen.onkeypress(move_left,"Left")
+        screen.onkeypress(move_right,"Right")
     screen.listen()
 
 def move_up():
@@ -1789,11 +1863,13 @@ def main(): #Start point
     global mode
     global cycle
     global Paused #Register did game paused
+    global Test #Large scale test register
     root=t.Screen()._root #Access the underlying Tk window
     timer=threading.Thread(target=Timer) #Setup sub-thread
     mode=2
     cycle=0 #Threshold
     Paused=False
+    Test=True
     if mode == 1: #CLI
         Menu_CLI()
     elif mode == 2: #GUI
@@ -1988,7 +2064,7 @@ class Option_set:
             length=len(self.text_list[i]) #String length of current string
             if length > max_length:
                 max_length=length
-        width=max_length*self.text_size/1.375
+        width=max_length*self.text_size/1.25
         self.dp=Button(x,self.y,width,self.text_size*2,self.text_list[self.n],self.style) #Display setup
         self.dp.draw() #Draw the display
         x=x+width+5 #Display to right arrow button TL position
@@ -1996,156 +2072,269 @@ class Option_set:
         self.btR.draw()
 
 class Player: #Player character class, mainly used for 2 player mode. Development paused
-    def __init__(self,Board,color,shape):
+    def __init__(self,Board,color,shape,shape_size,keybind):
         self.Board=Board #Game board
         self.color=color #Character color
         self.shape=shape #Character shape
         self.steps=0 #Steps taken
-        self.setup()
+        if keybind == 1:
+            self.set_key("w","a","s","d")
+        elif keybind == 2:
+            self.set_key("Up","Down","Left","Right")
+        self.setup(shape_size) #Setup charactor
+        self.player_found()
 
-    def setup(self): #Character setup
+    def setup(self,shape_size): #Character setup
         global Ratio
         self.character=t.Turtle() #Player character
-        self.character.shapesize((Ratio/20), (Ratio/20))
+        self.character.shapesize(shape_size,shape_size)
         self.character.penup()
         self.character.color(self.color)
         self.character.shape(self.shape)
         self.character.goto((Ratio/4),0)
         self.character.hideturtle()
 
+    def set_key(self,up,down,left,right): #Set key bind
+        self.up=up
+        self.down=down
+        self.left=left
+        self.right=right
+
     def get_steps(self): #Return steps taken
         return self.steps
 
-    def player_found(self): #Automated relocate player position
+    def goto(self,x,y): #Character move
+        self.character.goto(x,y)
+
+    def player_found(self): #Initialise player position
         global Size
         found=False #Register did the player position found
         x=0
-        y=0
+        y=Size-1
         try_n=0
-        while found != True: #Automated relocate player position
+        while found != True: #Locate player position
             if self.Board[x][y] == "P":
                 found=True
             else:
-                y=y+1
-                if y > (Size-1):
-                    x=x+1
-                    y=0
-                    if x > (Size-1):
-                        if try_n != 3:
-                            x=0
-                            y=0
-                            try_n=try_n+1
-                        else:
-                            print("System: ERROR")
-                            print("System: Player position not found, please restart the game")
-                            input("System: Press Enter to exit the game ")
-                            sys.exit()
-        coordinate=grid(x,y)
-        return coordinate #Return player coordinate in Grid fromat
+                x=x+1
+                if x == Size:
+                    if try_n != 3:
+                        x=0
+                        try_n=try_n+1
+                    else:
+                        print("System: ERROR")
+                        print("System: Player position not found, please restart the game")
+                        input("System: Press Enter to exit the game ")
+                        sys.exit()
+        self.x=x
+        self.y=y
 
-    def move_up(self): #Character move up
+    def movement_unbind(self): #Unbind keys to movement
+        global screen
+        screen.onkeypress(None,self.up)
+        screen.onkeypress(None,self.down)
+        screen.onkeypress(None,self.left)
+        screen.onkeypress(None,self.right)
+        screen.listen()
+
+    def movement_bind(self): #bind keys to movement
+        global screen
+        screen.onkeypress(self.move_up,self.up)
+        screen.onkeypress(self.move_down,self.down)
+        screen.onkeypress(self.move_left,self.left)
+        screen.onkeypress(self.move_right,self.right)
+        screen.listen()
+
+    def step_pn_ini(self,x,y,style): #Initialise steps count pen
+        self.step_style=style
+        self.step_pn=t.Turtle()
+        self.step_pn.penup()
+        self.step_pn.color("black")
+        self.step_pn.hideturtle()
+        self.step_pn.goto(x,y)
+        text="Steps: "+ str(steps)
+        self.step_pn.write(text, align="center", font=(self.step_style))
+
+    def steps_upd(self): #Update steps count
+        global screen
+        self.step_pn.clear()
+        text="Steps: "+str(self.steps)
+        self.step_pn.write(text, align="center", font=(self.step_style))
+        screen.update()
+
+    def maze_cal(self,mazeBL_x,mazeBL_y): #Calculate maze center coordinate, width and height
+        global Ratio
+        global Size
+        self.cen_x=mazeBL_x+((Size-1)/2)*Ratio
+        self.cen_y=mazeBL_y+((Size-1)/2)*Ratio
+        max_x=mazeBL_x+(Size-1)*Ratio+Ratio/2
+        max_y=mazeBL_y+(Size-1)*Ratio+Ratio/2
+        self.maze_width=max_x-mazeBL_x
+        self.maze_height=max_y-mazeBL_y
+
+    def sys_pn_ini(self): #Initialise system message output pen
+        self.system=t.Turtle() #System output message
+        self.system.shapesize(1,1)
+        self.system.penup()
+        self.system.color("red")
+        self.system.goto(0,0)
+        self.system.hideturtle()
+        self.cooldown=False
+
+    def Invalid_move(self,direction): #Error message output
+        global screen
+        global Ratio
+        global Size
+        style="Arial", int(25/min(self.maze_width/Size,self.maze_height/Size)*Ratio*1.5), "bold"
+        text_font, text_size, text_weight=style #Unpack text style
+        text="You Cannot Move "+direction
+        self.system.clear()
+        self.system.goto(self.cen_x-text_size*len(text)*0.4,self.cen_y+text_size*3) #TL of the display
+        self.system.pendown() #Start drawing the display
+        self.system.begin_fill()
+        self.system.fillcolor("white")
+        self.system.goto(self.cen_x+text_size*len(text)*0.4,self.cen_y+text_size*3) #TR of the display
+        self.system.goto(self.cen_x+text_size*len(text)*0.4,self.cen_y-text_size*1.5) #BR of the display
+        self.system.goto(self.cen_x-text_size*len(text)*0.4,self.cen_y-text_size*1.5) #BL of the display
+        self.system.goto(self.cen_x-text_size*len(text)*0.4,self.cen_y+text_size*3) #TL of the display
+        self.system.end_fill()
+        self.system.penup() #Finish drawing the display
+        self.system.goto(self.cen_x,self.cen_y+text_size/1.25)
+        self.system.write("Invalid Move", align="center", font=(style))
+        self.system.goto(self.cen_x,self.cen_y-text_size/1.75)
+        self.system.write(text, align="center", font=(style))
+        if not(self.cooldown): #Preventing Sys_wait_1_second procedure execute multiple times
+            screen.ontimer(self.Sys_wait_1_second, 1000) #Execute after 1 second
+            self.cooldown=True
+        screen.update()
+
+    def Sys_wait_1_second(self): #System message clear after 1 second
+        self.cooldown=False
+        self.system.clear()
+
+    def move_up(self):
         global Size
         global Screen
         global Ratio
-        temp=self.player_found() #Found player location
-        x=int(temp[0:2])
-        y=int(temp[2:4])
-        self.character.setheading(90) #Curser turn toward up
-        if y < (Size-1) and self.Board[x][y+1] != "X":
-            self.Board[x][y]=" "
-            y=y+1
-            self.steps=self.steps+1
-            steps_upd()
-            if self.Board[x][y] == "E":
-                self.Board[x][y]="P"
-                end(True)
+        global Timer_stop
+        global rec_step
+        global Difficulty
+        if not(Timer_stop): #Check is the game running
+            self.movement_unbind() #Prevent rapid calling
+            self.character.setheading(90) #Curser turn toward up
+            if self.y < (Size-1) and self.Board[self.x][self.y+1] != "X":
+                self.Board[self.x][self.y]=" "
+                self.y=self.y+1
+                self.steps=self.steps+1
+                self.steps_upd()
+                if self.Board[self.x][self.y] == "E":
+                    self.Board[self.x][self.y]="P"
+                    end(True)
+                else:
+                    self.Board[self.x][self.y]="P" #Change player postion in board
+                    x=self.character.xcor()
+                    y=self.character.ycor()
+                    y=y+Ratio
+                    self.character.goto(x,y) #Player curser move up
+                if self.steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
+                    end(False)
             else:
-                self.Board[x][y]="P" #Change player postion in board
-                x=self.character.xcor()
-                y=self.character.ycor()
-                y=y+Ratio
-                self.character.goto(x,y) #Player curser move up
-        else:
-            Invalid_move("Up")
-        screen.update()
+                self.Invalid_move("Up")
+            screen.ontimer(self.movement_bind, 10) #Delay 0.01 second
+            screen.update()
 
-    def move_down(self): #Character move down
+    def move_down(self):
         global Size
         global Screen
         global Ratio
-        temp=self.player_found() #Found player location
-        x=int(temp[0:2])
-        y=int(temp[2:4])
-        self.character.setheading(270) #Curser turn toward down
-        if y > 0 and self.Board[x][y-1] != "X":
-            self.Board[x][y]=" "
-            y=y-1
-            self.steps=self.steps+1
-            steps_upd()
-            if self.Board[x][y] == "E":
-                self.Board[x][y]="P"
-                end(True)
+        global Timer_stop
+        global rec_step
+        global Difficulty
+        if not(Timer_stop): #Check is the game running
+            self.movement_unbind() #Prevent rapid calling
+            self.character.setheading(270) #Curser turn toward down
+            if self.y > 0 and self.Board[self.x][self.y-1] != "X":
+                self.Board[self.x][self.y]=" "
+                self.y=self.y-1
+                self.steps=self.steps+1
+                self.self.steps_upd()
+                if self.Board[self.x][self.y] == "E":
+                    self.Board[self.x][self.y]="P"
+                    end(True)
+                else:
+                    self.Board[self.x][self.y]="P" #Change player postion in board
+                    x=self.character.xcor()
+                    y=self.character.ycor()
+                    y=y-Ratio
+                    self.character.goto(x,y) #Player curser move down
+                if self.steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
+                    end(False)
             else:
-                self.Board[x][y]="P" #Change player postion in board
-                x=self.character.xcor()
-                y=self.character.ycor()
-                y=y-Ratio
-                self.character.goto(x,y) #Player curser move down
-        else:
-            Invalid_move("Down")
-        screen.update()
+                self.Invalid_move("Down")
+            screen.ontimer(self.movement_bind, 10) #Delay 0.01 second
+            screen.update()
 
-    def move_left(self): #Character move left
+    def move_left(self):
         global Size
         global Screen
         global Ratio
-        temp=self.player_found() #Found player location
-        x=int(temp[0:2])
-        y=int(temp[2:4])
-        self.character.setheading(180) #Curser turn toward left
-        if x > 0 and self.Board[x-1][y] != "X":
-            self.Board[x][y]=" "
-            x=x-1
-            self.steps=self.steps+1
-            steps_upd()
-            if self.Board[x][y] == "E":
-                self.Board[x][y]="P"
-                end(True)
+        global Timer_stop
+        global rec_step
+        global Difficulty
+        if not(Timer_stop): #Check is the game running
+            self.movement_unbind() #Prevent rapid calling
+            self.character.setheading(180) #Curser turn toward left
+            if self.x > 0 and self.Board[self.x-1][self.y] != "X":
+                self.Board[self.x][self.y]=" "
+                self.x=self.x-1
+                self.steps=self.steps+1
+                self.self.steps_upd()
+                if self.Board[self.x][self.y] == "E":
+                    self.Board[self.x][self.y]="P"
+                    end(True)
+                else:
+                    self.Board[self.x][self.y]="P" #Change player postion in board
+                    x=self.character.xcor()
+                    y=self.character.ycor()
+                    x=x-Ratio
+                    self.character.goto(x,y) #Player curser move left
+                if self.steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
+                    end(False)
             else:
-                self.Board[x][y]="P" #Change player postion in board
-                x=self.character.xcor()
-                y=self.character.ycor()
-                x=x-Ratio
-                self.character.goto(x,y) #Player curser move left
-        else:
-            Invalid_move("Left")
-        screen.update()
+                self.Invalid_move("Left")
+            screen.ontimer(self.movement_bind, 10) #Delay 0.01 second
+            screen.update()
 
-    def move_right(self): #Character move right
+    def move_right(self):
         global Size
         global Screen
         global Ratio
-        temp=self.player_found() #Found player location
-        x=int(temp[0:2])
-        y=int(temp[2:4])
-        self.character.setheading(0) #Curser turn toward right
-        if x < (Size-1) and Board[x+1][y] != "X":
-            self.Board[x][y]=" "
-            x=x+1
-            self.steps=self.steps+1
-            steps_upd()
-            if self.Board[x][y] == "E":
-                self.Board[x][y]="P"
-                end(True)
+        global Timer_stop
+        global rec_step
+        global Difficulty
+        if not(Timer_stop): #Check is the game running
+            self.movement_unbind() #Prevent rapid calling
+            self.character.setheading(0) #Curser turn toward right
+            if self.x < (Size-1) and self.Board[self.x+1][self.y] != "X":
+                self.Board[x][y]=" "
+                self.x=self.x+1
+                self.steps=self.steps+1
+                self.steps_upd()
+                if self.Board[self.x][self.y] == "E":
+                    self.Board[self.x][self.y]="P"
+                    end(True)
+                else:
+                    self.Board[self.x][self.y]="P" #Change player postion in board
+                    x=self.character.xcor()
+                    y=self.character.ycor()
+                    x=x+Ratio
+                    self.character.goto(x,y) #Player curser move right
+                if self.steps == rec_step and Difficulty == 5: #Challenge mode step limit reached
+                    end(False)
             else:
-                self.Board[x][y]="P" #Change player postion in board
-                x=self.character.xcor()
-                y=self.character.ycor()
-                x=x+Ratio
-                self.character.goto(x,y) #Player curser move right
-        else:
-            Invalid_move("Right")
-        screen.update()
+                self.Invalid_move("Right")
+            screen.ontimer(self.movement_bind, 10) #Delay 0.01 second
+            screen.update()
 
 import time
 import random
