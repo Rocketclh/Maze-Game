@@ -96,7 +96,7 @@ def end(win): #win output
     global Time_up #Time up register
     global Timer_stop #Timer stop register
     global Exit_bt
-    global Restart_bt
+    global Menu_bt
     global page
     global player
     global Minutes
@@ -163,8 +163,8 @@ def end(win): #win output
         text="Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds"
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
-        Restart_bt=Button(Rat_convert(-175),y,Rat_convert(200),Rat_convert(50),"Restart",style)
-        Restart_bt.draw() #Draw restart button
+        Menu_bt=Button(Rat_convert(-175),y,Rat_convert(200),Rat_convert(50),"Main menu",style)
+        Menu_bt.draw() #Draw restart button
         Exit_bt=Button(Rat_convert(50),y,Rat_convert(150),Rat_convert(50),"Exit",style)
         Exit_bt.draw() #Draw exit button
         screen.update()
@@ -954,7 +954,7 @@ def button_click(x,y): #Mouse clicked
     global Return_bt #Return button
     global CLI_bt #CLI button
     global Difficulty_set #Difficulty option set
-    global Restart_bt #Restart button
+    global Menu_bt #Back to main menu button
     global cycle
     global Timer_stop #Register timer stop
     global Pause_bt #Pause button
@@ -1116,7 +1116,7 @@ def button_click(x,y): #Mouse clicked
             play_sound(1) #Play sound effect
             screen.bye()
             sys.exit()
-        elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button pressed
+        elif Menu_bt.get_x_min() < x < Menu_bt.get_x_max() and Menu_bt.get_y_min() < y < Menu_bt.get_y_max(): #Back to main menu button
             play_sound(1) #Play sound effect
             screen.reset()
             screen.ontimer(main,10) #Delay buffer
@@ -1869,7 +1869,7 @@ def main(): #Start point
     mode=2
     cycle=0 #Threshold
     Paused=False
-    Test=True
+    Test=False
     if mode == 1: #CLI
         Menu_CLI()
     elif mode == 2: #GUI
