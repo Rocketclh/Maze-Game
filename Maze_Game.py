@@ -101,6 +101,8 @@ def end(win): #win output
     global player
     global Minutes
     global Second
+    if Test:
+        global P1
     if mode == 1: #CLI end output
         if win:
             print("System: Congratulations!")
@@ -129,7 +131,10 @@ def end(win): #win output
         pen.clear() #Reset pen
         pen.penup()
         pen.shapesize(Rat_convert(1),Rat_convert(1))
-        player.hideturtle()
+        if Test:
+            P1.hideturtle()
+        else:
+            player.hideturtle()
         screen.update()
         style="Arial", int(Rat_convert(25)), "bold"
         y=Rat_convert(100)
@@ -152,7 +157,10 @@ def end(win): #win output
                 pen.write("You have used all of the steps", align="center", font=(style))
         y=y-Rat_convert(50)
         pen.goto(0,y)
-        text="Total steps taken:"+str(steps)
+        if Test:
+            text="Total steps taken:"+str(P1.get_steps())
+        else:
+            text="Total steps taken:"+str(steps)
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         pen.goto(0,y)
@@ -169,7 +177,10 @@ def end(win): #win output
         Exit_bt.draw() #Draw exit button
         screen.update()
         screen.onclick(button_click)
-        movement_unbind()
+        if Test:
+            P1.movement_unbind()
+        else:
+            movement_unbind()
         screen.listen()
 
 def print_board(): # board
@@ -1372,7 +1383,6 @@ def game_setup(): #Game GUI setup
     global PShape
     global PColour_set
     global PColour
-    global Test
     if Test:
         global P1
         global KeyBind
@@ -1439,10 +1449,14 @@ def draw_maze():
     global Ratio
     global player
     global menu_width
+    if Test:
+        global P1
     i=0
     j=Size-1 #Board top left corner
     maze_x0=-screen.window_width()/2-Ratio/1.25+menu_width #Maze bottom left corner coordinate
     maze_y0=-screen.window_height()/2+Ratio/1.25 #Maze bottom left corner coordinate
+    if Test:
+        P1.maze_cal(maze_x0,maze_y0)
     while (i < Size) and (j != -1):
         #Convert Board[i][j] location vecter to Screen x,y
         x=maze_x0+i*Ratio+Ratio/2
@@ -1453,13 +1467,19 @@ def draw_maze():
             wall_block(x,y,"red")
         elif Board[i][j] == "P": #Draw player start
             wall_block(x,y,"blue")
-            player.goto(x+Ratio/2,y-Ratio/2)
-            player.setheading(270)
+            if Test:
+                P1.goto_point(x+Ratio/2,y-Ratio/2,270)
+            else:
+                player.goto(x+Ratio/2,y-Ratio/2)
+                player.setheading(270)
         i=i+1
         if i == Size:
             i=0
             j=j-1
-    player.showturtle()
+    if Test:
+        P1.showturtle()
+    else:
+        player.showturtle()
     screen.update()
     draw_menu()
 
@@ -1476,6 +1496,8 @@ def draw_menu():
     global Pause_bt
     global Minutes
     global Second
+    if Test:
+        global P1
     menu_x0=-screen.window_width()/2
     margin=screen.window_height()*0.05
     menu_height=screen.window_height()-(margin*2) #Menu available height
@@ -1500,9 +1522,12 @@ def draw_menu():
     text="steps: "+ str(rec_step)
     pen.write(text, align="center", font=(style)) #Write second row
     y=y-item_height/2-spacing-item_height/2+text_size*2.25 #Third item y coordinate
-    step_pn.goto(menu_center,y)
-    text="Steps: "+ str(steps)
-    step_pn.write(text, align="center", font=(style))
+    if Test:
+        P1.step_pn_ini(menu_center,y,style)
+    else:
+        step_pn.goto(menu_center,y)
+        text="Steps: "+ str(steps)
+        step_pn.write(text, align="center", font=(style))
     y=y-item_height/2-spacing-item_height/2 #Fourth item y coordinate
     timer_pn.goto(menu_center,y)
     temp=grid(Minutes,Second)
@@ -1539,11 +1564,16 @@ def ready(): #Ready to start the game
 def Start(): #Start the game
     global screen
     global system
+    if Test:
+        global P1
     system.clear()
     screen.bgcolor("white")
     screen.update()
     screen.onkeypress(None,"Return")
-    movement_bind() #Set movement
+    if Test:
+        P1.movement_bind()
+    else:
+        movement_bind() #Set movement
     screen.onclick(button_click)
     screen.listen()
     Timer() #Start timer
@@ -1560,6 +1590,8 @@ def pause_game(): #Pause the game:
     global Exit_bt #Exit button
     global Paused #Register did game paused
     global Second
+    if Test:
+        global P1
     Timer_stop=True
     Paused=True
     Second=Second-1 #Adjust timer
@@ -1589,7 +1621,12 @@ def pause_game(): #Pause the game:
     Exit_bt.draw() #Draw exit button
     screen.update()
     screen.onclick(button_click)
-    movement_unbind()
+    if Test:
+        P1.movement_unbind()
+        P1.hideturtle()
+    else:
+        movement_unbind()
+        player.hideturtle()
 
 def steps_upd(): #Update steps count
     global step_pn
@@ -1863,13 +1900,11 @@ def main(): #Start point
     global mode
     global cycle
     global Paused #Register did game paused
-    global Test #Large scale test register
     root=t.Screen()._root #Access the underlying Tk window
     timer=threading.Thread(target=Timer) #Setup sub-thread
     mode=2
     cycle=0 #Threshold
     Paused=False
-    Test=False
     if mode == 1: #CLI
         Menu_CLI()
     elif mode == 2: #GUI
@@ -2083,6 +2118,7 @@ class Player: #Player character class, mainly used for 2 player mode. Developmen
             self.set_key("Up","Down","Left","Right")
         self.setup(shape_size) #Setup charactor
         self.player_found()
+        self.sys_pn_ini()
 
     def setup(self,shape_size): #Character setup
         global Ratio
@@ -2103,8 +2139,9 @@ class Player: #Player character class, mainly used for 2 player mode. Developmen
     def get_steps(self): #Return steps taken
         return self.steps
 
-    def goto(self,x,y): #Character move
+    def goto_point(self,x,y,direction): #Character move to starting point
         self.character.goto(x,y)
+        self.character.setheading(direction)
 
     def player_found(self): #Initialise player position
         global Size
@@ -2212,6 +2249,12 @@ class Player: #Player character class, mainly used for 2 player mode. Developmen
         self.cooldown=False
         self.system.clear()
 
+    def hideturtle(self): #Hide character icon
+        self.character.hideturtle()
+
+    def showturtle(self): #Show character icon
+        self.character.showturtle()
+
     def move_up(self):
         global Size
         global Screen
@@ -2257,7 +2300,7 @@ class Player: #Player character class, mainly used for 2 player mode. Developmen
                 self.Board[self.x][self.y]=" "
                 self.y=self.y-1
                 self.steps=self.steps+1
-                self.self.steps_upd()
+                self.steps_upd()
                 if self.Board[self.x][self.y] == "E":
                     self.Board[self.x][self.y]="P"
                     end(True)
@@ -2288,7 +2331,7 @@ class Player: #Player character class, mainly used for 2 player mode. Developmen
                 self.Board[self.x][self.y]=" "
                 self.x=self.x-1
                 self.steps=self.steps+1
-                self.self.steps_upd()
+                self.steps_upd()
                 if self.Board[self.x][self.y] == "E":
                     self.Board[self.x][self.y]="P"
                     end(True)
@@ -2341,6 +2384,7 @@ import random
 import sys
 import threading
 import turtle as t
+Test=True #Large scale test register
 try: #Check did pygame installed
     import pygame
     pygame.init() #Initialise pygame
