@@ -163,9 +163,9 @@ def end(win): #win output
         text="Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds"
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
-        Menu_bt=Button(Rat_convert(-175),y,Rat_convert(200),Rat_convert(50),"Main menu",style)
+        Menu_bt=Button(Rat_convert(-212.5),y,Rat_convert(200),Rat_convert(50),"Main menu",style)
         Menu_bt.draw() #Draw restart button
-        Exit_bt=Button(Rat_convert(50),y,Rat_convert(150),Rat_convert(50),"Exit",style)
+        Exit_bt=Button(Rat_convert(12.5),y,Rat_convert(200),Rat_convert(50),"Exit",style)
         Exit_bt.draw() #Draw exit button
         screen.update()
         screen.onclick(button_click)
@@ -746,7 +746,7 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    #quick_test() #Test
+    quick_test() #Test
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -883,7 +883,10 @@ def menu_setup(): #GUI screen setup
     try:
         screen.clear() #Test do the screen still exist
     except:
-        screen=t.Screen()
+        screen=t.Screen() #Create screen
+        def_set() #Setting options set to default
+        if Pyg: #Pygame was imported
+            volume_set() #Set audio volume
     screen.title("Maze Game")
     screen.bgcolor("White")
     screen.setup(width=Rat_convert(550), height=Rat_convert(650)) #Set screen size
@@ -900,9 +903,6 @@ def menu_setup(): #GUI screen setup
     system.hideturtle()
     cooldown=False
     screen.update()
-    def_set() #Setting options set to default
-    if Pyg: #Pygame was imported
-        volume_set() #Set audio volume
     Menu_GUI()
 
 def Rat_convert(init): #Convert the size in ratio
@@ -1026,6 +1026,7 @@ def button_click(x,y): #Mouse clicked
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
             play_sound(1) #Play sound effect
+            system.clear()
             if Paused: #Go back to pause menu when game paused
                 pause_game()
             else: #Go back to main menu
