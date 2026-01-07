@@ -97,6 +97,7 @@ def end(win): #win output
     global Timer_stop #Timer stop register
     global Exit_bt
     global Menu_bt
+    global Restart_bt
     global page
     global Minutes
     global Second
@@ -164,9 +165,12 @@ def end(win): #win output
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         Menu_bt=Button(Rat_convert(-212.5),y,Rat_convert(200),Rat_convert(50),"Main menu",style)
-        Menu_bt.draw() #Draw restart button
+        Menu_bt.draw() #Draw back to main menu button
         Exit_bt=Button(Rat_convert(12.5),y,Rat_convert(200),Rat_convert(50),"Exit",style)
         Exit_bt.draw() #Draw exit button
+        y=y-Rat_convert(75)
+        Restart_bt=Button(Rat_convert(-212.5),y,Rat_convert(200),Rat_convert(50),"Restart",style)
+        Restart_bt.draw() #Draw restart button
         screen.update()
         screen.onclick(button_click)
         P1.movement_unbind()
@@ -957,11 +961,12 @@ def button_click(x,y): #Mouse clicked
     global CLI_bt #CLI button
     global Difficulty_set #Difficulty option set
     global Menu_bt #Back to main menu button
-    global cycle
+    global cycle #Threshold
     global Timer_stop #Register timer stop
     global Pause_bt #Pause button
     global Resume_bt #Resume button
     global Menu_bt #Back to main menu button
+    global Restart_bt #Restart button
     global Paused #Register did game paused
     global PShape_set #Player shape option set
     global PShape #Player shape
@@ -1123,6 +1128,12 @@ def button_click(x,y): #Mouse clicked
             play_sound(1) #Play sound effect
             screen.reset()
             screen.ontimer(main,10) #Delay buffer
+        elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button
+            play_sound(1) #Play sound effect
+            cycle=0 #Threshold
+            Paused=False
+            screen.reset()
+            screen.ontimer(build_maze,10) #Delay buffer
     elif page == 6: #From game pause menu
         if Resume_bt.get_x_min() < x < Resume_bt.get_x_max() and Resume_bt.get_y_min() < y < Resume_bt.get_y_max(): #Resume button pressed
             play_sound(1) #Play sound effect
