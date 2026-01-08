@@ -98,9 +98,12 @@ def end(win): #win output
     global Exit_bt
     global Menu_bt
     global Restart_bt
+    global Advise_bt
     global page
     global Minutes
     global Second
+    global Max_Minute
+    global Max_Second
     global P1
     if mode == 1: #CLI end output
         if win:
@@ -124,7 +127,7 @@ def end(win): #win output
         Timer_stop=True
         page=5
         screen.clear() #Clear screen
-        screen.setup(width=Rat_convert(550), height=Rat_convert(650))
+        screen.setup(width=Rat_convert(575), height=Rat_convert(650))
         screen.tracer(0)
         screen.update()
         pen.clear() #Reset pen
@@ -133,7 +136,7 @@ def end(win): #win output
         P1.hideturtle()
         screen.update()
         style="Arial", int(Rat_convert(25)), "bold"
-        y=Rat_convert(100)
+        y=Rat_convert(150)
         if win:
             play_sound(3)
             pen.goto(0,y)
@@ -161,7 +164,17 @@ def end(win): #win output
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         pen.goto(0,y)
-        text="Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds"
+        if Minutes < 1:
+            text="Time spend:"+str(Second)+" seconds"
+        else:
+            text="Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds"
+        pen.write(text, align="center", font=(style))
+        y=y-Rat_convert(50)
+        pen.goto(0,y)
+        if Max_Minute < 1:
+            text="Time expect:"+str(int(Max_Second))+" seconds"
+        else:
+            text="Time expect:"+str(int(Max_Minute))+" minutes "+str(int(Max_Second))+" seconds"
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         Menu_bt=Button(Rat_convert(-212.5),y,Rat_convert(200),Rat_convert(50),"Main menu",style)
@@ -171,6 +184,8 @@ def end(win): #win output
         y=y-Rat_convert(75)
         Restart_bt=Button(Rat_convert(-212.5),y,Rat_convert(200),Rat_convert(50),"Restart",style)
         Restart_bt.draw() #Draw restart button
+        Advise_bt=Button(Rat_convert(12.5),y,Rat_convert(200),Rat_convert(50),"Advise level",style)
+        Advise_bt.draw() #Draw advise level button
         screen.update()
         screen.onclick(button_click)
         P1.movement_unbind()
@@ -750,7 +765,7 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    #quick_test() #Test
+    quick_test() #Test
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -787,10 +802,12 @@ def Timer(): #Timer setup (Main thread/Sub-thread)
     global screen
     global Time_up #Register time is up
     global Timer_stop #Register timer stop
-    global Max_Minute #Maximum time minutes allowed in challenge mode
-    global Max_Second #Maximum time seconds allowed in challenge mode
-    Max_Minute=3
-    Max_Second=0
+    global Max_Minute #Maximum time minutes predicted to solve the maze
+    global Max_Second #Maximum time seconds predicted to solve the maze
+    global rec_step
+    Max_Second=rec_step/4 #Total seconds
+    Max_Minute=Max_Second//60
+    Max_Second=Max_Second%60
     Timer_stop=False
     Time_up=False
     if mode == 1:
@@ -807,8 +824,8 @@ def tick(): #Timer count
     global screen
     global Time_up #Register time is up
     global Timer_stop #Register timer stop
-    global Max_Minute #Maximum time minutes allowed in challenge mode
-    global Max_Second #Maximum time seconds allowed in challenge mode
+    global Max_Minute #Maximum time minutes predicted to solve the maze
+    global Max_Second #Maximum time seconds predicted to solve the maze
     Second=Second+1
     if Second == 60:
         Minutes=Minutes+1
@@ -967,6 +984,7 @@ def button_click(x,y): #Mouse clicked
     global Resume_bt #Resume button
     global Menu_bt #Back to main menu button
     global Restart_bt #Restart button
+    global Advise_bt #Advise level button
     global Paused #Register did game paused
     global PShape_set #Player shape option set
     global PShape #Player shape
@@ -983,6 +1001,10 @@ def button_click(x,y): #Mouse clicked
     global cooldown
     global KeyBind_set #Key bind option set
     global KeyBind #Key bind
+    global Max_Minute #Maximum time minutes predicted to solve the maze
+    global Max_Second #Maximum time seconds predicted to solve the maze
+    global Minutes #Time spent minutes to solve the maze
+    global Second #Time spent seconds to solve the maze
     screen.update()
     style="Arial", int(Rat_convert(12.5)), "bold"
     if page == 0: #From menu
@@ -1130,6 +1152,18 @@ def button_click(x,y): #Mouse clicked
             screen.ontimer(main,10) #Delay buffer
         elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button
             play_sound(1) #Play sound effect
+            cycle=0 #Threshold
+            Paused=False
+            screen.reset()
+            screen.ontimer(build_maze,10) #Delay buffer
+        elif Advise_bt.get_x_min() < x < Advise_bt.get_x_max() and Advise_bt.get_y_min() < y < Advise_bt.get_y_max(): #Advise level button
+            play_sound(1) #Play sound effect
+            if Max_Minute*60+Max_Second < Minutes*60+Second:
+                if Difficulty < 5:
+                    Difficulty=Difficulty+1
+            else:
+                if Difficulty > 1:
+                    Difficulty=Difficulty-1
             cycle=0 #Threshold
             Paused=False
             screen.reset()
@@ -1602,8 +1636,8 @@ def timer_upd(): #Update timer count
     global Second
     global Screen
     global Pause_bt
-    global Max_Minute #Maximum time minutes allowed in challenge mode
-    global Max_Second #Maximum time seconds allowed in challenge mode
+    global Max_Minute #Maximum time minutes predicted to solve the maze
+    global Max_Second #Maximum time seconds predicted to solve the maze
     global Difficulty
     timer_pn.clear()
     if Difficulty == 5: #Convert to countdown
