@@ -750,7 +750,7 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    quick_test() #Test
+    #quick_test() #Test
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -1332,7 +1332,7 @@ def setting(): #GUI setting
     except:
         x=Rat_convert(-75) #Player colour set position
         y=Rat_convert(175) #Player colour section row
-        options=["Green","Red","Blue","Yellow","White","Black"] #Available player colour
+        options=["Green","Red","Blue","Yellow","Black","Purple", "Pink"] #Available player colour
         PColour_set=Option_set(x, y, style, "Player Colour:  ", options,PColour)
     PColour_set.draw() #Draw player colour option set
     try:
