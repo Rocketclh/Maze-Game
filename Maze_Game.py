@@ -107,14 +107,28 @@ def end(win): #win output
     global P1
     if mode == 1: #CLI end output
         if win:
+            play_sound(3)
             print("System: Congratulations!")
             print("System: You have exited the maze!")
         else:
+            play_sound(2)
             print("System: Game Over")
-            print("System: You have used all of the steps")
+            if Time_up: #Times up
+                print("System: You have ran out of time")
+            else: #Steps run out
+                print("System: You have used all of the steps")
         print("System: Total steps taken:", steps)
         print("System: Maze recommended steps:", rec_step)
-        print("System: Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds")
+        if Minutes < 1:
+            text="Time spend: "+str(Second)+" seconds"
+        else:
+            text="Time spend: "+str(Minutes)+" minutes "+str(Second)+" seconds"
+        print("System: "+ text)
+        if Max_Minute < 1:
+            text="Time expect: "+str(int(Max_Second))+" seconds"
+        else:
+            text="Time expect: "+str(int(Max_Minute))+" minutes "+str(int(Max_Second))+" seconds"
+        print("System: "+ text)
         time.sleep(0.5)
         ans=input("System: Press Enter to exit the game or type '/restart' to restart the game ")
         if ans.lower() == "/restart":
@@ -156,25 +170,25 @@ def end(win): #win output
                 pen.write("You have used all of the steps", align="center", font=(style))
         y=y-Rat_convert(50)
         pen.goto(0,y)
-        text="Total steps taken:"+str(P1.get_steps())
+        text="Total steps taken: "+str(P1.get_steps())
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         pen.goto(0,y)
-        text="Maze recommended steps:"+str(rec_step)
+        text="Maze recommended steps: "+str(rec_step)
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         pen.goto(0,y)
         if Minutes < 1:
-            text="Time spend:"+str(Second)+" seconds"
+            text="Time spend: "+str(Second)+" seconds"
         else:
-            text="Time spend:"+str(Minutes)+" minutes "+str(Second)+" seconds"
+            text="Time spend: "+str(Minutes)+" minutes "+str(Second)+" seconds"
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         pen.goto(0,y)
         if Max_Minute < 1:
-            text="Time expect:"+str(int(Max_Second))+" seconds"
+            text="Time expect: "+str(int(Max_Second))+" seconds"
         else:
-            text="Time expect:"+str(int(Max_Minute))+" minutes "+str(int(Max_Second))+" seconds"
+            text="Time expect: "+str(int(Max_Minute))+" minutes "+str(int(Max_Second))+" seconds"
         pen.write(text, align="center", font=(style))
         y=y-Rat_convert(50)
         Menu_bt=Button(Rat_convert(-212.5),y,Rat_convert(200),Rat_convert(50),"Main menu",style)
@@ -765,7 +779,7 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    quick_test() #Test
+    #quick_test() #Test
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -805,7 +819,11 @@ def Timer(): #Timer setup (Main thread/Sub-thread)
     global Max_Minute #Maximum time minutes predicted to solve the maze
     global Max_Second #Maximum time seconds predicted to solve the maze
     global rec_step
-    Max_Second=rec_step/4 #Total seconds
+    global mode
+    if mode == 1:
+        Max_Second=rec_step*2 #Total seconds
+    elif mode == 2:
+        Max_Second=rec_step/4 #Total seconds
     Max_Minute=Max_Second//60
     Max_Second=Max_Second%60
     Timer_stop=False
