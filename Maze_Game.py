@@ -789,8 +789,7 @@ def maze_solve():
         if mode == 1:
             print("System: Recommend steps for this maze:", rec_step)
             time.sleep(0.1)
-            if Difficulty == 5:
-                input("System: Press Enter to start ")
+            input("System: Press Enter to start ")
             timer.start()
             game()
         elif mode == 2:
