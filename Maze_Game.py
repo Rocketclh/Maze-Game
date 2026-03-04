@@ -1646,7 +1646,6 @@ def pause_game(): #Pause the game:
     P1.hideturtle()
     screen.update()
 
-
 def timer_upd(): #Update timer count
     global timer_pn
     global Minutes
@@ -1908,7 +1907,7 @@ class Option_set:
         self.btR=Button_R(x,self.y,self.text_size,self.text_size*2) #Right arrow button setup
         self.btR.draw()
 
-class Player: #Player character class, mainly used for 2 player mode. Development paused
+class Player: #Player character class
     def __init__(self,color,shape,shape_size,keybind): #Create player object
         self.set_data(color,shape,shape_size,keybind) #Set the data of the object
 
