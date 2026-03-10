@@ -226,15 +226,17 @@ def build_maze():
     global Difficulty
     global Second
     global Timer_stop
-    Second=0
-    Timer_stop=False
-    T_tick()
+    if True:
+        Second=0
+        Timer_stop=False
+        T_tick()
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
     temp=Difficulty
     if Difficulty == 5:
         temp=4
+    temp=9
     Size=(temp+1)*10+1 #Calculate board size
     Method=2 #Maze generation method using
     if Method == 1: #Loop-erased random walk method
@@ -569,10 +571,12 @@ def build_maze():
     if mode == 1:
         print("System: Maze 0"+mn+" loaded successfully")
         time.sleep(0.1)
-    Timer_stop=True
-    print_board()
-    print(Second)
-    #maze_solve()
+    if True:
+        Timer_stop=True
+        print_board()
+        print(Second)
+    else:
+        maze_solve()
 
 def check_state(Maze,Not_Maze,Done): #Loop-erased random walk method debug function
     global temp_Maze
@@ -675,12 +679,11 @@ def maze_solve():
     global Minutes
     global Second
     global New_board
+    global Timer_stop
     retry_cycle=0
     passed = False
     if mode == 1:
         print("System: Calculating recommended steps...")
-    Second=0
-    T_tick()
     while not (passed):
         rec_step=0
         Method=1
@@ -790,6 +793,10 @@ def maze_solve():
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
     #quick_test() #Test
+    if True:
+        Timer_stop=True
+        print_board()
+        print(Second)
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -1084,6 +1091,10 @@ def button_click(x,y): #Mouse clicked
                 game_setting()
         elif Start_bt.get_x_min() < x < Start_bt.get_x_max() and Start_bt.get_y_min() < y < Start_bt.get_y_max(): #Start button pressed
             play_sound(1) #Play sound effect
+            if True:
+                Second=0
+                Timer_stop=False
+                T_tick()
             build_maze()
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
