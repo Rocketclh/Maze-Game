@@ -1175,7 +1175,7 @@ def button_click(x,y): #Mouse clicked
             screen.ontimer(build_maze,10) #Delay buffer
         elif Advise_bt.get_x_min() < x < Advise_bt.get_x_max() and Advise_bt.get_y_min() < y < Advise_bt.get_y_max(): #Advise level button
             play_sound(1) #Play sound effect
-            if Max_Minute*60+Max_Second < Minutes*60+Second:
+            if Max_Minute*60+Max_Second > Minutes*60+Second:
                 if Difficulty < 5:
                     Difficulty=Difficulty+1
             else:
@@ -2005,7 +2005,7 @@ class Player: #Player character class
         self.step_style=style
         self.step_pn.color("black")
         self.step_pn.goto(x,y)
-        text="Steps: "+ str(steps)
+        text="Steps: "+ str(self.steps)
         self.step_pn.write(text, align="center", font=(self.step_style))
 
     def steps_upd(self): #Update steps count
