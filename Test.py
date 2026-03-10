@@ -224,12 +224,9 @@ def build_maze():
     global mode
     global mn
     global Difficulty
-    global Second
-    global Timer_stop
+    global start #Test timer start count
     if True:
-        Second=0
-        Timer_stop=False
-        T_tick()
+        start=time.perf_counter()
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
@@ -572,9 +569,9 @@ def build_maze():
         print("System: Maze 0"+mn+" loaded successfully")
         time.sleep(0.1)
     if True:
-        Timer_stop=True
+        end=time.perf_counter()
         print_board()
-        print(Second)
+        print(end-start)
     else:
         maze_solve()
 
@@ -679,7 +676,7 @@ def maze_solve():
     global Minutes
     global Second
     global New_board
-    global Timer_stop
+    global start #Test timer start count
     retry_cycle=0
     passed = False
     if mode == 1:
@@ -794,9 +791,8 @@ def maze_solve():
     rec_step=rec_step+10 #Add some buffer to the recommended steps
     #quick_test() #Test
     if True:
-        Timer_stop=True
-        print_board()
-        print(Second)
+        end=time.perf_counter()
+        print(end-start)
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -816,14 +812,6 @@ def maze_solve():
             print("System: User interface not recognised, please restart the game")
             input("System: Press Enter to exit the game ")
             sys.exit()
-
-def T_tick(): #Timer count
-    global Second
-    global screen
-    global Timer_stop #Register timer stop
-    Second=Second+0.001
-    if not(Timer_stop):
-        screen.ontimer(T_tick, 1) #Call tick function every 0.001 second
 
 def quick_test(): #Test
     global Board
@@ -1091,10 +1079,6 @@ def button_click(x,y): #Mouse clicked
                 game_setting()
         elif Start_bt.get_x_min() < x < Start_bt.get_x_max() and Start_bt.get_y_min() < y < Start_bt.get_y_max(): #Start button pressed
             play_sound(1) #Play sound effect
-            if True:
-                Second=0
-                Timer_stop=False
-                T_tick()
             build_maze()
     elif page == 3: #From setting
         if Return_bt.get_x_min() < x < Return_bt.get_x_max() and Return_bt.get_y_min() < y < Return_bt.get_y_max(): #Return button pressed
