@@ -1657,7 +1657,7 @@ def timer_upd(): #Update timer count
     global Difficulty
     timer_pn.clear()
     if Difficulty == 5: #Convert to countdown
-        minu=Max_Minute-Minutes-1
+        minu=int(Max_Minute-Minutes-1)
         seco=60-Second
         temp=grid(minu,seco)
     else:
