@@ -224,16 +224,13 @@ def build_maze():
     global mode
     global mn
     global Difficulty
-    global start #Test timer start count
-    if True:
-        start=time.perf_counter()
+    Benchmark("start","build_maze")
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
     temp=Difficulty
     if Difficulty == 5:
         temp=4
-    temp=9
     Size=(temp+1)*10+1 #Calculate board size
     Method=2 #Maze generation method using
     if Method == 1: #Loop-erased random walk method
@@ -568,12 +565,8 @@ def build_maze():
     if mode == 1:
         print("System: Maze 0"+mn+" loaded successfully")
         time.sleep(0.1)
-    if True:
-        end=time.perf_counter()
-        print_board()
-        print(end-start)
-    else:
-        maze_solve()
+    Benchmark("end","build_maze")
+    maze_solve()
 
 def check_state(Maze,Not_Maze,Done): #Loop-erased random walk method debug function
     global temp_Maze
@@ -593,6 +586,28 @@ def print_state(): #Loop-erased random walk method debug function
         print(*[temp_Maze[x][int((Size-1)/2)-y-1] for x in range(int((Size-1)/2))])
     print("Not Maze:"+ str(temp_Not_Maze))
     print("Done:", temp_Done)
+
+def Benchmark(action,function):
+    global start
+    global Size
+    global h
+    global u
+    action=action.lower()
+    if action == "start" and function == "Menu_CLI":
+        start=time.perf_counter()
+    elif action == "end" and function == "maze_solve":
+        end=time.perf_counter()
+        time_spend=round(end-start, ndigits=3)
+        h=h+1
+        u=u+(end-start)
+        print("Board size: "+str(Size)+"*"+str(Size))
+        print("Time spent: "+str(time_spend)+"s")
+        print("")
+        if h < 5:
+            build_maze()
+        else:
+            print("Mean time spent"+str(round(u/5, ndigits=3)))
+            main()
 
 def grid(x,y): #Convert Location vector to Grid format
     #Grid format: Location vector in "0519" form, x=5 y=19
@@ -676,7 +691,6 @@ def maze_solve():
     global Minutes
     global Second
     global New_board
-    global start #Test timer start count
     retry_cycle=0
     passed = False
     if mode == 1:
@@ -789,29 +803,28 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
+    Benchmark("end","maze_solve")
     #quick_test() #Test
-    if True:
-        end=time.perf_counter()
-        print(end-start)
-    cycle=cycle+1
-    if cycle == 1:
-        steps=0
-        Minutes=0 #Timer minutes reset
-        Second=0 #Timer second reset
-        New_board=True #New board was created
-        if mode == 1:
-            print("System: Recommend steps for this maze:", rec_step)
-            time.sleep(0.1)
-            input("System: Press Enter to start ")
-            timer.start()
-            game()
-        elif mode == 2:
-            game_setup()
-        else:
-            print("System: ERROR")
-            print("System: User interface not recognised, please restart the game")
-            input("System: Press Enter to exit the game ")
-            sys.exit()
+    if False:
+        cycle=cycle+1
+        if cycle == 1:
+            steps=0
+            Minutes=0 #Timer minutes reset
+            Second=0 #Timer second reset
+            New_board=True #New board was created
+            if mode == 1:
+                print("System: Recommend steps for this maze:", rec_step)
+                time.sleep(0.1)
+                input("System: Press Enter to start ")
+                timer.start()
+                game()
+            elif mode == 2:
+                game_setup()
+            else:
+                print("System: ERROR")
+                print("System: User interface not recognised, please restart the game")
+                input("System: Press Enter to exit the game ")
+                sys.exit()
 
 def quick_test(): #Test
     global Board
@@ -883,27 +896,27 @@ def Menu_CLI(): #CLI menu
     global Difficulty
     global mode
     print("System: This game is for single players")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: The icon 'X' represent the wall, and icon ' ' represent the path")
-    time .sleep(1)
+    time .sleep(0.1)
     print("System: Icon 'P' is the player, and icon 'E' is the exit")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: You can move in four directions")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: Up(W), Down(S), Left(A), Right(D)")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: Single character is entered everytime")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: Press Enter to execute the action")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: Every steps you take will be recorded")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: Your goal is to exit the maze with shortest time")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: In Challenge Mode your steps and time was limmited, think carefully before moving")
-    time.sleep(1)
+    time.sleep(0.1)
     print("System: You are not allow to use more steps and time than the system recommended in Challenge Mode")
-    time.sleep(1)
+    time.sleep(0.1)
     ans=input("System: Press Enter to start the game or enter /GUI to switch to GUI manu")
     if ans.lower() == "/gui":
         root.deiconify() #Restores the turtle screen window
@@ -924,6 +937,7 @@ def Menu_CLI(): #CLI menu
         Type_error=False
         print("System: Good luck!")
         time.sleep(0.5)
+        Benchmark("start","Menu_CLI")
         build_maze()
 
 def menu_setup(): #GUI screen setup
@@ -1188,7 +1202,7 @@ def button_click(x,y): #Mouse clicked
             screen.ontimer(build_maze,10) #Delay buffer
         elif Advise_bt.get_x_min() < x < Advise_bt.get_x_max() and Advise_bt.get_y_min() < y < Advise_bt.get_y_max(): #Advise level button
             play_sound(1) #Play sound effect
-            if Max_Minute*60+Max_Second < Minutes*60+Second:
+            if Max_Minute*60+Max_Second > Minutes*60+Second:
                 if Difficulty < 5:
                     Difficulty=Difficulty+1
             else:
@@ -1714,11 +1728,15 @@ def main(): #Start point
     global mode
     global cycle
     global Paused #Register did game paused
+    global h
+    global u
     root=t.Screen()._root #Access the underlying Tk window
     timer=threading.Thread(target=Timer) #Setup sub-thread
     mode=2
     cycle=0 #Threshold
     Paused=False
+    h=0
+    u=0
     if mode == 1: #CLI
         Menu_CLI()
     elif mode == 2: #GUI
@@ -2018,7 +2036,7 @@ class Player: #Player character class
         self.step_style=style
         self.step_pn.color("black")
         self.step_pn.goto(x,y)
-        text="Steps: "+ str(steps)
+        text="Steps: "+ str(self.steps)
         self.step_pn.write(text, align="center", font=(self.step_style))
 
     def steps_upd(self): #Update steps count
@@ -2241,3 +2259,4 @@ except:
     else:
         sys.exit()
 main()
+55
