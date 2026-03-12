@@ -823,8 +823,8 @@ def Timer(): #Timer setup (Main thread/Sub-thread)
         Max_Second=rec_step*2 #Total seconds
     elif mode == 2:
         Max_Second=rec_step/4 #Total seconds
-    Max_Minute=Max_Second//60
-    Max_Second=Max_Second%60
+    Max_Minute=int(round(Max_Second//60, ndigits=0))
+    Max_Second=int(round(Max_Second%60, ndigits=0))
     Timer_stop=False
     Time_up=False
     if mode == 1:
@@ -1657,9 +1657,10 @@ def timer_upd(): #Update timer count
     global Difficulty
     timer_pn.clear()
     if Difficulty == 5: #Convert to countdown
-        minu=int(Max_Minute-Minutes-1)
-        seco=60-Second
-        temp=grid(minu,seco)
+        ini_second=Max_Minute*60+Max_Second #The maximum second allowed
+        cur_second=Minutes*60+Second #The current second
+        dis_second=ini_second-cur_second #The amount of seconds left
+        temp=grid(int(round(dis_second//60, ndigits=0)),int(round(dis_second%60, ndigits=0)))
     else:
         temp=grid(Minutes,Second)
     text="Timer: "+temp[0:2]+":"+temp[2:4] #Concast minutes and seconds to timer format
