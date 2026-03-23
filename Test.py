@@ -204,6 +204,7 @@ def end(win): #win output
         screen.onclick(button_click)
         P1.movement_unbind()
         screen.listen()
+        Benchmark("","end")
 
 def print_board(): # board
     global Board
@@ -224,7 +225,6 @@ def build_maze():
     global mode
     global mn
     global Difficulty
-    Benchmark("start","build_maze")
     mn=str(random.randint(1,999)) #Random generate maze ID
     if mode == 1:
         print("System: Loading Maze 0"+mn+"...")
@@ -565,7 +565,6 @@ def build_maze():
     if mode == 1:
         print("System: Maze 0"+mn+" loaded successfully")
         time.sleep(0.1)
-    Benchmark("end","build_maze")
     maze_solve()
 
 def check_state(Maze,Not_Maze,Done): #Loop-erased random walk method debug function
@@ -587,27 +586,32 @@ def print_state(): #Loop-erased random walk method debug function
     print("Not Maze:"+ str(temp_Not_Maze))
     print("Done:", temp_Done)
 
-def Benchmark(action,function):
-    global start
-    global Size
-    global h
-    global u
+def Benchmark(action, function):
+    global Difficulty
+    global P1
+    global o
+    global Animation
     action=action.lower()
-    if action == "start" and function == "Menu_CLI":
-        start=time.perf_counter()
-    elif action == "end" and function == "maze_solve":
-        end=time.perf_counter()
-        time_spend=round(end-start, ndigits=3)
-        h=h+1
-        u=u+(end-start)
-        print("Board size: "+str(Size)+"*"+str(Size))
-        print("Time spent: "+str(time_spend)+"s")
-        print("")
-        if h < 5:
-            build_maze()
-        else:
-            print("Mean time spent"+str(round(u/5, ndigits=3)))
-            main()
+    Animation=2 #Off
+    if action == "" and function == "Menu_GUI":
+        screen.ontimer(delay1, 10)
+    elif action == "" and function == "game_setting":
+        Difficulty=4
+        screen.ontimer(delay2, 10)
+    elif action == "" and function == "ready":
+        screen.ontimer(Start, 10)
+    elif action == "" and function == "Start":
+        screen.ontimer(P1.move_down, 10)
+    elif action == "" and function == "end":
+        o=o+1
+        print("Cycle:"+str(o))
+        screen.ontimer(delay3, 10)
+def delay1():
+    button_click(random.randint(int(Start_bt.get_x_min()),int(Start_bt.get_x_max())),random.randint(int(Start_bt.get_y_min()),int(Start_bt.get_y_max())))
+def delay2():
+    button_click(random.randint(int(Start_bt.get_x_min()),int(Start_bt.get_x_max())),random.randint(int(Start_bt.get_y_min()),int(Start_bt.get_y_max())))
+def delay3():
+    button_click(random.randint(int(Restart_bt.get_x_min()),int(Restart_bt.get_x_max())),random.randint(int(Restart_bt.get_y_min()),int(Restart_bt.get_y_max())))
 
 def grid(x,y): #Convert Location vector to Grid format
     #Grid format: Location vector in "0519" form, x=5 y=19
@@ -803,28 +807,26 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    Benchmark("end","maze_solve")
-    #quick_test() #Test
-    if False:
-        cycle=cycle+1
-        if cycle == 1:
-            steps=0
-            Minutes=0 #Timer minutes reset
-            Second=0 #Timer second reset
-            New_board=True #New board was created
-            if mode == 1:
-                print("System: Recommend steps for this maze:", rec_step)
-                time.sleep(0.1)
-                input("System: Press Enter to start ")
-                timer.start()
-                game()
-            elif mode == 2:
-                game_setup()
-            else:
-                print("System: ERROR")
-                print("System: User interface not recognised, please restart the game")
-                input("System: Press Enter to exit the game ")
-                sys.exit()
+    quick_test() #Test
+    cycle=cycle+1
+    if cycle == 1:
+        steps=0
+        Minutes=0 #Timer minutes reset
+        Second=0 #Timer second reset
+        New_board=True #New board was created
+        if mode == 1:
+            print("System: Recommend steps for this maze:", rec_step)
+            time.sleep(0.1)
+            input("System: Press Enter to start ")
+            timer.start()
+            game()
+        elif mode == 2:
+            game_setup()
+        else:
+            print("System: ERROR")
+            print("System: User interface not recognised, please restart the game")
+            input("System: Press Enter to exit the game ")
+            sys.exit()
 
 def quick_test(): #Test
     global Board
@@ -937,7 +939,6 @@ def Menu_CLI(): #CLI menu
         Type_error=False
         print("System: Good luck!")
         time.sleep(0.5)
-        Benchmark("start","Menu_CLI")
         build_maze()
 
 def menu_setup(): #GUI screen setup
@@ -1005,8 +1006,9 @@ def Menu_GUI(): #GUI main menu
     screen.update()
     screen.onclick(button_click)
     screen.listen()
+    Benchmark("","Menu_GUI")
     screen.mainloop() #Keep the window open
-
+    
 def button_click(x,y): #Mouse clicked
     global root
     global screen
@@ -1314,6 +1316,7 @@ def game_setting(): #GUI game setting
     screen.update()
     screen.onclick(button_click)
     screen.listen()
+    Benchmark("","game_setting")
 
 def load_audio(): #Load in all audio
     global BtCl_SoundEffect
@@ -1612,6 +1615,7 @@ def ready(): #Ready to start the game
     screen.update()
     screen.onkeypress(Start,"Return")
     screen.listen()
+    Benchmark("","ready")
     screen.mainloop() #Keep the window open
 
 def Start(): #Start the game
@@ -1626,6 +1630,7 @@ def Start(): #Start the game
     screen.listen()
     screen.update()
     Timer() #Start timer
+    Benchmark("","Start")
 
 def pause_game(): #Pause the game:
     global screen
@@ -1728,15 +1733,11 @@ def main(): #Start point
     global mode
     global cycle
     global Paused #Register did game paused
-    global h
-    global u
     root=t.Screen()._root #Access the underlying Tk window
     timer=threading.Thread(target=Timer) #Setup sub-thread
     mode=2
     cycle=0 #Threshold
     Paused=False
-    h=0
-    u=0
     if mode == 1: #CLI
         Menu_CLI()
     elif mode == 2: #GUI
@@ -2232,6 +2233,7 @@ import sys
 import threading
 import turtle as t
 import copy
+o=0
 try: #Check did pygame installed
     import pygame
     pygame.init() #Initialise pygame
