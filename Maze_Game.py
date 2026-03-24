@@ -242,7 +242,7 @@ def build_maze():
         Board[x][y]=" "
         Maze=[["F"] * int((Size-1)/2) for n in range(int((Size-1)/2))] #Store the cells that are part of the maze, stored in Maze format
         x=int((x+1)/2-1) #Converting location vector from Board format to Maze format
-        y=int((x+1)/2-1)
+        y=int((y+1)/2-1)
         Maze[x][y]="T"
         Done=False #Register maze is fully finished
         while not(Done): #Check is all node included in the maze
@@ -259,7 +259,7 @@ def build_maze():
                 y=int(temp[2:4])
                 x=2*x+1 #Converting location vector from Maze format to Board format
                 y=2*y+1
-                Path=[temp] #Store walked path, stored in Board format
+                Path=[grid(x,y)] #Store walked path, stored in Board format
                 while Maze[int((x+1)/2-1)][int((y+1)/2-1)] != "T":
                     retry=False
                     Direction=random.randint(1,4) #1:Up 2:Down 3:Left 4:Right
@@ -271,12 +271,12 @@ def build_maze():
                             for t in range(Steps):
                                 y=y+1
                                 found=False
-                                for c in range(1,len(Path)):
+                                for c in range(len(Path)):
                                     if Path[c] == grid(x,y):
                                         m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(m-1)] #Remove the path cycle
+                                    Path = Path[:(m+1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                     elif Direction == 2: #Move down
@@ -286,12 +286,12 @@ def build_maze():
                             for t in range(Steps):
                                 y=y-1
                                 found=False
-                                for c in range(1,len(Path)):
+                                for c in range(len(Path)):
                                     if Path[c] == grid(x,y):
                                         m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(m-1)] #Remove the path cycle
+                                    Path = Path[:(m+1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                     elif Direction == 3: #Move left
@@ -301,12 +301,12 @@ def build_maze():
                             for t in range(Steps):
                                 x=x-1
                                 found=False
-                                for c in range(1,len(Path)):
+                                for c in range(len(Path)):
                                     if Path[c] == grid(x,y):
                                         m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(m-1)] #Remove the path cycle
+                                    Path = Path[:(m+1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                     elif Direction == 4: #Move right
@@ -316,12 +316,12 @@ def build_maze():
                             for t in range(Steps):
                                 x=x+1
                                 found=False
-                                for c in range(1,len(Path)):
+                                for c in range(len(Path)):
                                     if Path[c] == grid(x,y):
                                         m=c
                                         found=True
                                 if found:
-                                    Path = Path[:(m-1)] #Remove the path cycle
+                                    Path = Path[:(m+1)] #Remove the path cycle
                                 else:
                                     Path.append(grid(x,y)) #Storing the Location vector in Grid format
                 for n in range(0, len(Path)-1): #Register paths into maze
