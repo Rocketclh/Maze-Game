@@ -105,6 +105,9 @@ def end(win): #win output
     global Max_Minute
     global Max_Second
     global P1
+    global cycle #Threshold
+    Timer_stop=True
+    cycle=0
     if mode == 1: #CLI end output
         if win:
             play_sound(3)
@@ -138,7 +141,6 @@ def end(win): #win output
         else:
             sys.exit()
     elif mode == 2: #GUI end output
-        Timer_stop=True
         page=5
         screen.clear() #Clear screen
         screen.setup(width=Rat_convert(575), height=Rat_convert(650))
@@ -779,7 +781,7 @@ def maze_solve():
         else:
             passed=True
     rec_step=rec_step+10 #Add some buffer to the recommended steps
-    #quick_test() #Test
+    quick_test() #Test
     cycle=cycle+1
     if cycle == 1:
         steps=0
@@ -790,6 +792,7 @@ def maze_solve():
             print("System: Recommend steps for this maze:", rec_step)
             time.sleep(0.1)
             input("System: Press Enter to start ")
+            timer=threading.Thread(target=Timer) #Setup sub-thread
             timer.start()
             game()
         elif mode == 2:
@@ -1169,7 +1172,6 @@ def button_click(x,y): #Mouse clicked
             screen.ontimer(main,10) #Delay buffer
         elif Restart_bt.get_x_min() < x < Restart_bt.get_x_max() and Restart_bt.get_y_min() < y < Restart_bt.get_y_max(): #Restart button
             play_sound(1) #Play sound effect
-            cycle=0 #Threshold
             Paused=False
             screen.reset()
             screen.ontimer(build_maze,10) #Delay buffer
@@ -1181,7 +1183,6 @@ def button_click(x,y): #Mouse clicked
             else:
                 if Difficulty > 1:
                     Difficulty=Difficulty-1
-            cycle=0 #Threshold
             Paused=False
             screen.reset()
             screen.ontimer(build_maze,10) #Delay buffer
@@ -1698,12 +1699,10 @@ def Sys_wait_1_second(): #System message clear after 1 second
 
 def main(): #Start point
     global root
-    global timer
     global mode
     global cycle
     global Paused #Register did game paused
     root=t.Screen()._root #Access the underlying Tk window
-    timer=threading.Thread(target=Timer) #Setup sub-thread
     mode=2
     cycle=0 #Threshold
     Paused=False
