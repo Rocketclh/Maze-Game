@@ -2,7 +2,7 @@ A maze game developed for A-level NEA project
 
 
 
-How do play this game?
+How to play this game?
 
 1. Download the project as a zip file
 
