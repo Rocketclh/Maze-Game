@@ -21,7 +21,3 @@ How to play this game?
 8. Install pygame
 
 9. Press F5 to execute the code
-  
-  
-  
-This game is still in development, sometimes may not work.
